@@ -1,3 +1,4 @@
+import Dashboard from './components/Dashboard';
 import Home from './pages/home/index'
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
@@ -7,6 +8,7 @@ function App() {
       <Routes>
         <Route path="/" >
           <Route index element={<Home />} />
+          <Route path="/dashboard" element={<Dashboard />} />
         </Route>
       </Routes>
     </BrowserRouter>

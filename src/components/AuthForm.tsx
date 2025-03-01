@@ -43,7 +43,7 @@ export default function AuthForm({ isLoginMode, onToggleMode, onLogin }: AuthFor
       if (!formData.username) {
         newErrors.username = 'Введите имя или название компании';
       }
-      
+
       if (!formData.confirmPassword) {
         newErrors.confirmPassword = 'Подтвердите пароль';
       } else if (formData.password !== formData.confirmPassword) {
@@ -59,9 +59,11 @@ export default function AuthForm({ isLoginMode, onToggleMode, onLogin }: AuthFor
     e.preventDefault();
     if (validateForm()) {
       if (isLoginMode) {
-        onLogin(formData.email);
+        // onLogin(formData.email);
+        LoginApi(formData)
       } else {
-        // Handle registration
+        /////skdjskdjskdj
+        registerApi(formData)
         console.log('Registration data:', formData);
       }
     }
@@ -78,6 +80,60 @@ export default function AuthForm({ isLoginMode, onToggleMode, onLogin }: AuthFor
       setErrors(prev => ({ ...prev, [name]: '' }));
     }
   };
+
+  const registerApi = async (data: any) => {
+    const sendDAta = {
+      username: data.username,
+      email: data.email,
+      password: data.password,
+      password_confirmation: data.confirmPassword
+    }
+    fetch('https://xn----nbck7b7ald8atlv.xn--y9a3aq/halal.loc/public/api/register', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(sendDAta),
+    })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
+      .then(data => {
+        console.log('Success:', data);
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
+  }
+  const LoginApi = async (data: any) => {
+    console.log(data)
+    const sendDAta = {
+      email: data.email,
+      password: data.password,
+    }
+    fetch('https://xn----nbck7b7ald8atlv.xn--y9a3aq/halal.loc/public/api/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(sendDAta),
+    })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
+      .then(data => {
+        console.log('Success:', data);
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
+  }
 
   return (
     <>
@@ -99,9 +155,8 @@ export default function AuthForm({ isLoginMode, onToggleMode, onLogin }: AuthFor
                     name="username"
                     value={formData.username}
                     onChange={handleChange}
-                    className={`appearance-none block w-full px-3 py-2 bg-sky-50 border ${
-                      errors.username ? 'border-red-500' : 'border-sky-200'
-                    } rounded-lg shadow-sm placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-2 focus:ring-sky-500 
+                    className={`appearance-none block w-full px-3 py-2 bg-sky-50 border ${errors.username ? 'border-red-500' : 'border-sky-200'
+                      } rounded-lg shadow-sm placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-2 focus:ring-sky-500 
                     focus:border-transparent sm:text-sm transition-colors pl-10`}
                     placeholder="Иван Иванов или ООО Компания"
                   />
@@ -126,9 +181,8 @@ export default function AuthForm({ isLoginMode, onToggleMode, onLogin }: AuthFor
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
-                  className={`appearance-none block w-full px-3 py-2 bg-sky-50 border ${
-                    errors.email ? 'border-red-500' : 'border-sky-200'
-                  } rounded-lg shadow-sm placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-2 focus:ring-sky-500 
+                  className={`appearance-none block w-full px-3 py-2 bg-sky-50 border ${errors.email ? 'border-red-500' : 'border-sky-200'
+                    } rounded-lg shadow-sm placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-2 focus:ring-sky-500 
                   focus:border-transparent sm:text-sm transition-colors pl-10`}
                   placeholder="you@example.com"
                 />
@@ -152,9 +206,8 @@ export default function AuthForm({ isLoginMode, onToggleMode, onLogin }: AuthFor
                   name="password"
                   value={formData.password}
                   onChange={handleChange}
-                  className={`appearance-none block w-full px-3 py-2 bg-sky-50 border ${
-                    errors.password ? 'border-red-500' : 'border-sky-200'
-                  } rounded-lg shadow-sm placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-2 focus:ring-sky-500 
+                  className={`appearance-none block w-full px-3 py-2 bg-sky-50 border ${errors.password ? 'border-red-500' : 'border-sky-200'
+                    } rounded-lg shadow-sm placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-2 focus:ring-sky-500 
                   focus:border-transparent sm:text-sm transition-colors pl-10 pr-10`}
                   placeholder="••••••••"
                 />
@@ -191,9 +244,8 @@ export default function AuthForm({ isLoginMode, onToggleMode, onLogin }: AuthFor
                     name="confirmPassword"
                     value={formData.confirmPassword}
                     onChange={handleChange}
-                    className={`appearance-none block w-full px-3 py-2 bg-sky-50 border ${
-                      errors.confirmPassword ? 'border-red-500' : 'border-sky-200'
-                    } rounded-lg shadow-sm placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-2 focus:ring-sky-500 
+                    className={`appearance-none block w-full px-3 py-2 bg-sky-50 border ${errors.confirmPassword ? 'border-red-500' : 'border-sky-200'
+                      } rounded-lg shadow-sm placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-2 focus:ring-sky-500 
                     focus:border-transparent sm:text-sm transition-colors pl-10 pr-10`}
                     placeholder="••••••••"
                   />

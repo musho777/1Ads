@@ -6,6 +6,8 @@ import AdminDashboard from '../../components/AdminDashboard';
 import { useLanguage } from '../../contexts/LanguageContext';
 import LanguageSwitch from '../../components/LanguageSwitch';
 import { Campaign } from '../../types';
+import PrivacyPolicy from '../../components/PrivacyPolicy';
+import TermsOfUse from '../../components/TermsOfUse';
 
 // Initial campaigns data for demo purposes
 const initialCampaigns: Campaign[] = [
@@ -171,6 +173,9 @@ function Home() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [currentTime, setCurrentTime] = useState(new Date());
+  const [showPrivacyPolicy, setShowPrivacyPolicy] = useState(false);
+  const [showTerms, setShowTerms] = useState(false)
+
   const [campaigns, setCampaigns] = useState<Campaign[]>(initialCampaigns);
   const { t } = useLanguage();
 
@@ -208,15 +213,13 @@ function Home() {
   };
 
   if (isAuthenticated) {
-    return isAdmin ? (
+    return isAdmin && (
       <AdminDashboard
         campaigns={campaigns}
         onUpdateCampaign={handleUpdateCampaign}
         onSignOut={handleSignOut}
       />
-    ) : (
-      <Dashboard />
-    );
+    )
   }
 
   const formatTime = (date: Date) => {
@@ -337,12 +340,12 @@ function Home() {
               <h3 className="font-semibold text-gray-900 mb-4">{t('footer.legal.title')}</h3>
               <ul className="space-y-2">
                 <li>
-                  <a href="#" className="text-gray-600 hover:text-gray-900 text-sm">
+                  <a href='#' onClick={() => setShowPrivacyPolicy(true)} className="text-gray-600 hover:text-gray-900 text-sm">
                     {t('footer.legal.privacy')}
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="text-gray-600 hover:text-gray-900 text-sm">
+                  <a href="#" onClick={() => setShowTerms(true)} className="text-gray-600 hover:text-gray-900 text-sm">
                     {t('footer.legal.terms')}
                   </a>
                 </li>
@@ -381,6 +384,13 @@ function Home() {
           </div>
         </div>
       </footer>
+
+      {showPrivacyPolicy && (
+        <PrivacyPolicy onClose={() => setShowPrivacyPolicy(false)} />
+      )}
+      {showTerms && (
+        <TermsOfUse onClose={() => setShowTerms(false)} />
+      )}
 
       {/* Auth Modal */}
       {showAuthModal && (
