@@ -1,0 +1,240 @@
+openapi: 3.0.0
+info:
+  title: AdNetwork API
+  version: '1.0.0'
+  description: |
+    API for managing advertising campaigns and retrieving ad information.
+    
+    ## Rate Limiting
+    - 100 requests per minute per API key
+    - Responses include rate limit headers
+    
+    ## Authentication
+    All endpoints require an API key passed via the `X-API-Key` header.
+    
+    ## Pagination
+    List endpoints support pagination with `page` and `limit` query parameters.
+    
+servers:
+  - url: https://api.yourdomain.com/v1
+    description: Production server
+  - url: https://api-sandbox.yourdomain.com/v1
+    description: Sandbox server
+
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+
+  schemas:
+    Campaign:
+      type: object
+      required:
+        - name
+        - budget
+        - cpm
+        - startDate
+        - endDate
+        - adContent
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        name:
+          type: string
+          example: "Summer Sale 2024"
+        budget:
+          type: number
+          format: float
+          minimum: 0
+          example: 5000
+        cpm:
+          type: number
+          format: float
+          minimum: 0
+          example: 4.50
+        status:
+          type: string
+          enum: [active, paused, completed, pending]
+          default: pending
+        startDate:
+          type: string
+          format: date
+        endDate:
+          type: string
+          format: date
+        adContent:
+          type: object
+          required:
+            - title
+            - description
+            - imageUrl
+            - targetUrl
+          properties:
+            title:
+              type: string
+              maxLength: 100
+            description:
+              type: string
+              maxLength: 500
+            imageUrl:
+              type: string
+              format: uri
+            targetUrl:
+              type: string
+              format: uri
+
+paths:
+  /campaigns:
+    get:
+      summary: List campaigns
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+        - in: query
+          name: status
+          schema:
+            type: string
+            enum: [active, paused, completed, pending]
+        - in: query
+          name: minCpm
+          schema:
+            type: number
+            format: float
+            minimum: 0
+      responses:
+        '200':
+          description: List of campaigns
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Campaign'
+                  pagination:
+                    type: object
+                    properties:
+                      page:
+                        type: integer
+                      limit:
+                        type: integer
+                      total:
+                        type: integer
+                      pages:
+                        type: integer
+    
+    post:
+      summary: Create a campaign
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Campaign'
+      responses:
+        '201':
+          description: Campaign created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Campaign'
+
+  /campaigns/{id}:
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          format: uuid
+    
+    get:
+      summary: Get campaign by ID
+      responses:
+        '200':
+          description: Campaign details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Campaign'
+    
+    put:
+      summary: Update campaign
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Campaign'
+      responses:
+        '200':
+          description: Campaign updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Campaign'
+    
+    delete:
+      summary: Delete campaign
+      responses:
+        '204':
+          description: Campaign deleted
+
+  /campaigns/{id}/stats:
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          format: uuid
+    
+    get:
+      summary: Get campaign statistics
+      responses:
+        '200':
+          description: Campaign statistics
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      impressions:
+                        type: integer
+                      clicks:
+                        type: integer
+                      ctr:
+                        type: number
+                        format: float
+                      spent:
+                        type: number
+                        format: float
