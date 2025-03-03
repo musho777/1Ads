@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react';
 import { ArrowRight, BarChart4, Moon, X, Globe, Layers } from 'lucide-react';
-import AuthForm from '../../components/AuthForm';
-import Dashboard from '../../components/Dashboard';
 import AdminDashboard from '../../components/AdminDashboard';
 import { useLanguage } from '../../contexts/LanguageContext';
 import LanguageSwitch from '../../components/LanguageSwitch';
 import { Campaign } from '../../types';
 import PrivacyPolicy from '../../components/PrivacyPolicy';
 import TermsOfUse from '../../components/TermsOfUse';
+import Login from '../../components/auth/login';
+import Register from '../../components/auth/register';
 
 // Initial campaigns data for demo purposes
 const initialCampaigns: Campaign[] = [
@@ -402,11 +402,10 @@ function Home() {
             >
               <X className="w-6 h-6" />
             </button>
-            <AuthForm
-              isLoginMode={isLoginMode}
-              onToggleMode={() => setIsLoginMode(!isLoginMode)}
-              onLogin={handleLogin}
-            />
+            {isLoginMode ?
+              <Login onToggleMode={() => setIsLoginMode(!isLoginMode)} /> :
+              <Register onToggleMode={() => setIsLoginMode(!isLoginMode)} />
+            }
           </div>
         </div>
       )}

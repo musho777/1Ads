@@ -14,6 +14,11 @@ const translations = {
     'auth.login': 'Login',
     'auth.register': 'Register',
 
+    //error  
+    'login.error': 'login or password is wrong',
+    'mail.error': "The email has already been taken.",
+
+
     // Hero Section
     'hero.timeForAds': 'Perfect time for your advertising',
     'hero.description': 'Every month, 1Muslim app users generate millions of views. Anyone can place their ads on our platform.',
@@ -63,7 +68,7 @@ const translations = {
     'campaign.dates.end': 'End Date',
     'campaign.languages.label': 'Target Languages',
     'campaign.languages.description': 'Select languages for your target audience',
-    
+
     // Ad Content Section
     'campaign.ad.title': 'Ad Content',
     'campaign.ad.headline.label': 'Ad Title',
@@ -77,7 +82,7 @@ const translations = {
     'campaign.ad.preview.title': 'Ad Preview',
     'campaign.ad.preview.title.placeholder': 'Your Ad Title Here',
     'campaign.ad.preview.description.placeholder': 'Your ad description will appear here',
-    
+
     // Buttons
     'campaign.button.cancel': 'Cancel',
     'campaign.button.create': 'Create Campaign',
@@ -158,15 +163,15 @@ const translations = {
     'admin.moderation.reject': 'Reject',
     'admin.moderation.budget': 'Budget',
     'admin.moderation.cpm': 'CPM',
-    
+
     'admin.stats.highestCpm': 'Highest CPM',
     'admin.stats.pendingModeration': 'Pending Moderation',
     'admin.stats.activeCampaigns': 'Active Campaigns',
-    
+
     'admin.tabs.all': 'All Campaigns',
     'admin.tabs.moderation': 'Moderation Queue',
     'admin.tabs.competitive': 'Competitive Analysis',
-    
+
     'admin.competitive.title': 'Top Performing Campaigns by CPM',
     'admin.competitive.budget': 'Budget',
     'admin.competitive.spent': 'Spent',
@@ -200,6 +205,12 @@ const translations = {
     // Auth
     'auth.login': 'Войти',
     'auth.register': 'Регистрация',
+
+
+    //error  
+    'login.error': 'Неправильный логин или пароль',
+    'mail.error': "Электронная почта уже занята.",
+
 
     // Hero Section
     'hero.timeForAds': 'Идеальное время для вашей рекламы',
@@ -250,7 +261,7 @@ const translations = {
     'campaign.dates.end': 'Дата окончания',
     'campaign.languages.label': 'Целевые языки',
     'campaign.languages.description': 'Выберите языки целевой аудитории',
-    
+
     // Ad Content Section
     'campaign.ad.title': 'Содержание рекламы',
     'campaign.ad.headline.label': 'Заголовок рекламы',
@@ -264,7 +275,7 @@ const translations = {
     'campaign.ad.preview.title': 'Предпросмотр рекламы',
     'campaign.ad.preview.title.placeholder': 'Заголовок вашей рекламы',
     'campaign.ad.preview.description.placeholder': 'Здесь появится описание вашей рекламы',
-    
+
     // Buttons
     'campaign.button.cancel': 'Отмена',
     'campaign.button.create': 'Создать кампанию',
@@ -343,15 +354,15 @@ const translations = {
     'admin.moderation.reject': 'Отклонить',
     'admin.moderation.budget': 'Бюджет',
     'admin.moderation.cpm': 'CPM',
-    
+
     'admin.stats.highestCpm': 'Наивысший CPM',
     'admin.stats.pendingModeration': 'На модерации',
     'admin.stats.activeCampaigns': 'Активные кампании',
-    
+
     'admin.tabs.all': 'Все кампании',
     'admin.tabs.moderation': 'Очередь модерации',
     'admin.tabs.competitive': 'Конкурентный анализ',
-    
+
     'admin.competitive.title': 'Лучшие кампании по CPM',
     'admin.competitive.budget': 'Бюджет',
     'admin.competitive.spent': 'Потрачено',
@@ -390,13 +401,13 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
 
   const t = (key: string, params?: Record<string, string | number>): string => {
     let translation = translations[language][key] || key;
-    
+
     if (params) {
       Object.entries(params).forEach(([key, value]) => {
         translation = translation.replace(`{${key}}`, String(value));
       });
     }
-    
+
     return translation;
   };
 
