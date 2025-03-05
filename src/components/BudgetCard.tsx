@@ -1,6 +1,7 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Plus, DollarSign, Copy, Upload, X, Check } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
+import { useAuth } from '../contexts/AuthContext';
 
 interface BudgetCardProps {
   totalBudget: number;
@@ -26,6 +27,8 @@ function PaymentModal({ isOpen, onClose, amount, userEmail }: PaymentModalProps)
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { t, language } = useLanguage();
   const currencySymbol = language === 'ru' ? '₽' : '$';
+  const { token } = useAuth();
+
 
   if (!isOpen) return null;
 
@@ -43,15 +46,38 @@ function PaymentModal({ isOpen, onClose, amount, userEmail }: PaymentModalProps)
     }
   };
 
-  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+
+
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
       setUploading(true);
-      // Simulate upload
-      setTimeout(() => {
+      const formData = new FormData();
+      formData.append("payment", amount);
+      formData.append("file", file);
+
+      var myHeaders = new Headers();
+      myHeaders.append("Authorization", `Bearer ${token}`)
+      myHeaders.append("Accept", "application/json");
+      try {
+        const response = await
+          fetch(`/api/user_payment`, {
+            method: "POST",
+            headers: myHeaders,
+            body: formData,
+            redirect: 'follow'
+          });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          alert(errorData?.message)
+          setUploading(false)
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
         setUploading(false);
         setUploadComplete(true);
-      }, 1500);
+      } catch (error) {
+      }
     }
   };
 
@@ -146,7 +172,7 @@ function PaymentModal({ isOpen, onClose, amount, userEmail }: PaymentModalProps)
                 accept="image/*,.pdf"
                 className="hidden"
               />
-              
+
               {!uploading && !uploadComplete && (
                 <button
                   onClick={() => fileInputRef.current?.click()}
@@ -197,7 +223,9 @@ export default function BudgetCard({ totalBudget, remainingBudget, userEmail = "
   const [amount, setAmount] = useState('');
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const { t, language } = useLanguage();
+  const [getAllbugate, setGetAllBugate] = useState({})
   const currencySymbol = language === 'ru' ? '₽' : '$';
+  const { token } = useAuth();
 
   const handleAddFunds = () => {
     const numAmount = parseFloat(amount);
@@ -206,9 +234,42 @@ export default function BudgetCard({ totalBudget, remainingBudget, userEmail = "
     }
   };
 
-  const isValidAmount = amount !== '' && !isNaN(parseFloat(amount)) && parseFloat(amount) > 0;
+  const handleallBuget = async () => {
+    var myHeaders = new Headers();
+    myHeaders.append("Authorization", `Bearer ${token}`)
+    myHeaders.append("Accept", "application/json");
+    try {
+      const response = await
+        fetch(`/api/allBudget`, {
+          method: "GET",
+          headers: myHeaders,
+        });
+      const data = await response.json()
+      setGetAllBugate(data)
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+    } catch (error) {
+      console.log(error, 'response')
+    }
+  }
 
-  const spentPercentage = ((totalBudget - remainingBudget) / totalBudget) * 100;
+  useEffect(() => {
+    if (token) {
+      handleallBuget()
+    }
+  }, [token])
+
+
+  const isValidAmount = amount !== '' && !isNaN(parseFloat(amount)) && parseFloat(amount) > 0;
+  const [spentPercentage, setSpentPercentage] = useState(0)
+
+  useEffect(() => {
+    const percentage = ((getAllbugate?.budget_balance - getAllbugate?.budget) / totalBudget) * 100;
+    setSpentPercentage(percentage)
+  }, [getAllbugate])
+
+  // const spentPercentage = ((totalBudget - remainingBudget) / totalBudget) * 100;
 
   return (
     <div className="bg-white rounded-lg shadow-md p-6">
@@ -232,7 +293,7 @@ export default function BudgetCard({ totalBudget, remainingBudget, userEmail = "
           <div className="flex justify-between items-center mb-1">
             <span className="text-sm font-medium text-gray-700">{t('budget.remaining')}</span>
             <span className="text-sm text-gray-500">
-              {currencySymbol}{remainingBudget.toLocaleString()} / {currencySymbol}{totalBudget.toLocaleString()}
+              {currencySymbol}{getAllbugate?.budget_balance} / {currencySymbol}{getAllbugate?.budget}
             </span>
           </div>
           <div className="w-full bg-gray-200 rounded-full h-2">
@@ -267,8 +328,8 @@ export default function BudgetCard({ totalBudget, remainingBudget, userEmail = "
                 disabled={!isValidAmount}
                 className={`px-4 py-2 border border-transparent text-sm font-medium rounded-md 
                   text-white transition-colors
-                  ${isValidAmount 
-                    ? 'bg-sky-600 hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500' 
+                  ${isValidAmount
+                    ? 'bg-sky-600 hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500'
                     : 'bg-gray-400 cursor-not-allowed'}`}
               >
                 {t('budget.add')}

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { BarChart3, DollarSign, MousePointerClick, Eye, Pencil, Trash2, ExternalLink, AlertTriangle, TrendingUp, TrendingDown, MoreVertical } from 'lucide-react';
 import { Campaign } from '../types';
 import CampaignForm from './CampaignForm';
@@ -6,6 +6,9 @@ import { useLanguage } from '../contexts/LanguageContext';
 import LanguageSwitch from './LanguageSwitch';
 import ProfileMenu from './ProfileMenu';
 import BudgetCard from './BudgetCard';
+import { useAuth } from '../contexts/AuthContext';
+import EditAccaunt from './auth/editAccaunt';
+import SettingsModal from './settingsModal';
 
 const initialCampaigns: Campaign[] = [
   {
@@ -50,9 +53,9 @@ const initialCampaigns: Campaign[] = [
   }
 ];
 
-const StatCard = ({ title, value, icon: Icon, color }: { 
-  title: string; 
-  value: string; 
+const StatCard = ({ title, value, icon: Icon, color }: {
+  title: string;
+  value: string;
   icon: React.ElementType;
   color: string;
 }) => (
@@ -69,19 +72,17 @@ const StatCard = ({ title, value, icon: Icon, color }: {
   </div>
 );
 
-const CompetitiveStatus = ({ campaign, highestCpm }: { 
-  campaign: Campaign; 
+const CompetitiveStatus = ({ campaign, highestCpm }: {
+  campaign: Campaign;
   highestCpm: number;
 }) => {
   const { t, language } = useLanguage();
   const isCompetitive = campaign.cpm >= highestCpm;
   const recommendedCpm = Math.ceil(highestCpm * 1.1 * 100) / 100;
   const currencySymbol = language === 'ru' ? '₽' : '$';
-
   return (
-    <div className={`bg-white rounded-lg shadow-md p-6 mb-6 ${
-      isCompetitive ? 'border-l-4 border-green-500' : 'border-l-4 border-yellow-500'
-    }`}>
+    <div className={`bg-white rounded-lg shadow-md p-6 mb-6 ${isCompetitive ? 'border-l-4 border-green-500' : 'border-l-4 border-yellow-500'
+      }`}>
       <div className="flex items-start justify-between">
         <div>
           <h3 className="text-lg font-semibold mb-2">{t('competitive.title')}</h3>
@@ -133,7 +134,7 @@ const AdPreview = ({ campaign }: { campaign: Campaign }) => {
     <div className="bg-white rounded-lg shadow p-4 max-w-sm">
       <div className="relative w-full pb-[50%] mb-4">
         <img
-          src={campaign.adContent.imageUrl}
+          src={campaign.adContent.fileUrl}
           alt={campaign.adContent.title}
           className="absolute inset-0 w-full h-full object-cover rounded-lg"
         />
@@ -159,8 +160,17 @@ function Dashboard() {
   const [editingCampaign, setEditingCampaign] = useState<Campaign | undefined>();
   const [selectedCampaign, setSelectedCampaign] = useState<Campaign | null>(null);
   const [actionMenuOpen, setActionMenuOpen] = useState<string | null>(null);
+  const { token } = useAuth();
+  const [settings, setSettings] = useState(false)
+  const [isEditMode, setIsEditMode] = useState(false)
+  const { user } = useAuth()
 
-  const totalBudget = 10000; // This would typically come from your backend
+
+  const [loading, setLoading] = useState(false)
+
+  const [success, setSuccess] = useState(false)
+
+  const totalBudget = 10000;
   const totalSpent = campaigns.reduce((sum, campaign) => sum + campaign.spent, 0);
   const remainingBudget = totalBudget - totalSpent;
   const totalImpressions = campaigns.reduce((sum, campaign) => sum + campaign.impressions, 0);
@@ -173,7 +183,9 @@ function Dashboard() {
     console.log('Edit profile clicked');
   };
 
-  const handleCreateCampaign = (campaignData: Omit<Campaign, 'id' | 'impressions' | 'clicks' | 'ctr' | 'spent'>) => {
+
+  const handleCreateCampaign = async (campaignData: Omit<Campaign, 'id' | 'impressions' | 'clicks' | 'ctr' | 'spent'>) => {
+    setLoading(true)
     const newCampaign: Campaign = {
       ...campaignData,
       id: Math.random().toString(36).substr(2, 9),
@@ -182,14 +194,69 @@ function Dashboard() {
       ctr: 0,
       spent: 0
     };
-    setCampaigns([...campaigns, newCampaign]);
+    const formData = new FormData();
+    formData.append("company_name", "fsjdfsd");
+    formData.append("budget", JSON.stringify(campaignData.budget));
+    formData.append("CPM", JSON.stringify(campaignData.cpm));
+    formData.append("start_date", campaignData.startDate)
+    formData.append("finish_date", campaignData.endDate)
+    formData.append("finish_date", campaignData.endDate)
+    formData.append("company_description", campaignData.adContent.description)
+    formData.append("company_url", campaignData.adContent.targetUrl)
+    formData.append("media_type", campaignData.adContent.mediaType)
+    formData.append("status", campaignData.status)
+    formData.append("coutries", JSON.stringify(campaignData.targetCountries))
+
+    if (campaignData.adContent.imageUrl) {
+      formData.append("file", campaignData.adContent.imageUrl);
+      formData.append("videoImage", campaignData.adContent.imageUrl);
+    }
+    if (campaignData.adContent.thumbnailUrl) {
+    }
+
+    var myHeaders = new Headers();
+    myHeaders.append("Authorization", `Bearer ${token}`)
+    myHeaders.append("Accept", "application/json");
+    try {
+      const response = await
+        fetch(`/api/createCompany`, {
+          method: "POST",
+          headers: myHeaders,
+          body: formData,
+          redirect: 'follow'
+        });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        setLoading(false)
+        setSuccess(false)
+        if (errorData.messag) {
+          alert(JSON.stringify(errorData.message))
+        }
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      setCampaigns([...campaigns, newCampaign]);
+      setEditingCampaign(undefined);
+      setIsFormOpen(false);
+      setSuccess(true)
+      setLoading(false)
+    } catch (error) {
+      setLoading(false)
+      setSuccess(false)
+
+      console.error("Error:", error);
+    }
+
+
   };
 
   const handleEditCampaign = (campaignData: Omit<Campaign, 'id' | 'impressions' | 'clicks' | 'ctr' | 'spent'>) => {
     if (!editingCampaign) return;
-    
-    const updatedCampaigns = campaigns.map(campaign => 
-      campaign.id === editingCampaign.id 
+
+    const updatedCampaigns = campaigns.map(campaign =>
+      campaign.id === editingCampaign.id
         ? { ...campaign, ...campaignData }
         : campaign
     );
@@ -205,6 +272,8 @@ function Dashboard() {
       }
     }
   };
+
+  console.log(user)
 
   const openEditForm = (campaign: Campaign) => {
     setEditingCampaign(campaign);
@@ -227,6 +296,7 @@ function Dashboard() {
               onClick={() => {
                 setEditingCampaign(undefined);
                 setIsFormOpen(true);
+                setSuccess(false)
               }}
               className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md 
                 text-white bg-sky-600 hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500"
@@ -234,7 +304,11 @@ function Dashboard() {
               {t('dashboard.createCampaign')}
             </button>
             <LanguageSwitch />
-            <ProfileMenu onEditProfile={handleEditProfile} />
+            <ProfileMenu
+              setIsEditMode={(e: boolean) => setIsEditMode(e)}
+              onEditProfile={handleEditProfile}
+              setSettings={() => setSettings(true)}
+            />
           </div>
         </div>
 
@@ -243,25 +317,25 @@ function Dashboard() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <StatCard 
+          <StatCard
             title={t('dashboard.stats.totalSpent')}
             value={`${currencySymbol}${totalSpent.toLocaleString()}`}
             icon={DollarSign}
             color="bg-green-500"
           />
-          <StatCard 
+          <StatCard
             title={t('dashboard.stats.impressions')}
             value={totalImpressions.toLocaleString()}
             icon={Eye}
             color="bg-blue-500"
           />
-          <StatCard 
+          <StatCard
             title={t('dashboard.stats.clicks')}
             value={totalClicks.toLocaleString()}
             icon={MousePointerClick}
             color="bg-purple-500"
           />
-          <StatCard 
+          <StatCard
             title={t('dashboard.stats.averageCpm')}
             value={`${currencySymbol}${averageCpm.toFixed(2)}`}
             icon={BarChart3}
@@ -272,9 +346,9 @@ function Dashboard() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2">
             {campaigns.map(campaign => (
-              <CompetitiveStatus 
-                key={campaign.id} 
-                campaign={campaign} 
+              <CompetitiveStatus
+                key={campaign.id}
+                campaign={campaign}
                 highestCpm={highestCpm}
               />
             ))}
@@ -282,12 +356,12 @@ function Dashboard() {
               <div className="px-6 py-4 border-b border-gray-200">
                 <h2 className="text-xl font-semibold text-gray-800">{t('campaigns.title')}</h2>
               </div>
-              
+
               {/* Redesigned Campaigns Table */}
               <div className="divide-y divide-gray-200">
                 {campaigns.map((campaign) => (
-                  <div 
-                    key={campaign.id} 
+                  <div
+                    key={campaign.id}
                     className="hover:bg-gray-50 cursor-pointer transition-colors"
                     onClick={() => setSelectedCampaign(campaign)}
                   >
@@ -300,11 +374,10 @@ function Dashboard() {
                           </p>
                         </div>
                         <div className="flex items-center space-x-2">
-                          <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                            campaign.status === 'active' ? 'bg-green-100 text-green-800' :
+                          <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${campaign.status === 'active' ? 'bg-green-100 text-green-800' :
                             campaign.status === 'paused' ? 'bg-yellow-100 text-yellow-800' :
-                            'bg-gray-100 text-gray-800'
-                          }`}>
+                              'bg-gray-100 text-gray-800'
+                            }`}>
                             {campaign.status}
                           </span>
                           <div className="relative">
@@ -317,7 +390,7 @@ function Dashboard() {
                             >
                               <MoreVertical className="w-5 h-5 text-gray-500" />
                             </button>
-                            
+
                             {actionMenuOpen === campaign.id && (
                               <div className="absolute right-0 mt-1 w-36 bg-white rounded-md shadow-lg z-10 border border-gray-200">
                                 <div className="py-1">
@@ -349,7 +422,7 @@ function Dashboard() {
                           </div>
                         </div>
                       </div>
-                      
+
                       <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-4">
                         <div>
                           <p className="text-xs font-medium text-gray-500 uppercase">{t('campaigns.table.cpm')}</p>
@@ -368,7 +441,7 @@ function Dashboard() {
                           <p className="mt-1 text-sm font-medium text-gray-900">{campaign.ctr.toFixed(2)}%</p>
                         </div>
                       </div>
-                      
+
                       {/* Progress bar for budget spent - Updated to show dollar amounts */}
                       <div className="mt-4">
                         <div className="flex justify-between items-center mb-1">
@@ -407,7 +480,9 @@ function Dashboard() {
       </div>
 
       <CampaignForm
+        loading={loading}
         isOpen={isFormOpen}
+        success={success}
         onClose={() => {
           setIsFormOpen(false);
           setEditingCampaign(undefined);
@@ -415,6 +490,17 @@ function Dashboard() {
         onSubmit={editingCampaign ? handleEditCampaign : handleCreateCampaign}
         initialData={editingCampaign}
       />
+      {isEditMode &&
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <EditAccaunt setIsEditMode={(e) => setIsEditMode(e)} onToggleMode={() => setIsEditMode(!isEditMode)} />
+        </div>
+      }
+      {settings &&
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <SettingsModal setSettings={(e: any) => setSettings(e)} onToggleMode={() => setIsEditMode(!isEditMode)} />
+        </div>
+      }
+
     </div>
   );
 }

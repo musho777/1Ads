@@ -13,10 +13,11 @@ export interface Campaign {
   adContent: {
     title: string;
     description: string;
-    imageUrl: string;
+    imageUrl: File | null | string;
     targetUrl: string;
     mediaType: 'image' | 'video';
-    thumbnailUrl?: string;
+    thumbnailUrl?: File | null;
+    fileUrl: string;
   };
   moderationStatus?: 'pending' | 'approved' | 'rejected';
   moderationNote?: string;

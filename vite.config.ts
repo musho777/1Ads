@@ -1,10 +1,14 @@
 import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
 
-// https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react()],
-  optimizeDeps: {
-    exclude: ['lucide-react'],
+  server: {
+    proxy: {
+      '/api': {
+        target: 'https://xn----nbck7b7ald8atlv.xn--y9a3aq/halal.loc/public/api',
+        changeOrigin: true,
+        secure: false,
+        rewrite: (path) => path.replace(/^\/api/, ''), // This will remove /api from the path
+      },
+    },
   },
 });

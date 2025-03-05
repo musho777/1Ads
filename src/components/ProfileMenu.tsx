@@ -1,22 +1,27 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { User, Settings, LogOut, CreditCard, HelpCircle } from 'lucide-react';
+import { useState, useRef, useEffect } from 'react';
+import { User, Settings, LogOut, CreditCard, HelpCircle, Edit2 } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
+import { useAuth } from '../contexts/AuthContext';
 
 interface ProfileMenuProps {
   onEditProfile: () => void;
+  setIsEditMode: (value: boolean) => void;
+  setSettings: (value: boolean) => void;
+
 }
 
-export default function ProfileMenu({ onEditProfile }: ProfileMenuProps) {
+export default function ProfileMenu({ onEditProfile, setIsEditMode, setSettings }: ProfileMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const { t } = useLanguage();
+  const { user } = useAuth();
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
-        menuRef.current && 
-        buttonRef.current && 
+        menuRef.current &&
+        buttonRef.current &&
         !menuRef.current.contains(event.target as Node) &&
         !buttonRef.current.contains(event.target as Node)
       ) {
@@ -27,6 +32,14 @@ export default function ProfileMenu({ onEditProfile }: ProfileMenuProps) {
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
+
+
+
+
+
+
+
 
   return (
     <div className="relative">
@@ -49,8 +62,8 @@ export default function ProfileMenu({ onEditProfile }: ProfileMenuProps) {
         >
           <div className="p-2 border-b border-gray-100">
             <div className="px-3 py-2">
-              <p className="text-sm font-medium text-gray-900">Ivan Ivanov</p>
-              <p className="text-sm text-gray-500">ivan@example.com</p>
+              <p className="text-sm font-medium text-gray-900">{user?.username}</p>
+              <p className="text-sm text-gray-500">{user?.email}</p>
             </div>
           </div>
 
@@ -59,6 +72,7 @@ export default function ProfileMenu({ onEditProfile }: ProfileMenuProps) {
               onClick={() => {
                 onEditProfile();
                 setIsOpen(false);
+                setSettings(true)
               }}
               className="w-full flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md"
             >
@@ -79,6 +93,14 @@ export default function ProfileMenu({ onEditProfile }: ProfileMenuProps) {
               <HelpCircle className="w-4 h-4 mr-3" />
               {t('profile.help')}
             </button>
+
+            <button
+              onClick={() => setIsEditMode(true)}
+              className="w-full flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md"
+            >
+              <Edit2 className="w-4 h-4 mr-3" />
+              {t('profile.edit')}
+            </button>
           </div>
 
           <div className="p-2 border-t border-gray-100">
@@ -91,6 +113,7 @@ export default function ProfileMenu({ onEditProfile }: ProfileMenuProps) {
           </div>
         </div>
       )}
+
     </div>
   );
 }

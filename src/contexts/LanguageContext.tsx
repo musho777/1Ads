@@ -57,7 +57,7 @@ const translations = {
     'campaign.edit.title': 'Edit Campaign',
     'campaign.details.title': 'Campaign Details',
     'campaign.name.label': 'Campaign Name',
-    'campaign.budget.label': 'Budget (USD)',
+    'campaign.budget.label': 'Budget (RUB)',
     'campaign.cpm.label': 'Cost per 1000 Views (CPM)',
     'campaign.cpm.description': 'Amount charged per 1,000 ad views',
     'campaign.status.label': 'Status',
@@ -129,6 +129,7 @@ const translations = {
     'profile.billing': 'Billing',
     'profile.help': 'Help & Support',
     'profile.logout': 'Log Out',
+    "profile.edit": "edit profile",
 
     // Budget
     'budget.title': 'Campaign Budget',
@@ -250,7 +251,7 @@ const translations = {
     'campaign.edit.title': 'Редактировать кампанию',
     'campaign.details.title': 'Детали кампании',
     'campaign.name.label': 'Название кампании',
-    'campaign.budget.label': 'Бюджет (USD)',
+    'campaign.budget.label': 'Бюджет (RUB)',
     'campaign.cpm.label': 'Стоимость за 1000 показов (CPM)',
     'campaign.cpm.description': 'Сумма, взимаемая за 1000 показов рекламы',
     'campaign.status.label': 'Статус',
@@ -322,6 +323,7 @@ const translations = {
     'profile.billing': 'Оплата',
     'profile.help': 'Помощь и поддержка',
     'profile.logout': 'Выйти',
+    "profile.edit": "редактировать",
 
     // Budget
     'budget.title': 'Бюджет кампаний',

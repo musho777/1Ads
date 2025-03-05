@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { X, ChevronDown, Upload, Image, Video, Globe, Calendar, DollarSign, Target, Lock } from 'lucide-react';
 import { Campaign } from '../types';
 import { useLanguage } from '../contexts/LanguageContext';
+import { ClipLoader } from 'react-spinners';
+
 
 // List of countries with their names in English and Russian
 const countries = [
@@ -34,14 +36,20 @@ interface CampaignFormProps {
   onClose: () => void;
   onSubmit: (campaign: Omit<Campaign, 'id' | 'impressions' | 'clicks' | 'ctr' | 'spent'>) => void;
   initialData?: Campaign;
+  loading: boolean,
+  success: boolean,
 }
 
-export default function CampaignForm({ isOpen, onClose, onSubmit, initialData }: CampaignFormProps) {
+export default function CampaignForm({ isOpen, onClose, onSubmit, initialData, loading, success }: CampaignFormProps) {
   const { t, language } = useLanguage();
   const [activeTab, setActiveTab] = useState<'details' | 'content' | 'targeting'>('details');
   const [mediaType, setMediaType] = useState<'image' | 'video'>(initialData?.adContent?.mediaType || 'image');
-  const [previewUrl, setPreviewUrl] = useState(initialData?.adContent?.imageUrl || '');
+  // const [previewUrl, setPreviewUrl] = useState(initialData?.adContent?.imageUrl || '');
+  const [previewUrl, setPreviewUrl] = useState<File | null>(null);
   const [thumbnailUrl, setThumbnailUrl] = useState(initialData?.adContent?.thumbnailUrl || '');
+  const [videoPhoroUrl, setVideoPhotoUrl] = useState<string>("");
+  const [videoImage, setVideoImage] = useState<File | null>(null);
+  const [fileUrl, setFileUrl] = useState<string>("");
   const [formData, setFormData] = useState({
     name: initialData?.name || '',
     budget: initialData?.budget?.toString() || '',
@@ -65,11 +73,33 @@ export default function CampaignForm({ isOpen, onClose, onSubmit, initialData }:
   const defaultPreviewImage = 'https://images.unsplash.com/photo-1590845947676-fa2576f401b2?w=1200&h=600&fit=crop&q=80';
   const isEditing = !!initialData;
 
+
+  useEffect(() => {
+    if (success) {
+      setFileUrl("")
+      setActiveTab('details')
+      setPreviewUrl(null)
+      setVideoPhotoUrl("")
+      setVideoImage(null)
+      setFormData({
+        name: initialData?.name || '',
+        budget: initialData?.budget?.toString() || '',
+        cpm: initialData?.cpm?.toString() || '5.00',
+        status: initialData?.status || 'active',
+        startDate: initialData?.startDate || '',
+        endDate: initialData?.endDate || '',
+        adTitle: initialData?.adContent?.title || '',
+        adDescription: initialData?.adContent?.description || '',
+        targetUrl: initialData?.adContent?.targetUrl || '',
+      })
+    }
+  }, [success])
+
   if (!isOpen) return null;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Combine CIS and other countries
     const allSelectedCountries = [...selectedCISCountries, ...selectedOtherCountries];
 
@@ -81,40 +111,52 @@ export default function CampaignForm({ isOpen, onClose, onSubmit, initialData }:
       endDate: formData.endDate,
       cpm: Number(formData.cpm),
       targetCountries: allSelectedCountries.length > 0 ? allSelectedCountries : ['RU'],
-      adContent: isEditing 
+      adContent: isEditing
         ? initialData.adContent // Keep original ad content when editing
         : {
-            title: formData.adTitle,
-            description: formData.adDescription,
-            imageUrl: previewUrl || defaultPreviewImage,
-            targetUrl: formData.targetUrl,
-            mediaType: mediaType,
-            thumbnailUrl: mediaType === 'video' ? thumbnailUrl : undefined
-          },
+          title: formData.adTitle,
+          description: formData.adDescription,
+          imageUrl: previewUrl,
+          targetUrl: formData.targetUrl,
+          mediaType: mediaType,
+          fileUrl: fileUrl,
+          thumbnailUrl: videoImage,
+        },
     };
 
     onSubmit(campaign);
-    onClose();
+    // onClose();
   };
 
   const handleImageUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!isEditing) {
-      setPreviewUrl(e.target.value);
+      if (e.target.files && e.target.files[0]) {
+        setPreviewUrl(e.target.files[0]);
+        setFileUrl(URL.createObjectURL(e.target.files[0]));
+      }
     }
   };
 
   const handleThumbnailUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!isEditing) {
-      setThumbnailUrl(e.target.value);
+      // setThumbnailUrl(e.target.value);
+      if (e.target.files && e.target.files[0]) {
+        setVideoImage(e.target.files[0]);
+        setVideoPhotoUrl(URL.createObjectURL(e.target.files[0]));
+      }
     }
   };
 
   const handleMediaTypeChange = (type: 'image' | 'video') => {
+    setFileUrl("")
+    setPreviewUrl(null)
+    setVideoImage(null)
+    setVideoPhotoUrl("")
     if (!isEditing) {
       setMediaType(type);
       // Clear the preview URL when switching media types
       if (type !== mediaType) {
-        setPreviewUrl('');
+        setPreviewUrl(null);
         if (type === 'video') {
           setThumbnailUrl('');
         }
@@ -124,12 +166,12 @@ export default function CampaignForm({ isOpen, onClose, onSubmit, initialData }:
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    
+
     // If editing and trying to change ad content fields, don't update
     if (isEditing && (name === 'adTitle' || name === 'adDescription' || name === 'targetUrl')) {
       return;
     }
-    
+
     setFormData(prev => ({
       ...prev,
       [name]: value
@@ -167,18 +209,33 @@ export default function CampaignForm({ isOpen, onClose, onSubmit, initialData }:
         formData.endDate !== ''
       );
     }
-    
-    return (
-      formData.name.trim() !== '' &&
-      Number(formData.budget) > 0 &&
-      Number(formData.cpm) > 0 &&
-      formData.startDate !== '' &&
-      formData.endDate !== '' &&
-      formData.adTitle.trim() !== '' &&
-      formData.adDescription.trim() !== '' &&
-      formData.targetUrl.trim() !== '' &&
-      (mediaType === 'image' ? previewUrl.trim() !== '' : (previewUrl.trim() !== '' && thumbnailUrl.trim() !== ''))
-    );
+    if (mediaType == "image") {
+      return (
+        formData.name.trim() !== '' &&
+        Number(formData.budget) > 0 &&
+        Number(formData.cpm) > 0 &&
+        formData.startDate !== '' &&
+        formData.endDate !== '' &&
+        formData.adTitle.trim() !== '' &&
+        formData.adDescription.trim() !== '' &&
+        formData.targetUrl.trim() !== '' &&
+        mediaType === 'image' &&
+        fileUrl !== ''
+      )
+    }
+    else {
+      return formData.name.trim() !== '' &&
+        Number(formData.budget) > 0 &&
+        Number(formData.cpm) > 0 &&
+        formData.startDate !== '' &&
+        formData.endDate !== '' &&
+        formData.adTitle.trim() !== '' &&
+        formData.adDescription.trim() !== '' &&
+        formData.targetUrl.trim() !== '' &&
+        mediaType === 'video' &&
+        fileUrl !== '' &&
+        videoPhoroUrl !== ""
+    }
   };
 
   // Helper function to safely extract hostname from URL
@@ -279,7 +336,7 @@ export default function CampaignForm({ isOpen, onClose, onSubmit, initialData }:
                 >
                   <option value="active">{t('campaign.status.active')}</option>
                   <option value="paused">{t('campaign.status.paused')}</option>
-                  <option value="completed">{t('campaign.status.completed')}</option>
+                  {/* <option value="completed">{t('campaign.status.completed')}</option> */}
                 </select>
               </div>
 
@@ -327,7 +384,7 @@ export default function CampaignForm({ isOpen, onClose, onSubmit, initialData }:
             </div>
           </div>
         );
-      
+
       case 'content':
         // If editing, show a locked version of the content
         if (isEditing) {
@@ -343,11 +400,11 @@ export default function CampaignForm({ isOpen, onClose, onSubmit, initialData }:
                   {language === 'ru' ? 'Содержимое рекламы нельзя изменить' : 'Ad content cannot be modified'}
                 </h3>
                 <p className="text-center text-gray-600 mb-4">
-                  {language === 'ru' 
-                    ? 'Содержимое рекламы нельзя изменить после одобрения кампании. Если вам нужно изменить содержимое рекламы, удалите эту и создайте новую кампанию.' 
+                  {language === 'ru'
+                    ? 'Содержимое рекламы нельзя изменить после одобрения кампании. Если вам нужно изменить содержимое рекламы, удалите эту и создайте новую кампанию.'
                     : 'Ad content cannot be changed after a campaign has been approved. If you need to change the ad content, please delete this and create a new campaign.'}
                 </p>
-                
+
                 <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden mt-6 max-w-md mx-auto">
                   <div className="p-3 border-b border-gray-200">
                     <h4 className="text-sm font-medium text-gray-900">{t('campaign.ad.preview.title')}</h4>
@@ -355,7 +412,7 @@ export default function CampaignForm({ isOpen, onClose, onSubmit, initialData }:
                   <div className="p-3">
                     <div className="relative w-full pb-[40%] mb-2 bg-gray-100 rounded overflow-hidden">
                       <img
-                        src={initialData.adContent.mediaType === 'video' ? (initialData.adContent.thumbnailUrl || initialData.adContent.imageUrl) : initialData.adContent.imageUrl}
+                        src={initialData.adContent.mediaType === 'video' ? (videoPhoroUrl || fileUrl) : fileUrl}
                         alt="Ad preview"
                         className="absolute inset-0 w-full h-full object-cover"
                         onError={(e) => {
@@ -388,7 +445,7 @@ export default function CampaignForm({ isOpen, onClose, onSubmit, initialData }:
             </div>
           );
         }
-        
+
         // If creating a new campaign, show the editable content form
         return (
           <div className="space-y-6">
@@ -456,11 +513,10 @@ export default function CampaignForm({ isOpen, onClose, onSubmit, initialData }:
                       <button
                         type="button"
                         onClick={() => handleMediaTypeChange('image')}
-                        className={`flex-1 flex items-center justify-center px-4 py-2 border ${
-                          mediaType === 'image' 
-                            ? 'border-sky-500 bg-sky-50 text-sky-700' 
-                            : 'border-gray-300 bg-white text-gray-700 hover:bg-gray-50'
-                        } rounded-md shadow-sm text-sm font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500`}
+                        className={`flex-1 flex items-center justify-center px-4 py-2 border ${mediaType === 'image'
+                          ? 'border-sky-500 bg-sky-50 text-sky-700'
+                          : 'border-gray-300 bg-white text-gray-700 hover:bg-gray-50'
+                          } rounded-md shadow-sm text-sm font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500`}
                       >
                         <Image className="w-4 h-4 mr-2" />
                         {t('campaign.ad.mediaType.image')}
@@ -468,11 +524,10 @@ export default function CampaignForm({ isOpen, onClose, onSubmit, initialData }:
                       <button
                         type="button"
                         onClick={() => handleMediaTypeChange('video')}
-                        className={`flex-1 flex items-center justify-center px-4 py-2 border ${
-                          mediaType === 'video' 
-                            ? 'border-sky-500 bg-sky-50 text-sky-700' 
-                            : 'border-gray-300 bg-white text-gray-700 hover:bg-gray-50'
-                        } rounded-md shadow-sm text-sm font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500`}
+                        className={`flex-1 flex items-center justify-center px-4 py-2 border ${mediaType === 'video'
+                          ? 'border-sky-500 bg-sky-50 text-sky-700'
+                          : 'border-gray-300 bg-white text-gray-700 hover:bg-gray-50'
+                          } rounded-md shadow-sm text-sm font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500`}
                       >
                         <Video className="w-4 h-4 mr-2" />
                         {t('campaign.ad.mediaType.video')}
@@ -482,22 +537,29 @@ export default function CampaignForm({ isOpen, onClose, onSubmit, initialData }:
 
                   {mediaType === 'image' ? (
                     <div>
-                      <label htmlFor="adImage" className="block text-sm font-medium text-gray-700">
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
                         {t('campaign.ad.image.label')}
                       </label>
-                      <div className="mt-1 relative rounded-md shadow-sm">
+                      <div className="mt-1 relative rounded-md shadow-sm ">
+                        <label htmlFor="adImage" className="flex items-center block w-full rounded-md border-gray-300 pl-9 pr-12 focus:border-sky-500 focus:ring-sky-500 sm:text-sm h-10 border shadow-sm">
+                          {previewUrl?.name}
+                        </label>
                         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                           <Upload className="h-4 w-4 text-gray-400" />
                         </div>
+                      </div>
+                      <div className="mt-1 relative rounded-md shadow-sm">
                         <input
-                          type="url"
+                          type="file"
                           name="adImage"
                           id="adImage"
-                          value={previewUrl}
+                          accept="image/jpeg"
+                          // value={previewUrl}
                           onChange={handleImageUrlChange}
-                          required
+                          // required
                           placeholder="https://example.com/image.jpg"
-                          className="block w-full rounded-md border-gray-300 pl-9 pr-12 focus:border-sky-500 focus:ring-sky-500 sm:text-sm h-10 border shadow-sm"
+                          style={{ display: "none" }}
+                        // className="block w-full rounded-md border-gray-300 pl-9 pr-12 focus:border-sky-500 focus:ring-sky-500 sm:text-sm h-10 border shadow-sm"
                         />
                       </div>
                       <p className="mt-1 text-xs text-gray-500">{t('campaign.ad.image.description')}</p>
@@ -505,42 +567,58 @@ export default function CampaignForm({ isOpen, onClose, onSubmit, initialData }:
                   ) : (
                     <>
                       <div>
-                        <label htmlFor="adVideo" className="block text-sm font-medium text-gray-700">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
                           {t('campaign.ad.video.label')}
                         </label>
-                        <div className="mt-1 relative rounded-md shadow-sm">
+                        <div className="mt-1 relative rounded-md shadow-sm ">
+                          <label htmlFor="adVideo" className="flex items-center block w-full rounded-md border-gray-300 pl-9 pr-12 focus:border-sky-500 focus:ring-sky-500 sm:text-sm h-10 border shadow-sm">
+                            {previewUrl?.name}
+                          </label>
                           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             <Upload className="h-4 w-4 text-gray-400" />
                           </div>
+                        </div>
+                        <div>
                           <input
-                            type="url"
+                            type="file"
                             name="adVideo"
                             id="adVideo"
-                            value={previewUrl}
+                            accept="video/mp4, video/x-msvideo, video/quicktime, video/x-ms-wmv, video/x-flv, video/x-matroska, video/webm, video/3gpp, video/ogg, video/mpeg, video/hevc"
                             onChange={handleImageUrlChange}
                             required
                             placeholder="https://example.com/video.mp4"
-                            className="block w-full rounded-md border-gray-300 pl-9 pr-12 focus:border-sky-500 focus:ring-sky-500 sm:text-sm h-10 border shadow-sm"
+                            style={{ display: "none" }}
+                          // className="block w-full rounded-md border-gray-300 pl-9 pr-12 focus:border-sky-500 focus:ring-sky-500 sm:text-sm h-10 border shadow-sm"
                           />
                         </div>
                         <p className="mt-1 text-xs text-gray-500">{t('campaign.ad.video.description')}</p>
                       </div>
 
                       <div>
-                        <label htmlFor="thumbnailUrl" className="block text-sm font-medium text-gray-700">
+                        <label className="block text-sm font-medium text-gray-700">
                           {t('campaign.ad.thumbnail.label')}
                         </label>
-                        <div className="mt-1 relative rounded-md shadow-sm">
+                        <div className="mt-1 relative rounded-md shadow-sm ">
+                          <label htmlFor="thumbnailUrl" className="flex items-center block w-full rounded-md border-gray-300 pl-9 pr-12 focus:border-sky-500 focus:ring-sky-500 sm:text-sm h-10 border shadow-sm">
+                            {videoImage?.name}
+                          </label>
                           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             <Upload className="h-4 w-4 text-gray-400" />
                           </div>
+                        </div>
+                        <div className="mt-1 relative rounded-md shadow-sm">
+                          {/* <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <Upload className="h-4 w-4 text-gray-400" />
+                          </div> */}
                           <input
-                            type="url"
+                            type="file"
                             name="thumbnailUrl"
                             id="thumbnailUrl"
-                            value={thumbnailUrl}
+                            accept="image/jpeg"
+                            // value={thumbnailUrl}
                             onChange={handleThumbnailUrlChange}
-                            required
+                            // required
+                            style={{ display: "none" }}
                             placeholder="https://example.com/thumbnail.jpg"
                             className="block w-full rounded-md border-gray-300 pl-9 pr-12 focus:border-sky-500 focus:ring-sky-500 sm:text-sm h-10 border shadow-sm"
                           />
@@ -558,15 +636,29 @@ export default function CampaignForm({ isOpen, onClose, onSubmit, initialData }:
                     </div>
                     <div className="p-3">
                       <div className="relative w-full pb-[40%] mb-2 bg-gray-100 rounded overflow-hidden">
-                        <img
-                          src={mediaType === 'video' ? (thumbnailUrl || defaultPreviewImage) : (previewUrl || defaultPreviewImage)}
-                          alt="Ad preview"
-                          className="absolute inset-0 w-full h-full object-cover"
-                          onError={(e) => {
-                            const target = e.target as HTMLImageElement;
-                            target.src = defaultPreviewImage;
-                          }}
-                        />
+                        {mediaType !== 'video' ?
+                          <img
+                            src={fileUrl}
+                            alt={fileUrl && "Ad preview"}
+                            className={fileUrl && "absolute inset-0 w-full h-full object-cover"}
+                            onError={(e) => {
+                              const target = e.target as HTMLImageElement;
+                              target.src = "";
+                            }}
+                          />
+
+                          // setVideoPhotoUrl
+                          :
+                          <img
+                            src={videoPhoroUrl}
+                            alt={videoPhoroUrl && "Ad preview"}
+                            className={videoPhoroUrl && "absolute inset-0 w-full h-full object-cover"}
+                            onError={(e) => {
+                              const target = e.target as HTMLImageElement;
+                              target.src = "";
+                            }}
+                          />
+                        }
                         {mediaType === 'video' && (
                           <div className="absolute inset-0 flex items-center justify-center">
                             <div className="w-10 h-10 bg-black bg-opacity-60 rounded-full flex items-center justify-center">
@@ -593,7 +685,7 @@ export default function CampaignForm({ isOpen, onClose, onSubmit, initialData }:
             </div>
           </div>
         );
-      
+
       case 'targeting':
         return (
           <div className="space-y-6">
@@ -602,7 +694,7 @@ export default function CampaignForm({ isOpen, onClose, onSubmit, initialData }:
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   {t('campaign.countries.label')}
                 </label>
-                
+
                 <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
                   <div className="p-4 border-b border-gray-200">
                     <h4 className="text-sm font-medium text-gray-900">{t('campaign.countries.cis')}</h4>
@@ -662,46 +754,44 @@ export default function CampaignForm({ isOpen, onClose, onSubmit, initialData }:
                     </div>
                   )}
                 </div>
-                
+
                 <p className="mt-2 text-xs text-gray-500">{t('campaign.countries.description')}</p>
               </div>
             </div>
           </div>
         );
-      
+
       default:
         return null;
     }
   };
-
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-xl shadow-xl w-full max-w-4xl max-h-[90vh] overflow-hidden">
+      <div className="bg-white rounded-xl shadow-xl w-full max-w-4xl max-h-[90vh] overflow-scroll">
         <div className="flex flex-col h-full">
           {/* Header */}
           <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-white sticky top-0 z-10">
             <h2 className="text-xl font-semibold text-gray-900">
               {initialData ? t('campaign.edit.title') : t('campaign.create.title')}
             </h2>
-            <button 
-              onClick={onClose} 
+            <button
+              onClick={onClose}
               className="text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-sky-500 rounded-full p-1"
             >
               <X className="w-5 h-5" />
             </button>
           </div>
-          
+
           <form onSubmit={handleSubmit} className="flex flex-col flex-1 overflow-hidden">
             {/* Tabs */}
             <div className="px-6 py-2 bg-white border-b border-gray-200 flex space-x-1">
               <button
                 type="button"
                 onClick={() => setActiveTab('details')}
-                className={`px-4 py-2 text-sm font-medium rounded-md ${
-                  activeTab === 'details'
-                    ? 'bg-sky-100 text-sky-700'
-                    : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
-                }`}
+                className={`px-4 py-2 text-sm font-medium rounded-md ${activeTab === 'details'
+                  ? 'bg-sky-100 text-sky-700'
+                  : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
+                  }`}
               >
                 <div className="flex items-center">
                   <DollarSign className="w-4 h-4 mr-2" />
@@ -711,11 +801,10 @@ export default function CampaignForm({ isOpen, onClose, onSubmit, initialData }:
               <button
                 type="button"
                 onClick={() => setActiveTab('content')}
-                className={`px-4 py-2 text-sm font-medium rounded-md ${
-                  activeTab === 'content'
-                    ? 'bg-sky-100 text-sky-700'
-                    : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
-                }`}
+                className={`px-4 py-2 text-sm font-medium rounded-md ${activeTab === 'content'
+                  ? 'bg-sky-100 text-sky-700'
+                  : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
+                  }`}
               >
                 <div className="flex items-center">
                   <Image className="w-4 h-4 mr-2" />
@@ -726,11 +815,10 @@ export default function CampaignForm({ isOpen, onClose, onSubmit, initialData }:
               <button
                 type="button"
                 onClick={() => setActiveTab('targeting')}
-                className={`px-4 py-2 text-sm font-medium rounded-md ${
-                  activeTab === 'targeting'
-                    ? 'bg-sky-100 text-sky-700'
-                    : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
-                }`}
+                className={`px-4 py-2 text-sm font-medium rounded-md ${activeTab === 'targeting'
+                  ? 'bg-sky-100 text-sky-700'
+                  : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
+                  }`}
               >
                 <div className="flex items-center">
                   <Target className="w-4 h-4 mr-2" />
@@ -738,12 +826,12 @@ export default function CampaignForm({ isOpen, onClose, onSubmit, initialData }:
                 </div>
               </button>
             </div>
-            
+
             {/* Content */}
             <div className="flex-1 overflow-y-auto p-6 bg-gray-50">
               {renderTabContent()}
             </div>
-            
+
             {/* Footer */}
             <div className="px-6 py-4 bg-white border-t border-gray-200 flex justify-between items-center sticky bottom-0">
               <div className="flex items-center text-sm text-gray-500">
@@ -762,14 +850,22 @@ export default function CampaignForm({ isOpen, onClose, onSubmit, initialData }:
                 </button>
                 <button
                   type="submit"
-                  disabled={!isFormValid()}
-                  className={`px-4 py-2 text-sm font-medium text-white rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500 ${
-                    isFormValid()
-                      ? 'bg-sky-600 hover:bg-sky-700'
-                      : 'bg-sky-400 cursor-not-allowed'
-                  }`}
+                  disabled={!isFormValid() || loading}
+                  className={`px-4 py-2 text-sm font-medium text-white rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500 ${isFormValid()
+                    ? 'bg-sky-600 hover:bg-sky-700'
+                    : 'bg-sky-400 cursor-not-allowed'
+                    }`}
                 >
-                  {initialData ? t('campaign.button.save') : t('campaign.button.create')}
+                  {loading ?
+                    <ClipLoader
+                      color={"white"}
+                      loading={loading}
+                      size={20}
+                      aria-label="Loading Spinner"
+                      data-testid="loader"
+                    /> :
+                    initialData ? t('campaign.button.save') : t('campaign.button.create')
+                  }
                 </button>
               </div>
             </div>

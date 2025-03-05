@@ -4,7 +4,7 @@ import axios from "axios";
 // Define the types for the user and response data
 interface User {
   id: string;
-  name: string;
+  username: string;
   email: string;
   // Add other properties depending on the user object structure
 }
@@ -23,6 +23,7 @@ interface AuthContextType {
   loading: boolean;
   login: (email: string, password: string) => Promise<{ message: any; status: boolean }>;
   register: (data: any) => Promise<{ message: any; status: boolean }>;
+  editAccaunt: (data: any) => Promise<{ message: any; status: boolean }>;
   logout: () => void;
   token: string;
 }
@@ -37,17 +38,19 @@ interface AuthProviderProps {
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
   const [token, setToken] = useState<string>("");
 
   const getUser = async () => {
     const local_token = localStorage.getItem("token");
+    console.log(local_token)
     try {
-      const response = await axios.get<User>(`${process.env.VITE_URL}/api/auth/getUser`, {
+      const response = await axios.get<User>(`/api/getProfileInfo`, {
         headers: {
           Authorization: `Bearer ${local_token}`,
         },
       });
+      console.log(response.data, 'response')
       setUser(response.data);
     } catch (error: any) {
       if (error.response?.status === 403) localStorage.removeItem("token");
@@ -73,11 +76,39 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       const result: AuthResponse = await response.json();
 
       responseData = { message: result.message, status: result.status };
-      if (result.status) {
+      console.log(result)
+      if (!result.message) {
         setToken(result.token);
         localStorage.setItem("token", result.token);
         setUser(result.user);
         setIsAuthenticated(true);
+      }
+    } catch (error) {
+      responseData = { message: "Server Error", status: false };
+    } finally {
+      setLoading(false)
+    }
+    return responseData;
+  };
+
+  const editAccaunt = async (data: any) => {
+    setLoading(true)
+    const requestOptions = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      },
+      body: JSON.stringify(data),
+    };
+
+    let responseData: { message: string; status: boolean } = { message: "", status: false };
+    try {
+      const response = await fetch(`/api/editProfileInfo`, requestOptions);
+      const result: any = await response.json();
+      responseData = { message: result.errors, status: result.status };
+      if (!result.errors) {
+        // setUser(result.user);
       }
     } catch (error) {
       responseData = { message: "Server Error", status: false };
@@ -104,7 +135,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       const result: any = await response.json();
       console.log(result, 'response')
       responseData = { message: result.errors, status: result.status };
-      if (result.status) {
+      if (!result.errors) {
         setToken(result.token);
         localStorage.setItem("token", result.token);
         setUser(result.user);
@@ -134,7 +165,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, user, loading, login, logout, token, register }}>
+    <AuthContext.Provider value={{ isAuthenticated, user, loading, login, logout, token, register, editAccaunt }}>
       {children}
     </AuthContext.Provider>
   );
