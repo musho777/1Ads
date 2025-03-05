@@ -225,7 +225,7 @@ export default function BudgetCard({ totalBudget, remainingBudget, userEmail = "
   const { t, language } = useLanguage();
   const [getAllbugate, setGetAllBugate] = useState({})
   const currencySymbol = language === 'ru' ? '₽' : '$';
-  const { token } = useAuth();
+  const { token, user } = useAuth();
 
   const handleAddFunds = () => {
     const numAmount = parseFloat(amount);
@@ -234,40 +234,15 @@ export default function BudgetCard({ totalBudget, remainingBudget, userEmail = "
     }
   };
 
-  const handleallBuget = async () => {
-    var myHeaders = new Headers();
-    myHeaders.append("Authorization", `Bearer ${token}`)
-    myHeaders.append("Accept", "application/json");
-    try {
-      const response = await
-        fetch(`/api/allBudget`, {
-          method: "GET",
-          headers: myHeaders,
-        });
-      const data = await response.json()
-      setGetAllBugate(data)
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-    } catch (error) {
-      console.log(error, 'response')
-    }
-  }
-
-  useEffect(() => {
-    if (token) {
-      handleallBuget()
-    }
-  }, [token])
-
-
   const isValidAmount = amount !== '' && !isNaN(parseFloat(amount)) && parseFloat(amount) > 0;
   const [spentPercentage, setSpentPercentage] = useState(0)
 
   useEffect(() => {
-    const percentage = ((getAllbugate?.budget_balance - getAllbugate?.budget) / totalBudget) * 100;
-    setSpentPercentage(percentage)
-  }, [getAllbugate])
+    if (user) {
+      const percentage = ((user?.data.get_budget[0].budget - user?.data.get_budget[0].budget_balance) / totalBudget) * 100;
+      setSpentPercentage(percentage)
+    }
+  }, [user])
 
   // const spentPercentage = ((totalBudget - remainingBudget) / totalBudget) * 100;
 
@@ -293,7 +268,7 @@ export default function BudgetCard({ totalBudget, remainingBudget, userEmail = "
           <div className="flex justify-between items-center mb-1">
             <span className="text-sm font-medium text-gray-700">{t('budget.remaining')}</span>
             <span className="text-sm text-gray-500">
-              {currencySymbol}{getAllbugate?.budget_balance} / {currencySymbol}{getAllbugate?.budget}
+              {currencySymbol}{user?.data.get_budget[0].budget} / {currencySymbol}{user?.data.get_budget[0].budget_balance}
             </span>
           </div>
           <div className="w-full bg-gray-200 rounded-full h-2">

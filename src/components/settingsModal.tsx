@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { XCircle } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useLanguage } from '../contexts/LanguageContext';
@@ -9,13 +9,11 @@ interface AuthFormProps {
 }
 
 export default function SettingsModal({ setSettings }: AuthFormProps) {
-  const { token } = useAuth();
+  const { token, user } = useAuth();
   const { t } = useLanguage();
 
   const [notifcation, setNotifcation] = useState("false")
   const [autoNotifcation, setAutoNotifcation] = useState("false")
-
-
 
   const Save = async () => {
     const data = {
@@ -35,21 +33,22 @@ export default function SettingsModal({ setSettings }: AuthFormProps) {
     try {
       const response = await fetch(`/api/editProfileSetting`, requestOptions);
       const result: any = await response.json();
-      console.log(result, 'response')
       responseData = { message: result.errors, status: result.status };
       if (!result.errors) {
       }
     } catch (error) {
       responseData = { message: "Server Error", status: false };
-    } finally {
     }
     return responseData;
   }
 
-  const getInfo = async () => {
 
-  }
-
+  useEffect(() => {
+    if (user) {
+      setNotifcation(user?.data.get_profile_setting[0].notify_by_email)
+      setAutoNotifcation(user?.data.get_profile_setting[0].automatically_increase_CPM)
+    }
+  }, [user])
 
 
   return (
@@ -104,7 +103,7 @@ export default function SettingsModal({ setSettings }: AuthFormProps) {
                   focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500 
                   transition-colors"
           >
-            Войти
+            {t("profile.save")}
           </button>
         </div>
       </div>

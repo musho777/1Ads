@@ -273,8 +273,6 @@ function Dashboard() {
     }
   };
 
-  console.log(user)
-
   const openEditForm = (campaign: Campaign) => {
     setEditingCampaign(campaign);
     setIsFormOpen(true);
@@ -315,29 +313,28 @@ function Dashboard() {
         <div className="mb-8">
           <BudgetCard totalBudget={totalBudget} remainingBudget={remainingBudget} />
         </div>
-
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <StatCard
             title={t('dashboard.stats.totalSpent')}
-            value={`${currencySymbol}${totalSpent.toLocaleString()}`}
+            value={user?.allTimeStatistic.Total_spent}
             icon={DollarSign}
             color="bg-green-500"
           />
           <StatCard
             title={t('dashboard.stats.impressions')}
-            value={totalImpressions.toLocaleString()}
+            value={user?.allTimeStatistic.Impressions}
             icon={Eye}
             color="bg-blue-500"
           />
           <StatCard
             title={t('dashboard.stats.clicks')}
-            value={totalClicks.toLocaleString()}
+            value={user?.allTimeStatistic.Clicks}
             icon={MousePointerClick}
             color="bg-purple-500"
           />
           <StatCard
             title={t('dashboard.stats.averageCpm')}
-            value={`${currencySymbol}${averageCpm.toFixed(2)}`}
+            value={user?.allTimeStatistic.average_CPM}
             icon={BarChart3}
             color="bg-orange-500"
           />

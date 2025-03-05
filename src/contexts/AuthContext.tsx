@@ -6,6 +6,8 @@ interface User {
   id: string;
   username: string;
   email: string;
+  data: any,
+  allTimeStatistic: any
   // Add other properties depending on the user object structure
 }
 
@@ -43,14 +45,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const getUser = async () => {
     const local_token = localStorage.getItem("token");
-    console.log(local_token)
     try {
       const response = await axios.get<User>(`/api/getProfileInfo`, {
         headers: {
           Authorization: `Bearer ${local_token}`,
         },
       });
-      console.log(response.data, 'response')
       setUser(response.data);
     } catch (error: any) {
       if (error.response?.status === 403) localStorage.removeItem("token");
@@ -76,7 +76,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       const result: AuthResponse = await response.json();
 
       responseData = { message: result.message, status: result.status };
-      console.log(result)
       if (!result.message) {
         setToken(result.token);
         localStorage.setItem("token", result.token);

@@ -109,7 +109,6 @@ export default function AuthForm({ isLoginMode, onToggleMode, onLogin }: AuthFor
       });
   }
   const LoginApi = async (data: any) => {
-    console.log(data)
     const sendDAta = {
       email: data.email,
       password: data.password,

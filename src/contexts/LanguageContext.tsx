@@ -130,6 +130,7 @@ const translations = {
     'profile.help': 'Help & Support',
     'profile.logout': 'Log Out',
     "profile.edit": "edit profile",
+    "profile.save": "save",
 
     // Budget
     'budget.title': 'Campaign Budget',
@@ -301,6 +302,7 @@ const translations = {
     'preview.title': 'Предпросмотр рекламы',
     'preview.selectCampaign': 'Выберите кампанию для просмотра рекламы',
     'preview.viewLanding': 'Перейти на целевую страницу',
+    "profile.save": "сохранять",
 
     // Competitive Analysis
     'competitive.title': 'Конкурентный статус',
