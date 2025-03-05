@@ -239,7 +239,7 @@ export default function BudgetCard({ totalBudget, remainingBudget, userEmail = "
 
   useEffect(() => {
     if (user) {
-      const percentage = ((user?.data.get_budget[0].budget - user?.data.get_budget[0].budget_balance) / totalBudget) * 100;
+      const percentage = ((user?.data?.get_budget[0].budget - user?.data?.get_budget[0]?.budget_balance) / totalBudget) * 100;
       setSpentPercentage(percentage)
     }
   }, [user])
@@ -268,7 +268,7 @@ export default function BudgetCard({ totalBudget, remainingBudget, userEmail = "
           <div className="flex justify-between items-center mb-1">
             <span className="text-sm font-medium text-gray-700">{t('budget.remaining')}</span>
             <span className="text-sm text-gray-500">
-              {currencySymbol}{user?.data.get_budget[0].budget} / {currencySymbol}{user?.data.get_budget[0].budget_balance}
+              {currencySymbol}{user?.data?.get_budget[0].budget} / {currencySymbol}{user?.data?.get_budget[0].budget_balance}
             </span>
           </div>
           <div className="w-full bg-gray-200 rounded-full h-2">

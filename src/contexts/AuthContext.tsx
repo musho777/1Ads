@@ -23,9 +23,10 @@ interface AuthContextType {
   isAuthenticated: boolean;
   user: User | null;
   loading: boolean;
+  loadingEdit: boolean;
   login: (email: string, password: string) => Promise<{ message: any; status: boolean }>;
   register: (data: any) => Promise<{ message: any; status: boolean }>;
-  editAccaunt: (data: any) => Promise<{ message: any; status: boolean }>;
+  editAccaunt: (data: any) => Promise<{ message: any; status: any }>;
   logout: () => void;
   token: string;
 }
@@ -42,8 +43,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [token, setToken] = useState<string>("");
+  const [loadingEdit, setLoadingEdit] = useState(false)
 
   const getUser = async () => {
+    setLoading(true)
     const local_token = localStorage.getItem("token");
     try {
       const response = await axios.get<User>(`/api/getProfileInfo`, {
@@ -91,7 +94,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   const editAccaunt = async (data: any) => {
-    setLoading(true)
+    setLoadingEdit(true)
     const requestOptions = {
       method: "POST",
       headers: {
@@ -106,13 +109,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       const response = await fetch(`/api/editProfileInfo`, requestOptions);
       const result: any = await response.json();
       responseData = { message: result.errors, status: result.status };
+      getUser()
       if (!result.errors) {
-        // setUser(result.user);
+        return { message: "success", status: true }
       }
     } catch (error) {
-      responseData = { message: "Server Error", status: false };
+      responseData = { message: "", status: false };
     } finally {
-      setLoading(false)
+      setLoadingEdit(false)
     }
     return responseData;
   };
@@ -132,7 +136,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       const response = await fetch(`${import.meta.env.VITE_URL}/register`, requestOptions);
       const result: any = await response.json();
-      console.log(result, 'response')
       responseData = { message: result.errors, status: result.status };
       if (!result.errors) {
         setToken(result.token);
@@ -161,10 +164,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     if (local_token) setIsAuthenticated(true);
     else setIsAuthenticated(false);
     getUser();
-  }, []);
+  }, [isAuthenticated]);
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, user, loading, login, logout, token, register, editAccaunt }}>
+    <AuthContext.Provider value={{ isAuthenticated, user, loading, login, logout, token, register, editAccaunt, loadingEdit }}>
       {children}
     </AuthContext.Provider>
   );

@@ -43,24 +43,15 @@ interface CampaignFormProps {
 export default function CampaignForm({ isOpen, onClose, onSubmit, initialData, loading, success }: CampaignFormProps) {
   const { t, language } = useLanguage();
   const [activeTab, setActiveTab] = useState<'details' | 'content' | 'targeting'>('details');
-  const [mediaType, setMediaType] = useState<'image' | 'video'>(initialData?.adContent?.mediaType || 'image');
+  const [mediaType, setMediaType] = useState<'image' | 'video'>(initialData?.media_type || 'image');
   // const [previewUrl, setPreviewUrl] = useState(initialData?.adContent?.imageUrl || '');
   const [previewUrl, setPreviewUrl] = useState<File | null>(null);
   const [thumbnailUrl, setThumbnailUrl] = useState(initialData?.adContent?.thumbnailUrl || '');
   const [videoPhoroUrl, setVideoPhotoUrl] = useState<string>("");
   const [videoImage, setVideoImage] = useState<File | null>(null);
   const [fileUrl, setFileUrl] = useState<string>("");
-  const [formData, setFormData] = useState({
-    name: initialData?.name || '',
-    budget: initialData?.budget?.toString() || '',
-    cpm: initialData?.cpm?.toString() || '5.00',
-    status: initialData?.status || 'active',
-    startDate: initialData?.startDate || '',
-    endDate: initialData?.endDate || '',
-    adTitle: initialData?.adContent?.title || '',
-    adDescription: initialData?.adContent?.description || '',
-    targetUrl: initialData?.adContent?.targetUrl || '',
-  });
+  console.log(initialData?.company_name || '')
+  const [formData, setFormData] = useState({});
   const [selectedCISCountries, setSelectedCISCountries] = useState<string[]>(
     initialData?.targetCountries?.filter(code => countries.find(c => c.code === code)?.isCIS) || ['RU']
   );
@@ -73,6 +64,27 @@ export default function CampaignForm({ isOpen, onClose, onSubmit, initialData, l
   const defaultPreviewImage = 'https://images.unsplash.com/photo-1590845947676-fa2576f401b2?w=1200&h=600&fit=crop&q=80';
   const isEditing = !!initialData;
 
+  useEffect(() => {
+    if (initialData) {
+      console.log(initialData)
+      setFileUrl(initialData?.file)
+      setVideoPhotoUrl(initialData.videoImage)
+      setMediaType(initialData?.media_type)
+      // fileUrl
+      setFormData({
+        name: initialData?.company_name || '',
+        budget: initialData?.budget?.toString() || '',
+        cpm: initialData?.cpm?.toString() || '5.00',
+        status: initialData?.status || 'active',
+        startDate: initialData?.start_date || '',
+        endDate: initialData?.finish_date || '',
+        adTitle: initialData?.company_title || '',
+        adDescription: initialData?.company_description || '',
+        targetUrl: initialData?.company_url || '',
+      })
+    }
+  }, [initialData])
+
 
   useEffect(() => {
     if (success) {
@@ -82,13 +94,13 @@ export default function CampaignForm({ isOpen, onClose, onSubmit, initialData, l
       setVideoPhotoUrl("")
       setVideoImage(null)
       setFormData({
-        name: initialData?.name || '',
+        name: initialData?.company_name || '',
         budget: initialData?.budget?.toString() || '',
         cpm: initialData?.cpm?.toString() || '5.00',
         status: initialData?.status || 'active',
-        startDate: initialData?.startDate || '',
+        startDate: initialData?.start_date || '',
         endDate: initialData?.endDate || '',
-        adTitle: initialData?.adContent?.title || '',
+        adTitle: initialData?.title || '',
         adDescription: initialData?.adContent?.description || '',
         targetUrl: initialData?.adContent?.targetUrl || '',
       })
@@ -202,7 +214,7 @@ export default function CampaignForm({ isOpen, onClose, onSubmit, initialData, l
   const isFormValid = () => {
     if (isEditing) {
       return (
-        formData.name.trim() !== '' &&
+        formData.name?.trim() !== '' &&
         Number(formData.budget) > 0 &&
         Number(formData.cpm) > 0 &&
         formData.startDate !== '' &&
@@ -211,14 +223,14 @@ export default function CampaignForm({ isOpen, onClose, onSubmit, initialData, l
     }
     if (mediaType == "image") {
       return (
-        formData.name.trim() !== '' &&
+        formData.name?.trim() !== '' &&
         Number(formData.budget) > 0 &&
         Number(formData.cpm) > 0 &&
         formData.startDate !== '' &&
         formData.endDate !== '' &&
-        formData.adTitle.trim() !== '' &&
-        formData.adDescription.trim() !== '' &&
-        formData.targetUrl.trim() !== '' &&
+        formData.adTitle?.trim() !== '' &&
+        formData.adDescription?.trim() !== '' &&
+        formData.targetUrl?.trim() !== '' &&
         mediaType === 'image' &&
         fileUrl !== ''
       )
@@ -249,6 +261,8 @@ export default function CampaignForm({ isOpen, onClose, onSubmit, initialData, l
       return '';
     }
   };
+
+  console.log(formData.name, "formData.name")
 
   const renderTabContent = () => {
     switch (activeTab) {
@@ -412,7 +426,7 @@ export default function CampaignForm({ isOpen, onClose, onSubmit, initialData, l
                   <div className="p-3">
                     <div className="relative w-full pb-[40%] mb-2 bg-gray-100 rounded overflow-hidden">
                       <img
-                        src={initialData.adContent.mediaType === 'video' ? (videoPhoroUrl || fileUrl) : fileUrl}
+                        src={mediaType === 'video' ? (videoPhoroUrl || fileUrl) : fileUrl}
                         alt="Ad preview"
                         className="absolute inset-0 w-full h-full object-cover"
                         onError={(e) => {
@@ -420,7 +434,7 @@ export default function CampaignForm({ isOpen, onClose, onSubmit, initialData, l
                           target.src = defaultPreviewImage;
                         }}
                       />
-                      {initialData.adContent.mediaType === 'video' && (
+                      {mediaType === 'video' && (
                         <div className="absolute inset-0 flex items-center justify-center">
                           <div className="w-10 h-10 bg-black bg-opacity-60 rounded-full flex items-center justify-center">
                             <div className="w-0 h-0 border-t-5 border-b-5 border-l-8 border-transparent border-l-white ml-1"></div>
@@ -429,14 +443,14 @@ export default function CampaignForm({ isOpen, onClose, onSubmit, initialData, l
                       )}
                     </div>
                     <h5 className="font-medium text-gray-900 text-sm mb-1">
-                      {initialData.adContent.title}
+                      {initialData.title}
                     </h5>
                     <p className="text-gray-600 text-xs">
-                      {initialData.adContent.description}
+                      {initialData.description}
                     </p>
-                    {initialData.adContent.targetUrl && (
+                    {initialData.targetUrl && (
                       <div className="mt-1 text-xs text-sky-600 truncate">
-                        {getHostnameFromUrl(initialData.adContent.targetUrl)}
+                        {getHostnameFromUrl(initialData.targetUrl)}
                       </div>
                     )}
                   </div>

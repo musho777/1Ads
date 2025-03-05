@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { User, Settings, LogOut, CreditCard, HelpCircle, Edit2 } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useAuth } from '../contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 interface ProfileMenuProps {
   onEditProfile: () => void;
@@ -15,8 +16,8 @@ export default function ProfileMenu({ onEditProfile, setIsEditMode, setSettings 
   const menuRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const { t } = useLanguage();
-  const { user } = useAuth();
-
+  const { user, logout } = useAuth();
+  const navigator = useNavigate()
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -105,6 +106,10 @@ export default function ProfileMenu({ onEditProfile, setIsEditMode, setSettings 
 
           <div className="p-2 border-t border-gray-100">
             <button
+              onClick={() => {
+                logout()
+                navigator("/")
+              }}
               className="w-full flex items-center px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded-md"
             >
               <LogOut className="w-4 h-4 mr-3" />

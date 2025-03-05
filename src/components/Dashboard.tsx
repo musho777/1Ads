@@ -9,49 +9,9 @@ import BudgetCard from './BudgetCard';
 import { useAuth } from '../contexts/AuthContext';
 import EditAccaunt from './auth/editAccaunt';
 import SettingsModal from './settingsModal';
+import { ClipLoader } from 'react-spinners';
 
-const initialCampaigns: Campaign[] = [
-  {
-    id: '1',
-    name: 'Summer Sale 2024',
-    budget: 5000,
-    spent: 2340,
-    status: 'active',
-    startDate: '2024-03-01',
-    endDate: '2024-04-01',
-    impressions: 45000,
-    clicks: 1200,
-    ctr: 2.67,
-    cpm: 4.50,
-    languages: ['en', 'es', 'fr'],
-    adContent: {
-      title: "Summer Collection 2024",
-      description: "Discover our latest summer collection. Fresh styles for hot days!",
-      imageUrl: "https://images.unsplash.com/photo-1523381210434-271e8be1f52b",
-      targetUrl: "https://example.com/summer-collection"
-    }
-  },
-  {
-    id: '2',
-    name: 'Product Launch',
-    budget: 10000,
-    spent: 4500,
-    status: 'active',
-    startDate: '2024-03-15',
-    endDate: '2024-04-15',
-    impressions: 85000,
-    clicks: 2400,
-    ctr: 2.82,
-    cpm: 5.00,
-    languages: ['en', 'de', 'fr', 'it'],
-    adContent: {
-      title: "Revolutionary New Product",
-      description: "Experience the future of technology. Pre-order now!",
-      imageUrl: "https://images.unsplash.com/photo-1531297484001-80022131f5a1",
-      targetUrl: "https://example.com/new-product"
-    }
-  }
-];
+
 
 const StatCard = ({ title, value, icon: Icon, color }: {
   title: string;
@@ -77,7 +37,7 @@ const CompetitiveStatus = ({ campaign, highestCpm }: {
   highestCpm: number;
 }) => {
   const { t, language } = useLanguage();
-  const isCompetitive = campaign.cpm >= highestCpm;
+  const isCompetitive = campaign.CPM >= highestCpm;
   const recommendedCpm = Math.ceil(highestCpm * 1.1 * 100) / 100;
   const currencySymbol = language === 'ru' ? '₽' : '$';
   return (
@@ -90,23 +50,23 @@ const CompetitiveStatus = ({ campaign, highestCpm }: {
             <div className="flex items-center text-green-600 mb-2">
               <TrendingUp className="w-5 h-5 mr-2" />
               <span className="font-medium">
-                {t('competitive.isCompetitive', { name: campaign.name })}
+                {t('competitive.isCompetitive', { name: campaign.company_name })}
               </span>
             </div>
           ) : (
             <div className="flex items-center text-yellow-600 mb-2">
               <TrendingDown className="w-5 h-5 mr-2" />
               <span className="font-medium">
-                {t('competitive.needsBoost', { name: campaign.name })}
+                {t('competitive.needsBoost', { name: campaign.company_name })}
               </span>
             </div>
           )}
           <div className="space-y-2">
             <p className="text-sm text-gray-600">
-              {t('competitive.yourCpm')}: <span className="font-semibold">{currencySymbol}{campaign.cpm.toFixed(2)}</span>
+              {t('competitive.yourCpm')}: <span className="font-semibold">{currencySymbol}{campaign.CPM}</span>
             </p>
             <p className="text-sm text-gray-600">
-              {t('competitive.highestCpm')}: <span className="font-semibold">{currencySymbol}{highestCpm.toFixed(2)}</span>
+              {t('competitive.highestCpm')}: <span className="font-semibold">{currencySymbol}{highestCpm}</span>
             </p>
             <p className="text-sm text-gray-600">
               {t('competitive.status')}: <span className={`font-semibold ${isCompetitive ? 'text-green-600' : 'text-yellow-600'}`}>
@@ -117,7 +77,7 @@ const CompetitiveStatus = ({ campaign, highestCpm }: {
               <div className="mt-4 p-4 bg-yellow-50 rounded-lg">
                 <p className="text-sm text-yellow-800">
                   <AlertTriangle className="w-4 h-4 inline mr-2" />
-                  {t('competitive.recommendation', { amount: recommendedCpm.toFixed(2) })}
+                  {t('competitive.recommendation', { amount: recommendedCpm })}
                 </p>
               </div>
             )}
@@ -134,15 +94,15 @@ const AdPreview = ({ campaign }: { campaign: Campaign }) => {
     <div className="bg-white rounded-lg shadow p-4 max-w-sm">
       <div className="relative w-full pb-[50%] mb-4">
         <img
-          src={campaign.adContent.fileUrl}
-          alt={campaign.adContent.title}
+          src={campaign?.adContent.fileUrl}
+          alt={campaign?.company_title}
           className="absolute inset-0 w-full h-full object-cover rounded-lg"
         />
       </div>
-      <h3 className="font-medium text-lg mb-2">{campaign.adContent.title}</h3>
-      <p className="text-gray-600 text-sm mb-4">{campaign.adContent.description}</p>
+      <h3 className="font-medium text-lg mb-2">{campaign?.company_title}</h3>
+      <p className="text-gray-600 text-sm mb-4">{campaign?.company_description}</p>
       <a
-        href={campaign.adContent.targetUrl}
+        href={campaign?.company_url}
         target="_blank"
         rel="noopener noreferrer"
         className="text-blue-600 hover:text-blue-800 text-sm flex items-center"
@@ -155,45 +115,31 @@ const AdPreview = ({ campaign }: { campaign: Campaign }) => {
 
 function Dashboard() {
   const { t, language } = useLanguage();
-  const [campaigns, setCampaigns] = useState<Campaign[]>(initialCampaigns);
+  const [campaigns, setCampaigns] = useState<Campaign[]>();
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingCampaign, setEditingCampaign] = useState<Campaign | undefined>();
   const [selectedCampaign, setSelectedCampaign] = useState<Campaign | null>(null);
   const [actionMenuOpen, setActionMenuOpen] = useState<string | null>(null);
-  const { token } = useAuth();
+  const { token, user, loading } = useAuth();
   const [settings, setSettings] = useState(false)
   const [isEditMode, setIsEditMode] = useState(false)
-  const { user } = useAuth()
 
 
-  const [loading, setLoading] = useState(false)
+  const [loading1, setLoading] = useState(false)
 
   const [success, setSuccess] = useState(false)
 
   const totalBudget = 10000;
-  const totalSpent = campaigns.reduce((sum, campaign) => sum + campaign.spent, 0);
+  const totalSpent = 0;
   const remainingBudget = totalBudget - totalSpent;
-  const totalImpressions = campaigns.reduce((sum, campaign) => sum + campaign.impressions, 0);
-  const totalClicks = campaigns.reduce((sum, campaign) => sum + campaign.clicks, 0);
-  const averageCpm = campaigns.reduce((sum, c) => sum + c.cpm, 0) / campaigns.length;
   const currencySymbol = language === 'ru' ? '₽' : '$';
 
   const handleEditProfile = () => {
-    // Implement profile editing logic
     console.log('Edit profile clicked');
   };
 
-
-  const handleCreateCampaign = async (campaignData: Omit<Campaign, 'id' | 'impressions' | 'clicks' | 'ctr' | 'spent'>) => {
+  const handleCreateCampaign = async (campaignData: Omit<Campaign, 'id' | 'impressions' | 'clicks' | 'CTR' | 'spent'>) => {
     setLoading(true)
-    const newCampaign: Campaign = {
-      ...campaignData,
-      id: Math.random().toString(36).substr(2, 9),
-      impressions: 0,
-      clicks: 0,
-      ctr: 0,
-      spent: 0
-    };
     const formData = new FormData();
     formData.append("company_name", "fsjdfsd");
     formData.append("budget", JSON.stringify(campaignData.budget));
@@ -213,7 +159,6 @@ function Dashboard() {
     }
     if (campaignData.adContent.thumbnailUrl) {
     }
-
     var myHeaders = new Headers();
     myHeaders.append("Authorization", `Bearer ${token}`)
     myHeaders.append("Accept", "application/json");
@@ -225,7 +170,8 @@ function Dashboard() {
           body: formData,
           redirect: 'follow'
         });
-
+      const data = await response.json()
+      console.log(data)
       if (!response.ok) {
         const errorData = await response.json();
         setLoading(false)
@@ -235,9 +181,32 @@ function Dashboard() {
         }
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
-
-      const data = await response.json();
-      setCampaigns([...campaigns, newCampaign]);
+      console.log(data.data.CPM)
+      let newData = {
+        "CPM": data.data.CPM,
+        "CTR": 0.0,
+        // "admin_status": "Готова к публикации",
+        // "admin_status_comment": null,
+        "budget": data.data.budget,
+        "company_description": data.data.company_description,
+        "company_name": data.data.company_name,
+        "company_title": data.data.company_title,
+        "company_url": data.data.company_url,
+        "created_at": data.data.created_at,
+        "file": data.data.file,
+        "finish_date": data.data.finish_date,
+        "get_company_budget": [],
+        "get_company_statistic": [],
+        "highest_CPM": 9439349,
+        "id": data.data.id,
+        "media_type": data.data.media_type,
+        "start_date": data.data.start_date,
+        "status": data.data.status,
+        "updated_at": data.data?.updated_at,
+        "user_id": data.data.user_id,
+        "videoImage": data.data.videoImage
+      }
+      setCampaigns([...campaigns, newData]);
       setEditingCampaign(undefined);
       setIsFormOpen(false);
       setSuccess(true)
@@ -252,21 +221,99 @@ function Dashboard() {
 
   };
 
-  const handleEditCampaign = (campaignData: Omit<Campaign, 'id' | 'impressions' | 'clicks' | 'ctr' | 'spent'>) => {
+  const GetCompanys = async () => {
+    const requestOptions = {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`,
+      },
+    };
+
+    let responseData: { message: string; status: boolean } = { message: "", status: false };
+    try {
+      const response = await fetch(`/api/getCompanies`, requestOptions);
+      const result: any = await response.json();
+      responseData = { message: result.errors, status: result.status };
+      if (!result.errors) {
+        setCampaigns(result.data)
+        console.log(result.data)
+      }
+    }
+    catch (error) {
+      responseData = { message: "Server Error", status: false };
+    }
+    finally {
+    }
+    return responseData;
+  };
+
+  const handleEditCampaign = (campaignData: Omit<Campaign, 'id' | 'impressions' | 'clicks' | 'CTR' | 'spent'>) => {
     if (!editingCampaign) return;
 
-    const updatedCampaigns = campaigns.map(campaign =>
+    const updatedCampaigns = campaigns?.map(campaign =>
       campaign.id === editingCampaign.id
         ? { ...campaign, ...campaignData }
         : campaign
     );
+
+    console.log(editingCampaign.id)
+    const requestOptions = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        "company_name": campaignData.name,
+        "budget": 1000,
+        "CPM": 1000,
+        "company_id": editingCampaign.id,
+        "start_date": campaignData.startDate,
+        "finish_date": campaignData.endDate,
+        "status": campaignData.status,
+        "coutries": campaignData.targetCountries,
+      })
+    };
+
+    // let responseData: { message: string; status: boolean } = { message: "", status: false };
+    try {
+      const response = fetch(`/api/editCompany`, requestOptions);
+      const result: any = response.json();
+      console.log(result)
+      // responseData = { message: result.errors, status: result.status };
+      // if (!result.errors) {
+      //   setCampaigns(result.data)
+      //   console.log(result.data)
+      // }
+    }
+    catch (error) {
+      console.log(error)
+      // responseData = { message: "Server Error", status: false };
+    }
+
     setCampaigns(updatedCampaigns);
     setEditingCampaign(undefined);
   };
 
   const handleDeleteCampaign = (id: string) => {
+    console.log(token)
+    console.log(id)
+    const requestOptions = {
+      method: "POST",
+      body: JSON.stringify({ "company_id": id }),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      },
+    };
     if (window.confirm('Are you sure you want to delete this campaign?')) {
-      setCampaigns(campaigns.filter(campaign => campaign.id !== id));
+      setCampaigns(campaigns.filter(campaign => campaign?.id !== id));
+      try {
+        fetch(`/api/deleteCompany`, requestOptions);
+      }
+      catch (error) {
+      }
       if (selectedCampaign?.id === id) {
         setSelectedCampaign(null);
       }
@@ -274,6 +321,7 @@ function Dashboard() {
   };
 
   const openEditForm = (campaign: Campaign) => {
+    console.log(campaign, 'campaign')
     setEditingCampaign(campaign);
     setIsFormOpen(true);
   };
@@ -282,8 +330,24 @@ function Dashboard() {
     setActionMenuOpen(actionMenuOpen === id ? null : id);
   };
 
-  const highestCpm = Math.max(...campaigns.map(c => c.cpm));
+  useEffect(() => {
+    if (token) {
+      GetCompanys()
+    }
+  }, [token])
 
+  // const highestCpm = Math.max(...campaigns?.map(c => c?.CPM));
+  const highestCpm = 0;
+  if (loading)
+    return <div className="flex justify-center items-center h-screen">
+      <ClipLoader
+        color={"black"}
+        loading={true}
+        size={50}
+        aria-label="Loading Spinner"
+        data-testid="loader"
+      />
+    </div>
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -316,25 +380,25 @@ function Dashboard() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <StatCard
             title={t('dashboard.stats.totalSpent')}
-            value={user?.allTimeStatistic.Total_spent}
+            value={user?.allTimeStatistic?.Total_spent}
             icon={DollarSign}
             color="bg-green-500"
           />
           <StatCard
             title={t('dashboard.stats.impressions')}
-            value={user?.allTimeStatistic.Impressions}
+            value={user?.allTimeStatistic?.Impressions}
             icon={Eye}
             color="bg-blue-500"
           />
           <StatCard
             title={t('dashboard.stats.clicks')}
-            value={user?.allTimeStatistic.Clicks}
+            value={user?.allTimeStatistic?.Clicks}
             icon={MousePointerClick}
             color="bg-purple-500"
           />
           <StatCard
             title={t('dashboard.stats.averageCpm')}
-            value={user?.allTimeStatistic.average_CPM}
+            value={user?.allTimeStatistic?.average_CPM}
             icon={BarChart3}
             color="bg-orange-500"
           />
@@ -342,9 +406,9 @@ function Dashboard() {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2">
-            {campaigns.map(campaign => (
+            {campaigns?.map(campaign => (
               <CompetitiveStatus
-                key={campaign.id}
+                key={campaign?.id}
                 campaign={campaign}
                 highestCpm={highestCpm}
               />
@@ -356,39 +420,39 @@ function Dashboard() {
 
               {/* Redesigned Campaigns Table */}
               <div className="divide-y divide-gray-200">
-                {campaigns.map((campaign) => (
+                {campaigns?.map((campaign) => (
                   <div
-                    key={campaign.id}
+                    key={campaign?.id}
                     className="hover:bg-gray-50 cursor-pointer transition-colors"
                     onClick={() => setSelectedCampaign(campaign)}
                   >
                     <div className="p-4 sm:px-6">
                       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center">
                         <div className="mb-2 sm:mb-0">
-                          <h3 className="text-base font-medium text-gray-900">{campaign.name}</h3>
+                          <h3 className="text-base font-medium text-gray-900">{campaign?.company_name}</h3>
                           <p className="text-sm text-gray-500 mt-1">
-                            {campaign.startDate} - {campaign.endDate}
+                            {campaign?.start_date} - {campaign?.finish_date}
                           </p>
                         </div>
                         <div className="flex items-center space-x-2">
-                          <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${campaign.status === 'active' ? 'bg-green-100 text-green-800' :
-                            campaign.status === 'paused' ? 'bg-yellow-100 text-yellow-800' :
+                          <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${campaign?.status === 'active' ? 'bg-green-100 text-green-800' :
+                            campaign?.status === 'paused' ? 'bg-yellow-100 text-yellow-800' :
                               'bg-gray-100 text-gray-800'
                             }`}>
-                            {campaign.status}
+                            {campaign?.status}
                           </span>
                           <div className="relative">
                             <button
                               onClick={(e) => {
                                 e.stopPropagation();
-                                toggleActionMenu(campaign.id);
+                                toggleActionMenu(campaign?.id);
                               }}
                               className="p-1 rounded-full hover:bg-gray-200 focus:outline-none"
                             >
                               <MoreVertical className="w-5 h-5 text-gray-500" />
                             </button>
 
-                            {actionMenuOpen === campaign.id && (
+                            {actionMenuOpen === campaign?.id && (
                               <div className="absolute right-0 mt-1 w-36 bg-white rounded-md shadow-lg z-10 border border-gray-200">
                                 <div className="py-1">
                                   <button
@@ -405,7 +469,7 @@ function Dashboard() {
                                   <button
                                     onClick={(e) => {
                                       e.stopPropagation();
-                                      handleDeleteCampaign(campaign.id);
+                                      handleDeleteCampaign(campaign?.id);
                                       setActionMenuOpen(null);
                                     }}
                                     className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
@@ -423,35 +487,38 @@ function Dashboard() {
                       <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-4">
                         <div>
                           <p className="text-xs font-medium text-gray-500 uppercase">{t('campaigns.table.cpm')}</p>
-                          <p className="mt-1 text-sm font-medium text-gray-900">{currencySymbol}{campaign.cpm.toFixed(2)}</p>
+                          <p className="mt-1 text-sm font-medium text-gray-900">{currencySymbol}{campaign.CPM}</p>
                         </div>
                         <div>
-                          <p className="text-xs font-medium text-gray-500 uppercase">{t('campaigns.table.impressions')}</p>
-                          <p className="mt-1 text-sm font-medium text-gray-900">{campaign.impressions.toLocaleString()}</p>
+                          <p className="text-xs  font-medium text-gray-500 uppercase">{t('campaigns.table.impressions')}</p>
+                          {campaign?.get_company_statistic?.length > 0 &&
+                            <p className="mt-1 text-sm font-medium text-gray-900">{campaign?.get_company_statistic[0].Impressions}</p>
+                          }
                         </div>
                         <div>
-                          <p className="text-xs font-medium text-gray-500 uppercase">{t('campaigns.table.clicks')}</p>
-                          <p className="mt-1 text-sm font-medium text-gray-900">{campaign.clicks.toLocaleString()}</p>
+                          <p className="text-xs  font-medium text-gray-500 uppercase">{t('campaigns.table.clicks')}</p>
+                          {campaign?.get_company_statistic?.length > 0 &&
+                            <p className="mt-1  text-sm font-medium text-gray-900">{campaign?.get_company_statistic[0]?.Clicks}</p>
+                          }
                         </div>
                         <div>
                           <p className="text-xs font-medium text-gray-500 uppercase">{t('campaigns.table.ctr')}</p>
-                          <p className="mt-1 text-sm font-medium text-gray-900">{campaign.ctr.toFixed(2)}%</p>
+                          <p className="mt-1 text-sm font-medium text-gray-900">{campaign.CTR}%</p>
                         </div>
                       </div>
-
                       {/* Progress bar for budget spent - Updated to show dollar amounts */}
                       <div className="mt-4">
                         <div className="flex justify-between items-center mb-1">
                           <span className="text-xs font-medium text-gray-500">{t('campaigns.table.progress')}</span>
-                          <span className="text-xs text-gray-500">
-                            {currencySymbol}{campaign.spent.toLocaleString()}/{currencySymbol}{campaign.budget.toLocaleString()}
-                          </span>
+                          {campaign?.get_company_budget?.length > 0 && <span className="text-xs text-gray-500">
+                            {currencySymbol}{campaign.get_company_budget[0].budget_balance}/{currencySymbol}{campaign?.get_company_budget[0].budget}
+                          </span>}
                         </div>
                         <div className="w-full bg-gray-200 rounded-full h-1.5">
-                          <div
+                          {campaign?.get_company_budget?.length > 0 && <div
                             className="bg-sky-600 h-1.5 rounded-full"
-                            style={{ width: `${(campaign.spent / campaign.budget) * 100}%` }}
-                          />
+                            style={{ width: `${(campaign?.get_company_budget[0].budget_balance / campaign?.get_company_budget[0].budget_balance ?? 1) * 100}%` }}
+                          />}
                         </div>
                       </div>
                     </div>
@@ -477,7 +544,7 @@ function Dashboard() {
       </div>
 
       <CampaignForm
-        loading={loading}
+        loading1={loading1}
         isOpen={isFormOpen}
         success={success}
         onClose={() => {

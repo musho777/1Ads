@@ -461,12 +461,11 @@ export default function AdminDashboard({ campaigns, onUpdateCampaign, onSignOut 
           {topCPMCampaigns.map((campaign, index) => (
             <div key={campaign.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
               <div className="flex items-center space-x-4">
-                <div className={`w-8 h-8 flex items-center justify-center rounded-full ${
-                  index === 0 ? 'bg-yellow-100 text-yellow-800' :
-                  index === 1 ? 'bg-gray-100 text-gray-800' :
-                  index === 2 ? 'bg-orange-100 text-orange-800' :
-                  'bg-blue-100 text-blue-800'
-                }`}>
+                <div className={`w-8 h-8 flex items-center justify-center rounded-full ${index === 0 ? 'bg-yellow-100 text-yellow-800' :
+                    index === 1 ? 'bg-gray-100 text-gray-800' :
+                      index === 2 ? 'bg-orange-100 text-orange-800' :
+                        'bg-blue-100 text-blue-800'
+                  }`}>
                   {index + 1}
                 </div>
                 <div>
@@ -487,11 +486,10 @@ export default function AdminDashboard({ campaigns, onUpdateCampaign, onSignOut 
                       ...campaign,
                       status: campaign.status === 'active' ? 'paused' : 'active'
                     })}
-                    className={`px-3 py-1 rounded-full text-sm font-medium ${
-                      campaign.status === 'active'
+                    className={`px-3 py-1 rounded-full text-sm font-medium ${campaign.status === 'active'
                         ? 'bg-green-100 text-green-800'
                         : 'bg-yellow-100 text-yellow-800'
-                    }`}
+                      }`}
                   >
                     {campaign.status === 'active' ? t('admin.competitive.pause') : t('admin.competitive.activate')}
                   </button>
@@ -512,11 +510,10 @@ export default function AdminDashboard({ campaigns, onUpdateCampaign, onSignOut 
                 <p className="text-sm text-gray-500">CPM: ${campaign.cpm.toFixed(2)}</p>
               </div>
               <div className="flex items-center space-x-2">
-                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                  campaign.status === 'active' ? 'bg-green-100 text-green-800' :
-                  campaign.status === 'paused' ? 'bg-yellow-100 text-yellow-800' :
-                  'bg-gray-100 text-gray-800'
-                }`}>
+                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${campaign.status === 'active' ? 'bg-green-100 text-green-800' :
+                    campaign.status === 'paused' ? 'bg-yellow-100 text-yellow-800' :
+                      'bg-gray-100 text-gray-800'
+                  }`}>
                   {campaign.status}
                 </span>
                 <button
@@ -603,31 +600,28 @@ export default function AdminDashboard({ campaigns, onUpdateCampaign, onSignOut 
             <nav className="-mb-px flex">
               <button
                 onClick={() => setSelectedTab('all')}
-                className={`whitespace-nowrap py-4 px-6 border-b-2 font-medium text-sm ${
-                  selectedTab === 'all'
+                className={`whitespace-nowrap py-4 px-6 border-b-2 font-medium text-sm ${selectedTab === 'all'
                     ? 'border-blue-500 text-blue-600'
                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                }`}
+                  }`}
               >
                 {t('admin.tabs.all')}
               </button>
               <button
                 onClick={() => setSelectedTab('moderation')}
-                className={`whitespace-nowrap py-4 px-6 border-b-2 font-medium text-sm ${
-                  selectedTab === 'moderation'
+                className={`whitespace-nowrap py-4 px-6 border-b-2 font-medium text-sm ${selectedTab === 'moderation'
                     ? 'border-blue-500 text-blue-600'
                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                }`}
+                  }`}
               >
                 {t('admin.tabs.moderation')}
               </button>
               <button
                 onClick={() => setSelectedTab('competitive')}
-                className={`whitespace-nowrap py-4 px-6 border-b-2 font-medium text-sm ${
-                  selectedTab === 'competitive'
+                className={`whitespace-nowrap py-4 px-6 border-b-2 font-medium text-sm ${selectedTab === 'competitive'
                     ? 'border-blue-500 text-blue-600'
                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                }`}
+                  }`}
               >
                 {t('admin.tabs.competitive')}
               </button>

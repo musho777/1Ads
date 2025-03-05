@@ -13,7 +13,7 @@ interface AuthFormProps {
 export default function EditAccaunt({ setIsEditMode }: AuthFormProps) {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const { user, editAccaunt, loading } = useAuth();
+  const { user, editAccaunt, loadingEdit } = useAuth();
   const { t } = useLanguage();
   const [formData, setFormData] = useState({
     email: '',
@@ -27,10 +27,10 @@ export default function EditAccaunt({ setIsEditMode }: AuthFormProps) {
   useEffect(() => {
     if (user) {
       setFormData({
-        email: user?.email,
+        email: user.data?.email,
         password: "",
         confirmPassword: '',
-        username: user?.username,
+        username: user.data?.username,
         rememberMe: false
       })
     }
@@ -77,11 +77,14 @@ export default function EditAccaunt({ setIsEditMode }: AuthFormProps) {
         password: formData.password,
         password_confirmation: formData.confirmPassword
       }
+
       const response = await editAccaunt(sendDAta)
       console.log(response, 'response')
       if (!response.message) {
         setIsEditMode(false)
+        return
       }
+      setIsEditMode(false)
       setApiError(response.message)
     }
   };
@@ -238,10 +241,10 @@ export default function EditAccaunt({ setIsEditMode }: AuthFormProps) {
                   focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500 
                   transition-colors"
               >
-                {loading ?
+                {loadingEdit ?
                   <ClipLoader
                     color={"white"}
-                    loading={loading}
+                    loading={true}
                     size={20}
                     aria-label="Loading Spinner"
                     data-testid="loader"

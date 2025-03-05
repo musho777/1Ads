@@ -9,7 +9,7 @@ export interface Campaign {
   impressions: number;
   clicks: number;
   ctr: number;
-  cpm: number;
+  CPM: number;
   adContent: {
     title: string;
     description: string;
