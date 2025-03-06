@@ -68,6 +68,7 @@ const translations = {
     'campaign.dates.end': 'End Date',
     'campaign.languages.label': 'Target Languages',
     'campaign.languages.description': 'Select languages for your target audience',
+    'campaign.CPM.error': "Minimum CPM amount 1000 rubles",
 
     // Ad Content Section
     'campaign.ad.title': 'Ad Content',
@@ -263,6 +264,7 @@ const translations = {
     'campaign.dates.end': 'Дата окончания',
     'campaign.languages.label': 'Целевые языки',
     'campaign.languages.description': 'Выберите языки целевой аудитории',
+    'campaign.CPM.error': "Минимальная сумма CPM 1000 руб.",
 
     // Ad Content Section
     'campaign.ad.title': 'Содержание рекламы',

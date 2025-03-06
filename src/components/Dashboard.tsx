@@ -10,6 +10,7 @@ import { useAuth } from '../contexts/AuthContext';
 import EditAccaunt from './auth/editAccaunt';
 import SettingsModal from './settingsModal';
 import { ClipLoader } from 'react-spinners';
+import ReactPaginate from 'react-paginate';
 
 
 
@@ -90,11 +91,12 @@ const CompetitiveStatus = ({ campaign, highestCpm }: {
 
 const AdPreview = ({ campaign }: { campaign: Campaign }) => {
   const { t } = useLanguage();
+  console.log(campaign, 'campaign')
   return (
     <div className="bg-white rounded-lg shadow p-4 max-w-sm">
       <div className="relative w-full pb-[50%] mb-4">
         <img
-          src={campaign?.adContent.fileUrl}
+          src={campaign?.videoImage ? campaign?.videoImage : campaign?.file}
           alt={campaign?.company_title}
           className="absolute inset-0 w-full h-full object-cover rounded-lg"
         />
@@ -123,9 +125,10 @@ function Dashboard() {
   const { token, user, loading } = useAuth();
   const [settings, setSettings] = useState(false)
   const [isEditMode, setIsEditMode] = useState(false)
-
-
+  const [highestCpm, setHighestCpm] = useState(0)
+  const [page, setPage] = useState(1)
   const [loading1, setLoading] = useState(false)
+  const [pageCount, setPageCaunt] = useState(1)
 
   const [success, setSuccess] = useState(false)
 
@@ -138,20 +141,22 @@ function Dashboard() {
     console.log('Edit profile clicked');
   };
 
+
+
   const handleCreateCampaign = async (campaignData: Omit<Campaign, 'id' | 'impressions' | 'clicks' | 'CTR' | 'spent'>) => {
     setLoading(true)
     const formData = new FormData();
-    formData.append("company_name", "fsjdfsd");
+    formData.append("company_name", campaignData.name);
     formData.append("budget", JSON.stringify(campaignData.budget));
     formData.append("CPM", JSON.stringify(campaignData.cpm));
     formData.append("start_date", campaignData.startDate)
-    formData.append("finish_date", campaignData.endDate)
     formData.append("finish_date", campaignData.endDate)
     formData.append("company_description", campaignData.adContent.description)
     formData.append("company_url", campaignData.adContent.targetUrl)
     formData.append("media_type", campaignData.adContent.mediaType)
     formData.append("status", campaignData.status)
     formData.append("coutries", JSON.stringify(campaignData.targetCountries))
+    formData.append("company_title", campaignData.adContent.title)
 
     if (campaignData.adContent.imageUrl) {
       formData.append("file", campaignData.adContent.imageUrl);
@@ -173,20 +178,25 @@ function Dashboard() {
       const data = await response.json()
       console.log(data)
       if (!response.ok) {
-        const errorData = await response.json();
+        // const errorData = await response.json();
         setLoading(false)
         setSuccess(false)
-        if (errorData.messag) {
-          alert(JSON.stringify(errorData.message))
+        console.log(data.message)
+        if (data.message) {
+          console.log("aaaaaaaa")
+          // campaign.CPM.error
+          if (data.message === "минимальная сумма CPM 1000 рублей") {
+            alert(t("campaign.CPM.error"))
+          }
+          else {
+            alert(JSON.stringify(data.message))
+          }
+
         }
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
-      console.log(data.data.CPM)
       let newData = {
         "CPM": data.data.CPM,
-        "CTR": 0.0,
-        // "admin_status": "Готова к публикации",
-        // "admin_status_comment": null,
         "budget": data.data.budget,
         "company_description": data.data.company_description,
         "company_name": data.data.company_name,
@@ -197,7 +207,6 @@ function Dashboard() {
         "finish_date": data.data.finish_date,
         "get_company_budget": [],
         "get_company_statistic": [],
-        "highest_CPM": 9439349,
         "id": data.data.id,
         "media_type": data.data.media_type,
         "start_date": data.data.start_date,
@@ -232,12 +241,15 @@ function Dashboard() {
 
     let responseData: { message: string; status: boolean } = { message: "", status: false };
     try {
-      const response = await fetch(`/api/getCompanies`, requestOptions);
+      const response = await fetch(`/api/getCompanies?page=${page}`, requestOptions);
       const result: any = await response.json();
       responseData = { message: result.errors, status: result.status };
       if (!result.errors) {
         setCampaigns(result.data)
-        console.log(result.data)
+        setPageCaunt(result.page_count)
+        if (result.data.length > 0) {
+          setHighestCpm(result.data[0].highest_CPM)
+        }
       }
     }
     catch (error) {
@@ -297,8 +309,6 @@ function Dashboard() {
   };
 
   const handleDeleteCampaign = (id: string) => {
-    console.log(token)
-    console.log(id)
     const requestOptions = {
       method: "POST",
       body: JSON.stringify({ "company_id": id }),
@@ -321,7 +331,6 @@ function Dashboard() {
   };
 
   const openEditForm = (campaign: Campaign) => {
-    console.log(campaign, 'campaign')
     setEditingCampaign(campaign);
     setIsFormOpen(true);
   };
@@ -334,10 +343,10 @@ function Dashboard() {
     if (token) {
       GetCompanys()
     }
-  }, [token])
+  }, [token, page])
+
 
   // const highestCpm = Math.max(...campaigns?.map(c => c?.CPM));
-  const highestCpm = 0;
   if (loading)
     return <div className="flex justify-center items-center h-screen">
       <ClipLoader
@@ -526,6 +535,23 @@ function Dashboard() {
                 ))}
               </div>
             </div>
+
+            {pageCount > 1 && <ReactPaginate
+              breakLabel="..."
+              nextLabel=""
+              onPageChange={(e) => setPage(e.selected + 1)}
+              pageRangeDisplayed={5}
+              pageCount={10}
+              previousLabel=""
+              renderOnZeroPageCount={null}
+              containerClassName="flex justify-center items-center gap-2 p-4 text-[14px]"
+              activeClassName="bg-[rgb(2,132,199)] text-white rounded-full w-5 h-5 flex items-center justify-center "
+              disabledClassName="opacity-50 cursor-not-allowed"
+              previousClassName="font-bold "
+              nextClassName="font-bold"
+              breakClassName="px-3 py-2"
+            />}
+
           </div>
 
           <div className="lg:col-span-1">
@@ -544,7 +570,7 @@ function Dashboard() {
       </div>
 
       <CampaignForm
-        loading1={loading1}
+        loading={loading1}
         isOpen={isFormOpen}
         success={success}
         onClose={() => {

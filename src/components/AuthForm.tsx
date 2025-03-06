@@ -59,11 +59,7 @@ export default function AuthForm({ isLoginMode, onToggleMode, onLogin }: AuthFor
     e.preventDefault();
     if (validateForm()) {
       if (isLoginMode) {
-        // onLogin(formData.email);
-        LoginApi(formData)
       } else {
-        /////skdjskdjskdj
-        registerApi(formData)
         console.log('Registration data:', formData);
       }
     }
@@ -80,59 +76,6 @@ export default function AuthForm({ isLoginMode, onToggleMode, onLogin }: AuthFor
       setErrors(prev => ({ ...prev, [name]: '' }));
     }
   };
-
-  const registerApi = async (data: any) => {
-    const sendDAta = {
-      username: data.username,
-      email: data.email,
-      password: data.password,
-      password_confirmation: data.confirmPassword
-    }
-    fetch('https://xn----nbck7b7ald8atlv.xn--y9a3aq/halal.loc/public/api/register', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(sendDAta),
-    })
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        return response.json();
-      })
-      .then(data => {
-        console.log('Success:', data);
-      })
-      .catch(error => {
-        console.error('Error:', error);
-      });
-  }
-  const LoginApi = async (data: any) => {
-    const sendDAta = {
-      email: data.email,
-      password: data.password,
-    }
-    fetch('https://xn----nbck7b7ald8atlv.xn--y9a3aq/halal.loc/public/api/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(sendDAta),
-    })
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        return response.json();
-      })
-      .then(data => {
-        console.log('Success:', data);
-      })
-      .catch(error => {
-        console.error('Error:', error);
-      });
-  }
 
   return (
     <>

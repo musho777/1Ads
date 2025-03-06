@@ -46,12 +46,20 @@ export default function CampaignForm({ isOpen, onClose, onSubmit, initialData, l
   const [mediaType, setMediaType] = useState<'image' | 'video'>(initialData?.media_type || 'image');
   // const [previewUrl, setPreviewUrl] = useState(initialData?.adContent?.imageUrl || '');
   const [previewUrl, setPreviewUrl] = useState<File | null>(null);
-  const [thumbnailUrl, setThumbnailUrl] = useState(initialData?.adContent?.thumbnailUrl || '');
   const [videoPhoroUrl, setVideoPhotoUrl] = useState<string>("");
   const [videoImage, setVideoImage] = useState<File | null>(null);
   const [fileUrl, setFileUrl] = useState<string>("");
-  console.log(initialData?.company_name || '')
-  const [formData, setFormData] = useState({});
+  const [formData, setFormData] = useState({
+    name: initialData?.company_name || '',
+    budget: initialData?.budget?.toString() || '',
+    cpm: initialData?.cpm?.toString() || '5.00',
+    status: initialData?.status || 'active',
+    startDate: initialData?.start_date || '',
+    endDate: initialData?.finish_date || '',
+    adTitle: initialData?.company_title || '',
+    adDescription: initialData?.company_description || '',
+    targetUrl: initialData?.company_url || '',
+  });
   const [selectedCISCountries, setSelectedCISCountries] = useState<string[]>(
     initialData?.targetCountries?.filter(code => countries.find(c => c.code === code)?.isCIS) || ['RU']
   );
@@ -66,7 +74,6 @@ export default function CampaignForm({ isOpen, onClose, onSubmit, initialData, l
 
   useEffect(() => {
     if (initialData) {
-      console.log(initialData)
       setFileUrl(initialData?.file)
       setVideoPhotoUrl(initialData.videoImage)
       setMediaType(initialData?.media_type)
@@ -151,7 +158,6 @@ export default function CampaignForm({ isOpen, onClose, onSubmit, initialData, l
 
   const handleThumbnailUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!isEditing) {
-      // setThumbnailUrl(e.target.value);
       if (e.target.files && e.target.files[0]) {
         setVideoImage(e.target.files[0]);
         setVideoPhotoUrl(URL.createObjectURL(e.target.files[0]));
@@ -170,7 +176,6 @@ export default function CampaignForm({ isOpen, onClose, onSubmit, initialData, l
       if (type !== mediaType) {
         setPreviewUrl(null);
         if (type === 'video') {
-          setThumbnailUrl('');
         }
       }
     }

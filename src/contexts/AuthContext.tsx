@@ -75,7 +75,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
     let responseData: { message: string; status: boolean } = { message: "", status: false };
     try {
-      const response = await fetch(`${import.meta.env.VITE_URL}/login`, requestOptions);
+      const response = await fetch(`/api/login`, requestOptions);
       const result: AuthResponse = await response.json();
 
       responseData = { message: result.message, status: result.status };
@@ -134,7 +134,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
     let responseData: { message: string; status: boolean } = { message: "", status: false };
     try {
-      const response = await fetch(`${import.meta.env.VITE_URL}/register`, requestOptions);
+      const response = await fetch(`/api/register`, requestOptions);
       const result: any = await response.json();
       responseData = { message: result.errors, status: result.status };
       if (!result.errors) {

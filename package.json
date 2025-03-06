@@ -3,7 +3,6 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "proxy": "https://xn----nbck7b7ald8atlv.xn--y9a3aq/halal.loc/public/api",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -25,6 +24,7 @@
     "lucide-react": "^0.344.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "react-paginate": "^8.3.0",
     "react-router-dom": "^6.30.0",
     "react-spinners": "^0.15.0",
     "swagger-ui-express": "^5.0.0",
