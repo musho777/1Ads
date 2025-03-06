@@ -164,11 +164,17 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       const response = await fetch(`/api/register`, requestOptions);
       const result: any = await response.json();
       responseData = { message: result.errors, status: result.status };
-      if (!result.errors) {
+      if (response.ok) {
         setToken(result.token);
         localStorage.setItem("token", result.token);
         setUser(result.user);
         setIsAuthenticated(true);
+      }
+      else {
+        responseData = { message: result.message, status: false };
+        setIsAuthenticated(false);
+        setUser(null);
+
       }
     } catch (error) {
       responseData = { message: "Server Error", status: false };
@@ -191,7 +197,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     if (local_token) setIsAuthenticated(true);
     else setIsAuthenticated(false);
     getUser();
-  }, [isAuthenticated]);
+  }, [isAuthenticated, token]);
 
   return (
     <AuthContext.Provider value={{ isAuthenticated, user, loading, login, logout, token, register, editAccaunt, loadingEdit, ChaneUserData }}>

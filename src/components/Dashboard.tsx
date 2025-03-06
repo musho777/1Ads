@@ -37,10 +37,9 @@ const CompetitiveStatus = ({ campaign, highestCpm }: {
   campaign: Campaign;
   highestCpm: number;
 }) => {
-  const { t, language } = useLanguage();
+  const { t } = useLanguage();
   const isCompetitive = campaign.CPM >= highestCpm;
-  const recommendedCpm = Math.ceil(highestCpm * 1.1 * 100) / 100;
-  const currencySymbol = language === 'ru' ? '₽' : '$';
+  const currencySymbol = '₽';
   return (
     <div className={`bg-white rounded-lg shadow-md p-6 mb-6 ${isCompetitive ? 'border-l-4 border-green-500' : 'border-l-4 border-[#D9D9D9]'
       }`}>
@@ -117,7 +116,7 @@ const AdPreview = ({ campaign }: { campaign: Campaign }) => {
 };
 
 function Dashboard() {
-  const { t, language } = useLanguage();
+  const { t } = useLanguage();
   const [campaigns, setCampaigns] = useState<Campaign[]>();
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingCampaign, setEditingCampaign] = useState<Campaign | undefined>();
@@ -137,7 +136,7 @@ function Dashboard() {
   const totalBudget = 10000;
   const totalSpent = 0;
   const remainingBudget = totalBudget - totalSpent;
-  const currencySymbol = language === 'ru' ? '₽' : '$';
+  const currencySymbol = '₽';
 
   const handleEditProfile = () => {
     console.log('Edit profile clicked');
@@ -147,6 +146,7 @@ function Dashboard() {
 
   const handleCreateCampaign = async (campaignData: Omit<Campaign, 'id' | 'impressions' | 'clicks' | 'CTR' | 'spent'>) => {
     setLoading(true)
+    console.log(campaignData.targetCountries)
     const formData = new FormData();
     formData.append("company_name", campaignData.name);
     formData.append("budget", JSON.stringify(campaignData.budget));
@@ -157,7 +157,11 @@ function Dashboard() {
     formData.append("company_url", campaignData.adContent.targetUrl)
     formData.append("media_type", campaignData.adContent.mediaType)
     formData.append("status", campaignData.status)
-    formData.append("coutries", JSON.stringify(campaignData.targetCountries))
+    // formData.append("coutries", campaignData.targetCountries)
+    campaignData.targetCountries.forEach(country => {
+      console.log(country, 'country')
+      formData.append("countries[]", country);
+    });
     formData.append("company_title", campaignData.adContent.title)
 
     if (campaignData.adContent.imageUrl) {
@@ -178,6 +182,7 @@ function Dashboard() {
           redirect: 'follow'
         });
       const data = await response.json()
+      console.log(data)
       if (!response.ok) {
         // const errorData = await response.json();
         setLoading(false)
@@ -194,26 +199,7 @@ function Dashboard() {
         }
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
-      let newData = {
-        "CPM": data.data.CPM,
-        "budget": data.data.budget,
-        "company_description": data.data.company_description,
-        "company_name": data.data.company_name,
-        "company_title": data.data.company_title,
-        "company_url": data.data.company_url,
-        "created_at": data.data.created_at,
-        "file": data.data.file,
-        "finish_date": data.data.finish_date,
-        "get_company_budget": [],
-        "get_company_statistic": [],
-        "id": data.data.id,
-        "media_type": data.data.media_type,
-        "start_date": data.data.start_date,
-        "status": data.data.status,
-        "updated_at": data.data?.updated_at,
-        "user_id": data.data.user_id,
-        "videoImage": data.data.videoImage
-      }
+
       // setCampaigns([...campaigns, newData]);
       setEditingCampaign(undefined);
       setIsFormOpen(false);
@@ -229,7 +215,6 @@ function Dashboard() {
 
 
   };
-  console.log(user, 'user')
   const GetCompanys = async () => {
     setLoadingCampaigns(true)
     const requestOptions = {
@@ -260,24 +245,38 @@ function Dashboard() {
 
   const handleEditCampaign = async (campaignData: Omit<Campaign, 'id' | 'impressions' | 'clicks' | 'CTR' | 'spent'>) => {
     if (!editingCampaign) return;
-
+    console.log(campaignData.targetCountries)
     setEditLoading(true)
+
+    const formData = new FormData();
+    formData.append("company_name", campaignData.name);
+    formData.append("budget", JSON.stringify(campaignData.budget));
+    formData.append("CPM", campaignData.cpm);
+    formData.append("start_date", campaignData.startDate)
+    formData.append("finish_date", campaignData.endDate)
+    formData.append("status", campaignData.status)
+    formData.append("comapny_id", editingCampaign.id)
+
+    campaignData.targetCountries.forEach(country => {
+      formData.append("countries[]", country);
+    });
     const requestOptions = {
       method: "POST",
       headers: {
-        "Content-Type": "application/json",
+        // "Content-Type": "application/json",
         "Authorization": `Bearer ${token}`,
       },
-      body: JSON.stringify({
-        company_name: campaignData.name,
-        budget: campaignData.budget,
-        CPM: campaignData.cpm,
-        comapny_id: editingCampaign.id,
-        start_date: campaignData.startDate,
-        finish_date: campaignData.endDate,
-        status: campaignData.status,
-        coutries: campaignData.targetCountries,
-      }),
+      body: formData,
+      // body: JSON.stringify({
+      //   company_name: campaignData.name,
+      //   budget: campaignData.budget,
+      //   CPM: campaignData.cpm,
+      //   comapny_id: editingCampaign.id,
+      //   start_date: campaignData.startDate,
+      //   finish_date: campaignData.endDate,
+      //   status: campaignData.status,
+      //   coutries: campaignData.targetCountries,
+      // }),
     };
     try {
       const response = await fetch(`/api/editCompany`, requestOptions);
@@ -290,17 +289,23 @@ function Dashboard() {
         }
       }
       else {
-        // setEditLoading(false)
+        console.log(data)
+        setEditLoading(false)
         setIsFormOpen(false)
         let item = [...campaigns]
         let index = campaigns?.findIndex((elm) => elm.id == editingCampaign.id)
         item[index] = data.data
+        item[index].CTR = data.CTR
+        console.log()
         setCampaigns(item)
+        console.log("sfdk;fsdkfjdslkfjklsdfjksd")
+        setEditingCampaign(undefined);
       }
 
     }
     catch (error) {
       setEditLoading(false)
+      setEditingCampaign(undefined);
     }
     setEditingCampaign(undefined);
   };

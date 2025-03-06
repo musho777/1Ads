@@ -71,6 +71,7 @@ export default function Register({ onToggleMode }: AuthFormProps) {
       }
       const response = await register(sendDAta)
       if (!response.message) {
+        onToggleMode()
         navigate("/dashboard")
       }
       setApiError(response.message)
@@ -242,7 +243,7 @@ export default function Register({ onToggleMode }: AuthFormProps) {
           <p className="mt-4 text-center text-sm text-gray-600">
             {"Уже есть аккаунт?"}{' '}
             <button
-              onClick={onToggleMode}
+              // onClick={}
               className="font-medium text-sky-600 hover:text-sky-500"
             >
               {'Зарегистрироваться'}

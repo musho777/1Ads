@@ -25,8 +25,7 @@ function PaymentModal({ isOpen, onClose, amount, userEmail }: PaymentModalProps)
   const [uploading, setUploading] = useState(false);
   const [uploadComplete, setUploadComplete] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const { language } = useLanguage();
-  const currencySymbol = language === 'ru' ? '₽' : '$';
+  const currencySymbol = '₽';
   const { token, ChaneUserData } = useAuth();
 
 
@@ -228,8 +227,8 @@ export default function BudgetCard({ totalBudget, userEmail = "user@example.com"
   const [showAddFunds, setShowAddFunds] = useState(false);
   const [amount, setAmount] = useState('');
   const [showPaymentModal, setShowPaymentModal] = useState(false);
-  const { t, language } = useLanguage();
-  const currencySymbol = language === 'ru' ? '₽' : '$';
+  const { t } = useLanguage();
+  const currencySymbol = '₽';
   const { user } = useAuth();
 
   const handleAddFunds = () => {
@@ -245,7 +244,7 @@ export default function BudgetCard({ totalBudget, userEmail = "user@example.com"
   useEffect(() => {
     if (user) {
       const percentage = ((user?.data?.get_budget[0].budget - user?.data?.get_budget[0]?.budget_balance) / totalBudget) * 100;
-      if (totalBudget == 0) {
+      if (user?.data?.get_budget[0].budget == 0 && user?.data?.get_budget[0]?.budget_balance) {
         setSpentPercentage(100)
       }
       else {

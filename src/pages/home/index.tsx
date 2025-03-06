@@ -178,7 +178,6 @@ function Home() {
 
   const [campaigns, setCampaigns] = useState<Campaign[]>(initialCampaigns);
   const { t } = useLanguage();
-
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentTime(new Date());
@@ -186,13 +185,6 @@ function Home() {
 
     return () => clearInterval(timer);
   }, []);
-
-  const handleLogin = (email: string) => {
-    setIsAuthenticated(true);
-    // For demo purposes, set admin if email contains "admin"
-    setIsAdmin(email.toLowerCase().includes('admin'));
-    setShowAuthModal(false);
-  };
 
   const handleAuthClick = (mode: boolean) => {
     setIsLoginMode(mode);

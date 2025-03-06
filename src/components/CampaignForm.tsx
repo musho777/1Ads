@@ -3,6 +3,7 @@ import { X, ChevronDown, Upload, Image, Video, Globe, Calendar, DollarSign, Targ
 import { Campaign } from '../types';
 import { useLanguage } from '../contexts/LanguageContext';
 import { ClipLoader } from 'react-spinners';
+import e from 'express';
 
 
 // List of countries with their names in English and Russian
@@ -67,18 +68,28 @@ export default function CampaignForm({ isOpen, onClose, onSubmit, initialData, l
     initialData?.targetCountries?.filter(code => !countries.find(c => c.code === code)?.isCIS) || []
   );
   const [showOtherCountries, setShowOtherCountries] = useState(false);
-  const currencySymbol = language === 'ru' ? '₽' : '$';
+  const currencySymbol = '₽';
 
   const defaultPreviewImage = 'https://images.unsplash.com/photo-1590845947676-fa2576f401b2?w=1200&h=600&fit=crop&q=80';
   const isEditing = !!initialData;
 
   useEffect(() => {
-    console.log(initialData?.CPM, 'initialData?.cpm')
     if (initialData) {
       setFileUrl(initialData?.file)
+      let item = []
+      let item2 = []
+      initialData?.get_country.map((elm, i) => {
+        if (elm.name == "TR" || elm.name == "AE" || elm.name == "SA" || elm.name == "EG" || elm.name == "ID" || elm.name == "MY" || elm.name == "PK" || elm.name == "GB" || elm.name == "DE" || elm.name == "FR" || elm.name == "US") {
+          item2.push(elm.name)
+        }
+        else {
+          item.push(elm.name)
+        }
+      })
+      setSelectedCISCountries(item)
+      setSelectedOtherCountries(item2)
       setVideoPhotoUrl(initialData.videoImage)
       setMediaType(initialData?.media_type)
-      // fileUrl
       setFormData({
         name: initialData?.company_name || '',
         budget: initialData?.budget?.toString() || '',
@@ -91,8 +102,25 @@ export default function CampaignForm({ isOpen, onClose, onSubmit, initialData, l
         targetUrl: initialData?.company_url || '',
       })
     }
+    else {
+      setFileUrl("")
+      setVideoPhotoUrl("")
+      setMediaType("image")
+      setSelectedCISCountries(["RU"])
+      setSelectedOtherCountries([])
+      setFormData({
+        name: '',
+        budget: '',
+        cpm: '5.00',
+        status: 'active',
+        startDate: '',
+        endDate: '',
+        adTitle: '',
+        adDescription: '',
+        targetUrl: '',
+      })
+    }
   }, [initialData])
-
 
   useEffect(() => {
     if (success) {
@@ -100,6 +128,8 @@ export default function CampaignForm({ isOpen, onClose, onSubmit, initialData, l
       setActiveTab('details')
       setPreviewUrl(null)
       setVideoPhotoUrl("")
+      setSelectedCISCountries(["RU"])
+      setSelectedOtherCountries([])
       setVideoImage(null)
       setFormData({
         name: initialData?.company_name || '',
@@ -268,8 +298,6 @@ export default function CampaignForm({ isOpen, onClose, onSubmit, initialData, l
     }
   };
 
-  console.log(formData.name, "formData.name")
-
   const renderTabContent = () => {
     switch (activeTab) {
       case 'details':
@@ -300,8 +328,8 @@ export default function CampaignForm({ isOpen, onClose, onSubmit, initialData, l
                     {t('campaign.budget.label')}
                   </label>
                   <div className="mt-1 relative rounded-md shadow-sm">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <DollarSign className="h-4 w-4 text-gray-400" />
+                    <div className="absolute inset-y-0 text-gray-400 left-0 pl-3 flex items-center pointer-events-none">
+                      {currencySymbol}
                     </div>
                     <input
                       type="number"
@@ -323,8 +351,9 @@ export default function CampaignForm({ isOpen, onClose, onSubmit, initialData, l
                     {t('campaign.cpm.label')}
                   </label>
                   <div className="mt-1 relative rounded-md shadow-sm">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <DollarSign className="h-4 w-4 text-gray-400" />
+                    <div className="absolute inset-y-0 left-0 pl-3 text-gray-400 flex items-center pointer-events-none">
+
+                      {currencySymbol}
                     </div>
                     <input
                       type="number"
@@ -813,8 +842,10 @@ export default function CampaignForm({ isOpen, onClose, onSubmit, initialData, l
                   : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
                   }`}
               >
-                <div className="flex items-center">
-                  <DollarSign className="w-4 h-4 mr-2" />
+                <div className="flex items-center gap-2 text-gray-400">
+                  <div>
+                    {currencySymbol}
+                  </div>
                   {t('campaign.details.title')}
                 </div>
               </button>
