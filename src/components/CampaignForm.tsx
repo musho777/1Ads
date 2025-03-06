@@ -667,7 +667,7 @@ export default function CampaignForm({ isOpen, onClose, onSubmit, initialData, l
                             }}
                           />
 
-                          // setVideoPhotoUrl
+
                           :
                           <img
                             src={videoPhoroUrl}

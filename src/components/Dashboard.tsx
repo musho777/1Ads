@@ -42,7 +42,7 @@ const CompetitiveStatus = ({ campaign, highestCpm }: {
   const recommendedCpm = Math.ceil(highestCpm * 1.1 * 100) / 100;
   const currencySymbol = language === 'ru' ? '₽' : '$';
   return (
-    <div className={`bg-white rounded-lg shadow-md p-6 mb-6 ${isCompetitive ? 'border-l-4 border-green-500' : 'border-l-4 border-yellow-500'
+    <div className={`bg-white rounded-lg shadow-md p-6 mb-6 ${isCompetitive ? 'border-l-4 border-green-500' : 'border-l-4 border-[#D9D9D9]'
       }`}>
       <div className="flex items-start justify-between">
         <div>
@@ -55,10 +55,12 @@ const CompetitiveStatus = ({ campaign, highestCpm }: {
               </span>
             </div>
           ) : (
-            <div className="flex items-center text-yellow-600 mb-2">
-              <TrendingDown className="w-5 h-5 mr-2" />
+            <div className="flex items-center text-[#D9D9D9] mb-2">
+
+              {/* <TrendingDown className="w-5 h-5 mr-2" /> */}
               <span className="font-medium">
-                {t('competitive.needsBoost', { name: campaign.company_name })}
+                Oплачена, находится на ручной модерации у администратора
+                {/* {t('competitive.needsBoost', { name: campaign.company_name })} */}
               </span>
             </div>
           )}
@@ -70,18 +72,18 @@ const CompetitiveStatus = ({ campaign, highestCpm }: {
               {t('competitive.highestCpm')}: <span className="font-semibold">{currencySymbol}{highestCpm}</span>
             </p>
             <p className="text-sm text-gray-600">
-              {t('competitive.status')}: <span className={`font-semibold ${isCompetitive ? 'text-green-600' : 'text-yellow-600'}`}>
-                {isCompetitive ? t('competitive.active') : t('competitive.paused')}
+              {t('competitive.status')}: <span className={`font-semibold ${isCompetitive ? 'text-green-600' : 'text-[#D9D9D9]'}`}>
+                На модерации
               </span>
             </p>
-            {!isCompetitive && (
+            {/* {!isCompetitive && (
               <div className="mt-4 p-4 bg-yellow-50 rounded-lg">
                 <p className="text-sm text-yellow-800">
                   <AlertTriangle className="w-4 h-4 inline mr-2" />
                   {t('competitive.recommendation', { amount: recommendedCpm })}
                 </p>
               </div>
-            )}
+            )} */}
           </div>
         </div>
       </div>
@@ -129,7 +131,7 @@ function Dashboard() {
   const [loading1, setLoading] = useState(false)
   const [pageCount, setPageCaunt] = useState(1)
   const [editLoading, setEditLoading] = useState(false)
-
+  const [loadingCampaigns, setLoadingCampaigns] = useState(false)
   const [success, setSuccess] = useState(false)
 
   const totalBudget = 10000;
@@ -145,7 +147,6 @@ function Dashboard() {
 
   const handleCreateCampaign = async (campaignData: Omit<Campaign, 'id' | 'impressions' | 'clicks' | 'CTR' | 'spent'>) => {
     setLoading(true)
-    console.log(campaignData)
     const formData = new FormData();
     formData.append("company_name", campaignData.name);
     formData.append("budget", JSON.stringify(campaignData.budget));
@@ -177,14 +178,11 @@ function Dashboard() {
           redirect: 'follow'
         });
       const data = await response.json()
-      console.log(data)
       if (!response.ok) {
         // const errorData = await response.json();
         setLoading(false)
         setSuccess(false)
-        console.log(data.message)
         if (data.message) {
-          console.log("aaaaaaaa")
           // campaign.CPM.error
           if (data.message === "минимальная сумма CPM 1000 рублей") {
             alert(t("campaign.CPM.error"))
@@ -231,8 +229,9 @@ function Dashboard() {
 
 
   };
-
+  console.log(user, 'user')
   const GetCompanys = async () => {
+    setLoadingCampaigns(true)
     const requestOptions = {
       method: "GET",
       headers: {
@@ -241,11 +240,9 @@ function Dashboard() {
       },
     };
 
-    let responseData: { message: string; status: boolean } = { message: "", status: false };
     try {
       const response = await fetch(`/api/getCompanies?page=${page}`, requestOptions);
       const result: any = await response.json();
-      responseData = { message: result.errors, status: result.status };
       if (!result.errors) {
         setCampaigns(result.data)
         setPageCaunt(result.page_count)
@@ -255,11 +252,10 @@ function Dashboard() {
       }
     }
     catch (error) {
-      responseData = { message: "Server Error", status: false };
     }
     finally {
+      setLoadingCampaigns(false)
     }
-    return responseData;
   };
 
   const handleEditCampaign = async (campaignData: Omit<Campaign, 'id' | 'impressions' | 'clicks' | 'CTR' | 'spent'>) => {
@@ -298,9 +294,7 @@ function Dashboard() {
         setIsFormOpen(false)
         let item = [...campaigns]
         let index = campaigns?.findIndex((elm) => elm.id == editingCampaign.id)
-        if (index) {
-          item[index] = data.data
-        }
+        item[index] = data.data
         setCampaigns(item)
       }
 
@@ -348,8 +342,6 @@ function Dashboard() {
     }
   }, [token, page])
 
-
-  // const highestCpm = Math.max(...campaigns?.map(c => c?.CPM));
   if (loading)
     return <div className="flex justify-center items-center h-screen">
       <ClipLoader
@@ -432,128 +424,152 @@ function Dashboard() {
 
               {/* Redesigned Campaigns Table */}
               <div className="divide-y divide-gray-200">
-                {campaigns?.map((campaign) => (
-                  <div
-                    key={campaign?.id}
-                    className="hover:bg-gray-50 cursor-pointer transition-colors"
-                    onClick={() => setSelectedCampaign(campaign)}
-                  >
-                    <div className="p-4 sm:px-6">
-                      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center">
-                        <div className="mb-2 sm:mb-0">
-                          <h3 className="text-base font-medium text-gray-900">{campaign?.company_name}</h3>
-                          <p className="text-sm text-gray-500 mt-1">
-                            {campaign?.start_date} - {campaign?.finish_date}
-                          </p>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${campaign?.status === 'active' ? 'bg-green-100 text-green-800' :
-                            campaign?.status === 'paused' ? 'bg-yellow-100 text-yellow-800' :
-                              'bg-gray-100 text-gray-800'
-                            }`}>
-                            {campaign?.status}
-                          </span>
-                          <div className="relative">
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                toggleActionMenu(campaign?.id);
-                              }}
-                              className="p-1 rounded-full hover:bg-gray-200 focus:outline-none"
-                            >
-                              <MoreVertical className="w-5 h-5 text-gray-500" />
-                            </button>
 
-                            {actionMenuOpen === campaign?.id && (
-                              <div className="absolute right-0 mt-1 w-36 bg-white rounded-md shadow-lg z-10 border border-gray-200">
-                                <div className="py-1">
-                                  <button
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      openEditForm(campaign);
-                                      setActionMenuOpen(null);
-                                    }}
-                                    className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
-                                  >
-                                    <Pencil className="w-4 h-4 mr-2 text-blue-600" />
-                                    {t('campaigns.actions.edit')}
-                                  </button>
-                                  <button
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      handleDeleteCampaign(campaign?.id);
-                                      setActionMenuOpen(null);
-                                    }}
-                                    className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
-                                  >
-                                    <Trash2 className="w-4 h-4 mr-2 text-red-600" />
-                                    {t('campaigns.actions.delete')}
-                                  </button>
-                                </div>
+                {loadingCampaigns ?
+                  <div className="flex justify-center items-center py-5">
+                    <ClipLoader
+                      color={"black"}
+                      loading={true}
+                      size={20}
+                      aria-label="Loading Spinner"
+                      data-testid="loader"
+                    />
+                  </div>
+                  :
+                  <div>
+                    {campaigns?.map((campaign) => (
+                      <div
+                        key={campaign?.id}
+                        className="hover:bg-gray-50 cursor-pointer transition-colors"
+                        onClick={() => setSelectedCampaign(campaign)}
+                      >
+                        <div className="p-4 sm:px-6">
+                          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center">
+                            <div className="mb-2 sm:mb-0">
+                              <h3 className="text-base font-medium text-gray-900">{campaign?.company_name}</h3>
+                              <p className="text-sm text-gray-500 mt-1">
+                                {campaign?.start_date} - {campaign?.finish_date}
+                              </p>
+                            </div>
+                            <div className="flex items-center space-x-2">
+                              <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${campaign?.status === 'active' ? 'bg-green-100 text-green-800' :
+                                campaign?.status === 'paused' ? 'bg-yellow-100 text-yellow-800' :
+                                  'bg-gray-100 text-gray-800'
+                                }`}>
+                                {campaign?.status}
+                              </span>
+                              <div className="relative">
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    toggleActionMenu(campaign?.id);
+                                  }}
+                                  className="p-1 rounded-full hover:bg-gray-200 focus:outline-none"
+                                >
+                                  <MoreVertical className="w-5 h-5 text-gray-500" />
+                                </button>
+
+                                {actionMenuOpen === campaign?.id && (
+                                  <div className="absolute right-0 mt-1 w-36 bg-white rounded-md shadow-lg z-10 border border-gray-200">
+                                    <div className="py-1">
+                                      <button
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          openEditForm(campaign);
+                                          setActionMenuOpen(null);
+                                        }}
+                                        className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
+                                      >
+                                        <Pencil className="w-4 h-4 mr-2 text-blue-600" />
+                                        {t('campaigns.actions.edit')}
+                                      </button>
+                                      <button
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          handleDeleteCampaign(campaign?.id);
+                                          setActionMenuOpen(null);
+                                        }}
+                                        className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
+                                      >
+                                        <Trash2 className="w-4 h-4 mr-2 text-red-600" />
+                                        {t('campaigns.actions.delete')}
+                                      </button>
+                                    </div>
+                                  </div>
+                                )}
                               </div>
-                            )}
+                            </div>
+                          </div>
+
+                          <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-4">
+                            <div>
+                              <p className="text-xs font-medium text-gray-500 uppercase">{t('campaigns.table.cpm')}</p>
+                              <p className="mt-1 text-sm font-medium text-gray-900">{currencySymbol}{campaign.CPM}</p>
+                            </div>
+                            <div>
+                              <p className="text-xs  font-medium text-gray-500 uppercase">{t('campaigns.table.impressions')}</p>
+                              {campaign?.get_company_statistic?.length > 0 &&
+                                <p className="mt-1 text-sm font-medium text-gray-900">{campaign?.get_company_statistic[0].Impressions}</p>
+                              }
+                            </div>
+                            <div>
+                              <p className="text-xs  font-medium text-gray-500 uppercase">{t('campaigns.table.clicks')}</p>
+                              {campaign?.get_company_statistic?.length > 0 &&
+                                <p className="mt-1  text-sm font-medium text-gray-900">{campaign?.get_company_statistic[0]?.Clicks}</p>
+                              }
+                            </div>
+                            <div>
+                              <p className="text-xs font-medium text-gray-500 uppercase">{t('campaigns.table.ctr')}</p>
+                              <p className="mt-1 text-sm font-medium text-gray-900">{campaign.CTR}%</p>
+                            </div>
+                          </div>
+                          {/* Progress bar for budget spent - Updated to show dollar amounts */}
+                          <div className="mt-4">
+                            <div className="flex justify-between items-center mb-1">
+                              <span className="text-xs font-medium text-gray-500">{t('campaigns.table.progress')}</span>
+                              {campaign?.get_company_budget?.length > 0 && <span className="text-xs text-gray-500">
+                                {currencySymbol}{campaign.get_company_budget[0].budget_balance}/{currencySymbol}{campaign?.get_company_budget[0].budget}
+                              </span>}
+                            </div>
+                            <div className="w-full bg-gray-200 rounded-full h-1.5">
+                              {campaign?.get_company_budget?.length > 0 && <div
+                                className="bg-sky-600 h-1.5 rounded-full"
+
+                                style={{
+                                  width: `
+                                  ${(
+                                      !campaign?.get_company_budget[0].budget_balance / (campaign?.get_company_budget[0].budget_balance ?? 1) ?
+                                        0 :
+                                        campaign?.get_company_budget[0].budget_balance / campaign?.get_company_budget[0].budget_balance ?? 1) * 100
+                                    }%`
+                                }}
+                              />}
+                            </div>
                           </div>
                         </div>
                       </div>
-
-                      <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-4">
-                        <div>
-                          <p className="text-xs font-medium text-gray-500 uppercase">{t('campaigns.table.cpm')}</p>
-                          <p className="mt-1 text-sm font-medium text-gray-900">{currencySymbol}{campaign.CPM}</p>
-                        </div>
-                        <div>
-                          <p className="text-xs  font-medium text-gray-500 uppercase">{t('campaigns.table.impressions')}</p>
-                          {campaign?.get_company_statistic?.length > 0 &&
-                            <p className="mt-1 text-sm font-medium text-gray-900">{campaign?.get_company_statistic[0].Impressions}</p>
-                          }
-                        </div>
-                        <div>
-                          <p className="text-xs  font-medium text-gray-500 uppercase">{t('campaigns.table.clicks')}</p>
-                          {campaign?.get_company_statistic?.length > 0 &&
-                            <p className="mt-1  text-sm font-medium text-gray-900">{campaign?.get_company_statistic[0]?.Clicks}</p>
-                          }
-                        </div>
-                        <div>
-                          <p className="text-xs font-medium text-gray-500 uppercase">{t('campaigns.table.ctr')}</p>
-                          <p className="mt-1 text-sm font-medium text-gray-900">{campaign.CTR}%</p>
-                        </div>
-                      </div>
-                      {/* Progress bar for budget spent - Updated to show dollar amounts */}
-                      <div className="mt-4">
-                        <div className="flex justify-between items-center mb-1">
-                          <span className="text-xs font-medium text-gray-500">{t('campaigns.table.progress')}</span>
-                          {campaign?.get_company_budget?.length > 0 && <span className="text-xs text-gray-500">
-                            {currencySymbol}{campaign.get_company_budget[0].budget_balance}/{currencySymbol}{campaign?.get_company_budget[0].budget}
-                          </span>}
-                        </div>
-                        <div className="w-full bg-gray-200 rounded-full h-1.5">
-                          {campaign?.get_company_budget?.length > 0 && <div
-                            className="bg-sky-600 h-1.5 rounded-full"
-                            style={{ width: `${(campaign?.get_company_budget[0].budget_balance / campaign?.get_company_budget[0].budget_balance ?? 1) * 100}%` }}
-                          />}
-                        </div>
-                      </div>
-                    </div>
+                    ))}
                   </div>
-                ))}
+                }
               </div>
             </div>
-
-            {pageCount > 1 && <ReactPaginate
-              breakLabel="..."
-              nextLabel=""
-              onPageChange={(e) => setPage(e.selected + 1)}
-              pageRangeDisplayed={5}
-              pageCount={10}
-              previousLabel=""
-              renderOnZeroPageCount={null}
-              containerClassName="flex justify-center items-center gap-2 p-4 text-[14px]"
-              activeClassName="bg-[rgb(2,132,199)] text-white rounded-full w-5 h-5 flex items-center justify-center "
-              disabledClassName="opacity-50 cursor-not-allowed"
-              previousClassName="font-bold "
-              nextClassName="font-bold"
-              breakClassName="px-3 py-2"
-            />}
+            <div className='height-40'>
+              {pageCount > 1 && <ReactPaginate
+                breakLabel="..."
+                nextLabel=""
+                onPageChange={(e) => setPage(e.selected + 1)}
+                pageRangeDisplayed={5}
+                pageCount={pageCount}
+                previousLabel=""
+                renderOnZeroPageCount={null}
+                containerClassName="flex justify-center items-center gap-2 p-4 text-[14px]"
+                activeClassName="bg-[rgb(2,132,199)] text-white rounded-full w-5 h-5 flex items-center justify-center "
+                disabledClassName="opacity-50 cursor-not-allowed"
+                previousClassName="font-bold "
+                nextClassName="font-bold"
+                breakClassName="px-3 py-2"
+              />}
+            </div>
 
           </div>
 

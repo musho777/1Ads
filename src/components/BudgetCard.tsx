@@ -25,9 +25,9 @@ function PaymentModal({ isOpen, onClose, amount, userEmail }: PaymentModalProps)
   const [uploading, setUploading] = useState(false);
   const [uploadComplete, setUploadComplete] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const { t, language } = useLanguage();
+  const { language } = useLanguage();
   const currencySymbol = language === 'ru' ? '₽' : '$';
-  const { token } = useAuth();
+  const { token, ChaneUserData } = useAuth();
 
 
   if (!isOpen) return null;
@@ -67,7 +67,7 @@ function PaymentModal({ isOpen, onClose, amount, userEmail }: PaymentModalProps)
             body: formData,
             redirect: 'follow'
           });
-
+        const data = await response.json();
         if (!response.ok) {
           const errorData = await response.json();
           alert(errorData?.message)
@@ -76,6 +76,7 @@ function PaymentModal({ isOpen, onClose, amount, userEmail }: PaymentModalProps)
         }
         setUploading(false);
         setUploadComplete(true);
+        ChaneUserData("balance", amount)
       } catch (error) {
       }
     }
@@ -89,7 +90,12 @@ function PaymentModal({ isOpen, onClose, amount, userEmail }: PaymentModalProps)
             {showUpload ? 'Загрузить квитанцию' : 'Информация об оплате'}
           </h3>
           {!uploading && (
-            <button onClick={onClose} className="text-gray-400 hover:text-gray-500">
+            <button onClick={() => {
+              setUploading(false)
+              setUploadComplete(false)
+              setShowUpload(false)
+              onClose()
+            }} className="text-gray-400 hover:text-gray-500">
               <X className="w-5 h-5" />
             </button>
           )}
@@ -218,14 +224,13 @@ function PaymentModal({ isOpen, onClose, amount, userEmail }: PaymentModalProps)
   );
 }
 
-export default function BudgetCard({ totalBudget, remainingBudget, userEmail = "user@example.com" }: BudgetCardProps) {
+export default function BudgetCard({ totalBudget, userEmail = "user@example.com" }: BudgetCardProps) {
   const [showAddFunds, setShowAddFunds] = useState(false);
   const [amount, setAmount] = useState('');
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const { t, language } = useLanguage();
-  const [getAllbugate, setGetAllBugate] = useState({})
   const currencySymbol = language === 'ru' ? '₽' : '$';
-  const { token, user } = useAuth();
+  const { user } = useAuth();
 
   const handleAddFunds = () => {
     const numAmount = parseFloat(amount);
@@ -240,7 +245,12 @@ export default function BudgetCard({ totalBudget, remainingBudget, userEmail = "
   useEffect(() => {
     if (user) {
       const percentage = ((user?.data?.get_budget[0].budget - user?.data?.get_budget[0]?.budget_balance) / totalBudget) * 100;
-      setSpentPercentage(percentage)
+      if (totalBudget == 0) {
+        setSpentPercentage(100)
+      }
+      else {
+        setSpentPercentage(percentage)
+      }
     }
   }, [user])
 
@@ -274,7 +284,8 @@ export default function BudgetCard({ totalBudget, remainingBudget, userEmail = "
           <div className="w-full bg-gray-200 rounded-full h-2">
             <div
               className="bg-sky-600 h-2 rounded-full transition-all duration-300"
-              style={{ width: `${100 - spentPercentage}%` }}
+              // style={{ width: `${100 - (spentPercentage ?? 40)}%` }}
+              style={{ width: `${100 - (spentPercentage ?? 0)}%` }}
             />
           </div>
         </div>

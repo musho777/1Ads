@@ -10,7 +10,7 @@ interface AuthFormProps {
 }
 
 export default function SettingsModal({ setSettings }: AuthFormProps) {
-  const { token, user } = useAuth();
+  const { token, user, ChaneUserData } = useAuth();
   const { t } = useLanguage();
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
@@ -41,25 +41,25 @@ export default function SettingsModal({ setSettings }: AuthFormProps) {
         setLoading(false)
         return
       }
-      console.log("dasfkd")
       setSuccess(true)
+      ChaneUserData("userSettings", { notifcation, autoNotifcation })
       setLoading(false)
     } catch (error) {
       setSuccess(false)
       setLoading(false)
-      console.log(error)
     }
   }
 
 
   useEffect(() => {
     if (user) {
+      console.log(user?.data.get_profile_setting[0].notify_by_email)
       setNotifcation(user?.data.get_profile_setting[0].notify_by_email)
       setAutoNotifcation(user?.data.get_profile_setting[0].automatically_increase_CPM)
     }
   }, [user])
 
-  console.log(success)
+
   return (
     <>
       <div className="w-full max-w-md mx-auto bg-white rounded-2xl shadow-xl overflow-hidden border border-sky-100">

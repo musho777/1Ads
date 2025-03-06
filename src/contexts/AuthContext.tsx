@@ -7,7 +7,7 @@ interface User {
   username: string;
   email: string;
   data: any,
-  allTimeStatistic: any
+  allTimeStatistic: any,
   // Add other properties depending on the user object structure
 }
 
@@ -30,6 +30,7 @@ interface AuthContextType {
   logout: () => void;
   token: string;
   successEdit: boolean,
+  ChaneUserData: any,
 }
 
 // Create the AuthContext with the type
@@ -125,6 +126,28 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     return responseData;
   };
 
+  const ChaneUserData = (key: any, value: any) => {
+    let item = { ...user }
+    if (key == "balance") {
+      let budget_balance = +item.data.get_budget[0].budget_balance
+      let budget = +item.data.get_budget[0].budget
+      budget_balance += +value
+      budget += +value
+      item.data.get_budget[0].budget_balance = budget_balance
+      item.data.get_budget[0].budget = budget
+
+    }
+    else {
+      console.log(value)
+      item.data.get_profile_setting[0].notify_by_email = value.notifcation
+      item.data.get_profile_setting[0].automatically_increase_CPM = value.autoNotifcation
+      console.log(item.data.get_profile_setting[0].notify_by_email, item.data.get_profile_setting[0].automatically_increase_CPM)
+    }
+    setUser(item)
+    // console.log(user)
+    // console.log("das")
+  }
+
 
   const register = async (data: any) => {
     setLoading(true)
@@ -171,7 +194,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }, [isAuthenticated]);
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, user, loading, login, logout, token, register, editAccaunt, loadingEdit }}>
+    <AuthContext.Provider value={{ isAuthenticated, user, loading, login, logout, token, register, editAccaunt, loadingEdit, ChaneUserData }}>
       {children}
     </AuthContext.Provider>
   );
