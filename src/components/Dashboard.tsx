@@ -91,7 +91,6 @@ const CompetitiveStatus = ({ campaign, highestCpm }: {
 
 const AdPreview = ({ campaign }: { campaign: Campaign }) => {
   const { t } = useLanguage();
-  console.log(campaign, 'campaign')
   return (
     <div className="bg-white rounded-lg shadow p-4 max-w-sm">
       <div className="relative w-full pb-[50%] mb-4">
@@ -129,6 +128,7 @@ function Dashboard() {
   const [page, setPage] = useState(1)
   const [loading1, setLoading] = useState(false)
   const [pageCount, setPageCaunt] = useState(1)
+  const [editLoading, setEditLoading] = useState(false)
 
   const [success, setSuccess] = useState(false)
 
@@ -145,6 +145,7 @@ function Dashboard() {
 
   const handleCreateCampaign = async (campaignData: Omit<Campaign, 'id' | 'impressions' | 'clicks' | 'CTR' | 'spent'>) => {
     setLoading(true)
+    console.log(campaignData)
     const formData = new FormData();
     formData.append("company_name", campaignData.name);
     formData.append("budget", JSON.stringify(campaignData.budget));
@@ -160,7 +161,7 @@ function Dashboard() {
 
     if (campaignData.adContent.imageUrl) {
       formData.append("file", campaignData.adContent.imageUrl);
-      formData.append("videoImage", campaignData.adContent.imageUrl);
+      formData.append("videoImage", campaignData.adContent.thumbnailUrl);
     }
     if (campaignData.adContent.thumbnailUrl) {
     }
@@ -215,11 +216,12 @@ function Dashboard() {
         "user_id": data.data.user_id,
         "videoImage": data.data.videoImage
       }
-      setCampaigns([...campaigns, newData]);
+      // setCampaigns([...campaigns, newData]);
       setEditingCampaign(undefined);
       setIsFormOpen(false);
       setSuccess(true)
       setLoading(false)
+      GetCompanys()
     } catch (error) {
       setLoading(false)
       setSuccess(false)
@@ -260,16 +262,10 @@ function Dashboard() {
     return responseData;
   };
 
-  const handleEditCampaign = (campaignData: Omit<Campaign, 'id' | 'impressions' | 'clicks' | 'CTR' | 'spent'>) => {
+  const handleEditCampaign = async (campaignData: Omit<Campaign, 'id' | 'impressions' | 'clicks' | 'CTR' | 'spent'>) => {
     if (!editingCampaign) return;
 
-    const updatedCampaigns = campaigns?.map(campaign =>
-      campaign.id === editingCampaign.id
-        ? { ...campaign, ...campaignData }
-        : campaign
-    );
-
-    console.log(editingCampaign.id)
+    setEditLoading(true)
     const requestOptions = {
       method: "POST",
       headers: {
@@ -277,34 +273,41 @@ function Dashboard() {
         "Authorization": `Bearer ${token}`,
       },
       body: JSON.stringify({
-        "company_name": campaignData.name,
-        "budget": 1000,
-        "CPM": 1000,
-        "company_id": editingCampaign.id,
-        "start_date": campaignData.startDate,
-        "finish_date": campaignData.endDate,
-        "status": campaignData.status,
-        "coutries": campaignData.targetCountries,
-      })
+        company_name: campaignData.name,
+        budget: campaignData.budget,
+        CPM: campaignData.cpm,
+        comapny_id: editingCampaign.id,
+        start_date: campaignData.startDate,
+        finish_date: campaignData.endDate,
+        status: campaignData.status,
+        coutries: campaignData.targetCountries,
+      }),
     };
-
-    // let responseData: { message: string; status: boolean } = { message: "", status: false };
     try {
-      const response = fetch(`/api/editCompany`, requestOptions);
-      const result: any = response.json();
-      console.log(result)
-      // responseData = { message: result.errors, status: result.status };
-      // if (!result.errors) {
-      //   setCampaigns(result.data)
-      //   console.log(result.data)
-      // }
+      const response = await fetch(`/api/editCompany`, requestOptions);
+      const data = await response.json();
+      if (!response.ok) {
+        setEditLoading(false)
+        setIsFormOpen(false)
+        if (data.message == "минимальная сумма CPM 1000 рублей") {
+          alert(t("campaign.CPM.error"));
+        }
+      }
+      else {
+        // setEditLoading(false)
+        setIsFormOpen(false)
+        let item = [...campaigns]
+        let index = campaigns?.findIndex((elm) => elm.id == editingCampaign.id)
+        if (index) {
+          item[index] = data.data
+        }
+        setCampaigns(item)
+      }
+
     }
     catch (error) {
-      console.log(error)
-      // responseData = { message: "Server Error", status: false };
+      setEditLoading(false)
     }
-
-    setCampaigns(updatedCampaigns);
     setEditingCampaign(undefined);
   };
 
@@ -570,7 +573,7 @@ function Dashboard() {
       </div>
 
       <CampaignForm
-        loading={loading1}
+        loading={loading1 || editLoading}
         isOpen={isFormOpen}
         success={success}
         onClose={() => {

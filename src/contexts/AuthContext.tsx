@@ -29,6 +29,7 @@ interface AuthContextType {
   editAccaunt: (data: any) => Promise<{ message: any; status: any }>;
   logout: () => void;
   token: string;
+  successEdit: boolean,
 }
 
 // Create the AuthContext with the type
@@ -108,8 +109,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       const response = await fetch(`/api/editProfileInfo`, requestOptions);
       const result: any = await response.json();
+      let item = { ...user }
+      item.data.username = result.data.username
+      setUser(item)
       responseData = { message: result.errors, status: result.status };
-      getUser()
+      // getUser()
       if (!result.errors) {
         return { message: "success", status: true }
       }

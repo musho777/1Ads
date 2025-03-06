@@ -124,6 +124,7 @@ const translations = {
     'settings.language': 'Change Language',
     'settings.english': 'English',
     'settings.russian': 'Русский',
+    'settings.success': "Настройки успешно сохранены",
 
     // Profile Menu
     'profile.settings': 'Settings',
@@ -321,6 +322,7 @@ const translations = {
     'settings.language': 'Изменить язык',
     'settings.english': 'English',
     'settings.russian': 'Русский',
+    'settings.success': "Настройки успешно сохранены",
 
     // Profile Menu
     'profile.settings': 'Настройки',

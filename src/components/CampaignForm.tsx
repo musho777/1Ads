@@ -73,6 +73,7 @@ export default function CampaignForm({ isOpen, onClose, onSubmit, initialData, l
   const isEditing = !!initialData;
 
   useEffect(() => {
+    console.log(initialData?.CPM, 'initialData?.cpm')
     if (initialData) {
       setFileUrl(initialData?.file)
       setVideoPhotoUrl(initialData.videoImage)
@@ -81,7 +82,7 @@ export default function CampaignForm({ isOpen, onClose, onSubmit, initialData, l
       setFormData({
         name: initialData?.company_name || '',
         budget: initialData?.budget?.toString() || '',
-        cpm: initialData?.cpm?.toString() || '5.00',
+        cpm: initialData?.CPM || '5.00',
         status: initialData?.status || 'active',
         startDate: initialData?.start_date || '',
         endDate: initialData?.finish_date || '',
@@ -103,7 +104,7 @@ export default function CampaignForm({ isOpen, onClose, onSubmit, initialData, l
       setFormData({
         name: initialData?.company_name || '',
         budget: initialData?.budget?.toString() || '',
-        cpm: initialData?.cpm?.toString() || '5.00',
+        cpm: initialData?.CPM?.toString() || '5.00',
         status: initialData?.status || 'active',
         startDate: initialData?.start_date || '',
         endDate: initialData?.endDate || '',
