@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { X, ChevronDown, Upload, Image, Video, Globe, Calendar, DollarSign, Target, Lock } from 'lucide-react';
+import { X, ChevronDown, Upload, Image, Video, Globe, Calendar, Target, Lock } from 'lucide-react';
 import { Campaign } from '../types';
 import { useLanguage } from '../contexts/LanguageContext';
 import { ClipLoader } from 'react-spinners';
-import e from 'express';
 
 
 // List of countries with their names in English and Russian
@@ -53,7 +52,7 @@ export default function CampaignForm({ isOpen, onClose, onSubmit, initialData, l
   const [formData, setFormData] = useState({
     name: initialData?.company_name || '',
     budget: initialData?.budget?.toString() || '',
-    cpm: initialData?.cpm?.toString() || '5.00',
+    cpm: initialData?.cpm?.toString() || '500',
     status: initialData?.status || 'active',
     startDate: initialData?.start_date || '',
     endDate: initialData?.finish_date || '',
@@ -93,7 +92,7 @@ export default function CampaignForm({ isOpen, onClose, onSubmit, initialData, l
       setFormData({
         name: initialData?.company_name || '',
         budget: initialData?.budget?.toString() || '',
-        cpm: initialData?.CPM || '5.00',
+        cpm: initialData?.CPM || '500',
         status: initialData?.status || 'active',
         startDate: initialData?.start_date || '',
         endDate: initialData?.finish_date || '',
@@ -111,7 +110,7 @@ export default function CampaignForm({ isOpen, onClose, onSubmit, initialData, l
       setFormData({
         name: '',
         budget: '',
-        cpm: '5.00',
+        cpm: '500',
         status: 'active',
         startDate: '',
         endDate: '',
@@ -134,7 +133,7 @@ export default function CampaignForm({ isOpen, onClose, onSubmit, initialData, l
       setFormData({
         name: initialData?.company_name || '',
         budget: initialData?.budget?.toString() || '',
-        cpm: initialData?.CPM?.toString() || '5.00',
+        cpm: initialData?.CPM?.toString() || '500',
         status: initialData?.status || 'active',
         startDate: initialData?.start_date || '',
         endDate: initialData?.endDate || '',
@@ -341,7 +340,7 @@ export default function CampaignForm({ isOpen, onClose, onSubmit, initialData, l
                       onChange={handleInputChange}
                       required
                       className="block w-full rounded-md border-gray-300 pl-9 pr-12 focus:border-sky-500 focus:ring-sky-500 sm:text-sm h-10 border shadow-sm"
-                      placeholder="1000"
+                      placeholder="500"
                     />
                   </div>
                 </div>
@@ -365,7 +364,7 @@ export default function CampaignForm({ isOpen, onClose, onSubmit, initialData, l
                       onChange={handleInputChange}
                       required
                       className="block w-full rounded- md border-gray-300 pl-9 pr-12 focus:border-sky-500 focus:ring-sky-500 sm:text-sm h-10 border shadow-sm"
-                      placeholder="5.00"
+                      placeholder="500"
                     />
                   </div>
                   <p className="mt-1 text-xs text-gray-500">{t('campaign.cpm.description')}</p>
@@ -823,6 +822,34 @@ export default function CampaignForm({ isOpen, onClose, onSubmit, initialData, l
             <h2 className="text-xl font-semibold text-gray-900">
               {initialData ? t('campaign.edit.title') : t('campaign.create.title')}
             </h2>
+            <div className="flex space-x-3">
+              <button
+                type="button"
+                onClick={onClose}
+                className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500"
+              >
+                {t('campaign.button.cancel')}
+              </button>
+              <button
+                type="submit"
+                disabled={!isFormValid() || loading}
+                className={`px-4 py-2 text-sm font-medium text-white rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500 ${isFormValid()
+                  ? 'bg-sky-600 hover:bg-sky-700'
+                  : 'bg-sky-400 cursor-not-allowed'
+                  }`}
+              >
+                {loading ?
+                  <ClipLoader
+                    color={"white"}
+                    loading={loading}
+                    size={20}
+                    aria-label="Loading Spinner"
+                    data-testid="loader"
+                  /> :
+                  initialData ? t('campaign.button.save') : t('campaign.button.create')
+                }
+              </button>
+            </div>
             <button
               onClick={onClose}
               className="text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-sky-500 rounded-full p-1"
@@ -891,7 +918,7 @@ export default function CampaignForm({ isOpen, onClose, onSubmit, initialData, l
                   {selectedCISCountries.length + selectedOtherCountries.length} {t('campaign.countries.label')}
                 </span>
               </div>
-              <div className="flex space-x-3">
+              {/* <div className="flex space-x-3">
                 <button
                   type="button"
                   onClick={onClose}
@@ -918,7 +945,7 @@ export default function CampaignForm({ isOpen, onClose, onSubmit, initialData, l
                     initialData ? t('campaign.button.save') : t('campaign.button.create')
                   }
                 </button>
-              </div>
+              </div> */}
             </div>
           </form>
         </div>

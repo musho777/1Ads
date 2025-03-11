@@ -8,6 +8,7 @@ import PrivacyPolicy from '../../components/PrivacyPolicy';
 import TermsOfUse from '../../components/TermsOfUse';
 import Login from '../../components/auth/login';
 import Register from '../../components/auth/register';
+import Cookie from '../../components/cookie';
 
 // Initial campaigns data for demo purposes
 const initialCampaigns: Campaign[] = [
@@ -175,6 +176,7 @@ function Home() {
   const [currentTime, setCurrentTime] = useState(new Date());
   const [showPrivacyPolicy, setShowPrivacyPolicy] = useState(false);
   const [showTerms, setShowTerms] = useState(false)
+  const [showCookie, setShowCookie] = useState(false)
 
   const [campaigns, setCampaigns] = useState<Campaign[]>(initialCampaigns);
   const { t } = useLanguage();
@@ -204,8 +206,8 @@ function Home() {
     setIsAdmin(false);
   };
 
-  if (isAuthenticated) {
-    return isAdmin && (
+  if (true) {
+    return true && (
       <AdminDashboard
         campaigns={campaigns}
         onUpdateCampaign={handleUpdateCampaign}
@@ -342,7 +344,7 @@ function Home() {
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="text-gray-600 hover:text-gray-900 text-sm">
+                  <a href="#" onClick={() => setShowCookie(true)} className="text-gray-600 hover:text-gray-900 text-sm">
                     {t('footer.legal.cookies')}
                   </a>
                 </li>
@@ -383,6 +385,9 @@ function Home() {
       {showTerms && (
         <TermsOfUse onClose={() => setShowTerms(false)} />
       )}
+      {showCookie &&
+        <Cookie onClose={() => setShowCookie(false)} />
+      }
 
       {/* Auth Modal */}
       {showAuthModal && (
