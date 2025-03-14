@@ -814,51 +814,51 @@ export default function CampaignForm({ isOpen, onClose, onSubmit, initialData, l
     }
   };
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-xl shadow-xl w-full max-w-4xl max-h-[90vh] overflow-scroll">
-        <div className="flex flex-col h-full">
-          {/* Header */}
-          <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-white sticky top-0 z-10">
-            <h2 className="text-xl font-semibold text-gray-900">
-              {initialData ? t('campaign.edit.title') : t('campaign.create.title')}
-            </h2>
-            <div className="flex space-x-3">
+    <form onSubmit={handleSubmit} className="flex flex-col flex-1 overflow-hidden">
+      <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+        <div className="bg-white rounded-xl shadow-xl w-full max-w-4xl max-h-[90vh] overflow-scroll">
+          <div className="flex flex-col h-full">
+            {/* Header */}
+            <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-white sticky top-0 z-10">
+              <h2 className="text-xl font-semibold text-gray-900">
+                {initialData ? t('campaign.edit.title') : t('campaign.create.title')}
+              </h2>
+              <div className="flex space-x-3">
+                <button
+                  type="button"
+                  onClick={onClose}
+                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500"
+                >
+                  {t('campaign.button.cancel')}
+                </button>
+                <button
+                  type="submit"
+                  disabled={!isFormValid() || loading}
+                  className={`px-4 py-2 text-sm font-medium text-white rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500 ${isFormValid()
+                    ? 'bg-sky-600 hover:bg-sky-700'
+                    : 'bg-sky-400 cursor-not-allowed'
+                    }`}
+                >
+                  {loading ?
+                    <ClipLoader
+                      color={"white"}
+                      loading={loading}
+                      size={20}
+                      aria-label="Loading Spinner"
+                      data-testid="loader"
+                    /> :
+                    initialData ? t('campaign.button.save') : t('campaign.button.create')
+                  }
+                </button>
+              </div>
               <button
-                type="button"
                 onClick={onClose}
-                className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500"
+                className="text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-sky-500 rounded-full p-1"
               >
-                {t('campaign.button.cancel')}
-              </button>
-              <button
-                type="submit"
-                disabled={!isFormValid() || loading}
-                className={`px-4 py-2 text-sm font-medium text-white rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500 ${isFormValid()
-                  ? 'bg-sky-600 hover:bg-sky-700'
-                  : 'bg-sky-400 cursor-not-allowed'
-                  }`}
-              >
-                {loading ?
-                  <ClipLoader
-                    color={"white"}
-                    loading={loading}
-                    size={20}
-                    aria-label="Loading Spinner"
-                    data-testid="loader"
-                  /> :
-                  initialData ? t('campaign.button.save') : t('campaign.button.create')
-                }
+                <X className="w-5 h-5" />
               </button>
             </div>
-            <button
-              onClick={onClose}
-              className="text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-sky-500 rounded-full p-1"
-            >
-              <X className="w-5 h-5" />
-            </button>
-          </div>
 
-          <form onSubmit={handleSubmit} className="flex flex-col flex-1 overflow-hidden">
             {/* Tabs */}
             <div className="px-6 py-2 bg-white border-b border-gray-200 flex space-x-1">
               <button
@@ -947,9 +947,9 @@ export default function CampaignForm({ isOpen, onClose, onSubmit, initialData, l
                 </button>
               </div> */}
             </div>
-          </form>
+          </div>
         </div>
       </div>
-    </div>
+    </form>
   );
 }

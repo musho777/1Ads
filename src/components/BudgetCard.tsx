@@ -244,12 +244,15 @@ export default function BudgetCard({ totalBudget, userEmail = "user@example.com"
   useEffect(() => {
     if (user) {
       const percentage = ((user?.data?.get_budget[0].budget - user?.data?.get_budget[0]?.budget_balance) / totalBudget) * 100;
-      if (user?.data?.get_budget[0].budget == 0 && user?.data?.get_budget[0]?.budget_balance) {
+      if (user?.data?.get_budget[0].budget == 0 && user?.data?.get_budget[0]?.budget_balance == 0) {
         setSpentPercentage(100)
       }
       else {
         setSpentPercentage(percentage)
       }
+    }
+    else {
+      setSpentPercentage(100)
     }
   }, [user])
 

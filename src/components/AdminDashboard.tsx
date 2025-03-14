@@ -1,8 +1,11 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { AlertTriangle, CheckCircle, XCircle, DollarSign, TrendingUp, X, FileText, ExternalLink, LogOut } from 'lucide-react';
 import { Campaign, BudgetIncrease } from '../types';
 import { useLanguage } from '../contexts/LanguageContext';
 import LanguageSwitch from './LanguageSwitch';
+import axios from 'axios';
+import { useAuth } from '../contexts/AuthContext';
+
 
 interface PaymentDocumentsModalProps {
   isOpen: boolean;
@@ -26,8 +29,6 @@ interface RejectionModalProps {
 
 function RejectionModal({ isOpen, onClose, onConfirm }: RejectionModalProps) {
   const [reason, setReason] = useState('');
-  const { t } = useLanguage();
-
   if (!isOpen) return null;
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -92,8 +93,6 @@ function RejectionModal({ isOpen, onClose, onConfirm }: RejectionModalProps) {
 }
 
 function BudgetIncreaseModal({ isOpen, onClose, onVerify, budgetIncrease }: BudgetIncreaseModalProps) {
-  const { t } = useLanguage();
-
   if (!isOpen) return null;
 
   return (
@@ -116,8 +115,11 @@ function BudgetIncreaseModal({ isOpen, onClose, onVerify, budgetIncrease }: Budg
             <div className="flex justify-between items-center">
               <div>
                 <h4 className="text-sm font-medium text-blue-900">Сумма пополнения</h4>
-                <p className="text-2xl font-bold text-blue-900">${budgetIncrease.amount.toLocaleString()}</p>
+                <p className="text-2xl font-bold text-blue-900">₽{budgetIncrease.amount.toLocaleString()}</p>
               </div>
+              {/* <div  className="w-8 h-8 text-blue-500" >
+              ₽
+              </div> */}
               <DollarSign className="w-8 h-8 text-blue-500" />
             </div>
           </div>
@@ -219,8 +221,9 @@ function PaymentDocumentsModal({ isOpen, onClose, onVerify, campaign }: PaymentD
             <div className="flex justify-between items-center">
               <div>
                 <h4 className="text-sm font-medium text-blue-900">Campaign Budget</h4>
-                <p className="text-2xl font-bold text-blue-900">${campaign.budget.toLocaleString()}</p>
+                <p className="text-2xl font-bold text-blue-900">₽{campaign.budget.toLocaleString()}</p>
               </div>
+              
               <DollarSign className="w-8 h-8 text-blue-500" />
             </div>
           </div>
@@ -237,7 +240,7 @@ function PaymentDocumentsModal({ isOpen, onClose, onVerify, campaign }: PaymentD
                       Payment {doc.type.charAt(0).toUpperCase() + doc.type.slice(1)}
                     </h4>
                     <p className="text-sm text-gray-500">
-                      {new Date(doc.date).toLocaleDateString()} • ${doc.amount.toLocaleString()}
+                      {new Date(doc.date).toLocaleDateString()} • ₽{doc.amount.toLocaleString()}
                     </p>
                   </div>
                 </div>
@@ -307,7 +310,8 @@ export default function AdminDashboard({ campaigns, onUpdateCampaign, onSignOut 
   const [selectedBudgetIncrease, setSelectedBudgetIncrease] = useState<BudgetIncrease | null>(null);
   const [campaignToReject, setCampaignToReject] = useState<Campaign | null>(null);
   const { t } = useLanguage();
-
+  const { user, logout } = useAuth();
+  const [companyStatistic, setCompanyStatistic] = useState({})
   const pendingModeration = campaigns.filter(c => c.moderationStatus === 'pending');
   const pendingBudgetIncreases = mockBudgetIncreases.filter(bi => bi.status === 'pending');
   const sortedByCPM = [...campaigns].sort((a, b) => b.cpm - a.cpm);
@@ -368,8 +372,9 @@ export default function AdminDashboard({ campaigns, onUpdateCampaign, onSignOut 
         <div key={budgetIncrease.id} className="bg-white rounded-lg shadow p-6 border-l-4 border-blue-500">
           <div className="flex items-start justify-between">
             <div className="space-y-2">
-              <div className="flex items-center space-x-2">
-                <DollarSign className="w-5 h-5 text-blue-500" />
+              <div className="flex items-center space-x-1">
+                <p className="w-5 h-5 text-blue-500" >₽</p>
+                {/* <DollarSign className="w-5 h-5 text-blue-500" /> */}
                 <h4 className="text-lg font-medium text-gray-900">
                   Запрос на пополнение бюджета
                 </h4>
@@ -378,7 +383,7 @@ export default function AdminDashboard({ campaigns, onUpdateCampaign, onSignOut 
                 Пользователь: {budgetIncrease.userEmail}
               </p>
               <p className="text-sm text-gray-500">
-                Сумма: ${budgetIncrease.amount.toLocaleString()}
+                Сумма: ₽{budgetIncrease.amount.toLocaleString()}
               </p>
               <p className="text-sm text-gray-500">
                 Дата запроса: {new Date(budgetIncrease.requestDate).toLocaleDateString()}
@@ -388,7 +393,8 @@ export default function AdminDashboard({ campaigns, onUpdateCampaign, onSignOut 
               onClick={() => handleVerifyBudgetIncrease(budgetIncrease)}
               className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
             >
-              <DollarSign className="w-4 h-4 mr-1" />
+              <p  className="w-4 h-4 mr-1" >₽</p>
+              {/* <DollarSign className="w-4 h-4 mr-1" /> */}
               Проверить оплату
             </button>
           </div>
@@ -414,10 +420,10 @@ export default function AdminDashboard({ campaigns, onUpdateCampaign, onSignOut 
                 <div className="space-y-1">
                   <h4 className="text-lg font-medium text-gray-900">{campaign.name}</h4>
                   <p className="text-sm text-gray-500">
-                    Бюджет: ${campaign.budget.toLocaleString()}
+                    Бюджет: ₽{campaign.budget.toLocaleString()}
                   </p>
                   <p className="text-sm text-gray-500">
-                    CPM: ${campaign.cpm.toFixed(2)}
+                    CPM: ₽{campaign.cpm.toFixed(2)}
                   </p>
                   <div className="mt-2">
                     <h5 className="text-sm font-medium text-gray-900">{campaign.adContent.title}</h5>
@@ -462,22 +468,22 @@ export default function AdminDashboard({ campaigns, onUpdateCampaign, onSignOut 
             <div key={campaign.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
               <div className="flex items-center space-x-4">
                 <div className={`w-8 h-8 flex items-center justify-center rounded-full ${index === 0 ? 'bg-yellow-100 text-yellow-800' :
-                    index === 1 ? 'bg-gray-100 text-gray-800' :
-                      index === 2 ? 'bg-orange-100 text-orange-800' :
-                        'bg-blue-100 text-blue-800'
+                  index === 1 ? 'bg-gray-100 text-gray-800' :
+                    index === 2 ? 'bg-orange-100 text-orange-800' :
+                      'bg-blue-100 text-blue-800'
                   }`}>
                   {index + 1}
                 </div>
                 <div>
                   <h4 className="font-medium text-gray-900">{campaign.name}</h4>
                   <p className="text-sm text-gray-500">
-                    {t('admin.competitive.budget')}: ${campaign.budget.toLocaleString()} | {t('admin.competitive.spent')}: ${campaign.spent.toLocaleString()}
+                    {t('admin.competitive.budget')}: ₽{campaign.budget.toLocaleString()} | {t('admin.competitive.spent')}: ₽{campaign.spent.toLocaleString()}
                   </p>
                 </div>
               </div>
               <div className="flex items-center space-x-4">
                 <div className="text-right">
-                  <div className="text-lg font-semibold text-gray-900">${campaign.cpm.toFixed(2)}</div>
+                  <div className="text-lg font-semibold text-gray-900">₽{campaign.cpm.toFixed(2)}</div>
                   <div className="text-sm text-gray-500">CPM</div>
                 </div>
                 {index === 3 && (
@@ -487,8 +493,8 @@ export default function AdminDashboard({ campaigns, onUpdateCampaign, onSignOut 
                       status: campaign.status === 'active' ? 'paused' : 'active'
                     })}
                     className={`px-3 py-1 rounded-full text-sm font-medium ${campaign.status === 'active'
-                        ? 'bg-green-100 text-green-800'
-                        : 'bg-yellow-100 text-yellow-800'
+                      ? 'bg-green-100 text-green-800'
+                      : 'bg-yellow-100 text-yellow-800'
                       }`}
                   >
                     {campaign.status === 'active' ? t('admin.competitive.pause') : t('admin.competitive.activate')}
@@ -507,12 +513,12 @@ export default function AdminDashboard({ campaigns, onUpdateCampaign, onSignOut 
             <div key={campaign.id} className="flex items-center justify-between p-4 border-b last:border-0">
               <div>
                 <h4 className="font-medium text-gray-900">{campaign.name}</h4>
-                <p className="text-sm text-gray-500">CPM: ${campaign.cpm.toFixed(2)}</p>
+                <p className="text-sm text-gray-500">CPM: ₽{campaign.cpm.toFixed(2)}</p>
               </div>
               <div className="flex items-center space-x-2">
                 <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${campaign.status === 'active' ? 'bg-green-100 text-green-800' :
-                    campaign.status === 'paused' ? 'bg-yellow-100 text-yellow-800' :
-                      'bg-gray-100 text-gray-800'
+                  campaign.status === 'paused' ? 'bg-yellow-100 text-yellow-800' :
+                    'bg-gray-100 text-gray-800'
                   }`}>
                   {campaign.status}
                 </span>
@@ -533,6 +539,31 @@ export default function AdminDashboard({ campaigns, onUpdateCampaign, onSignOut 
     </div>
   );
 
+  const getCompanyStatistic = async () => {
+    // setLoading(true)
+    const local_token = localStorage.getItem("token");
+    try {
+      const response = await axios.get(`/api/getCompanyStatistic`, {
+        headers: {
+          Authorization: `Bearer ${local_token}`,
+        },
+      });
+      console.log(response.data, 'dasd')
+      // setUser(response.data);
+      setCompanyStatistic(response.data)
+    } catch (error: any) {
+      if (error.response?.status === 403) localStorage.removeItem("token");
+      // setUser(null);
+    } finally {
+      // setLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    getCompanyStatistic()
+  }, [])
+
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -541,7 +572,7 @@ export default function AdminDashboard({ campaigns, onUpdateCampaign, onSignOut 
           <div className="flex items-center space-x-4">
             <LanguageSwitch />
             <button
-              onClick={onSignOut}
+              onClick={()=>logout()}
               className="inline-flex items-center px-4 py-2 text-sm font-medium text-red-600 hover:text-red-700 
                 transition-colors rounded-lg hover:bg-red-50"
             >
@@ -557,7 +588,7 @@ export default function AdminDashboard({ campaigns, onUpdateCampaign, onSignOut 
               <div>
                 <p className="text-sm text-gray-500">{t('admin.stats.highestCpm')}</p>
                 <p className="text-2xl font-bold text-gray-900">
-                  ${sortedByCPM[0]?.cpm.toFixed(2) || '0.00'}
+                  {companyStatistic.max_CPM}
                 </p>
               </div>
               <div className="p-3 bg-blue-100 rounded-full">
@@ -571,7 +602,7 @@ export default function AdminDashboard({ campaigns, onUpdateCampaign, onSignOut 
               <div>
                 <p className="text-sm text-gray-500">{t('admin.stats.pendingModeration')}</p>
                 <p className="text-2xl font-bold text-gray-900">
-                  {pendingModeration.length + pendingBudgetIncreases.length}
+                  {companyStatistic.under_moderation}
                 </p>
               </div>
               <div className="p-3 bg-yellow-100 rounded-full">
@@ -585,11 +616,11 @@ export default function AdminDashboard({ campaigns, onUpdateCampaign, onSignOut 
               <div>
                 <p className="text-sm text-gray-500">{t('admin.stats.activeCampaigns')}</p>
                 <p className="text-2xl font-bold text-gray-900">
-                  {campaigns.filter(c => c.status === 'active').length}
+                  {companyStatistic.active_company}
                 </p>
               </div>
-              <div className="p-3 bg-green-100 rounded-full">
-                <DollarSign className="w-6 h-6 text-green-600" />
+              <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                <p className="text-green-600">₽</p>
               </div>
             </div>
           </div>
@@ -601,8 +632,8 @@ export default function AdminDashboard({ campaigns, onUpdateCampaign, onSignOut 
               <button
                 onClick={() => setSelectedTab('all')}
                 className={`whitespace-nowrap py-4 px-6 border-b-2 font-medium text-sm ${selectedTab === 'all'
-                    ? 'border-blue-500 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  ? 'border-blue-500 text-blue-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                   }`}
               >
                 {t('admin.tabs.all')}
@@ -610,21 +641,21 @@ export default function AdminDashboard({ campaigns, onUpdateCampaign, onSignOut 
               <button
                 onClick={() => setSelectedTab('moderation')}
                 className={`whitespace-nowrap py-4 px-6 border-b-2 font-medium text-sm ${selectedTab === 'moderation'
-                    ? 'border-blue-500 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  ? 'border-blue-500 text-blue-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                   }`}
               >
                 {t('admin.tabs.moderation')}
               </button>
-              <button
+              {/* <button
                 onClick={() => setSelectedTab('competitive')}
                 className={`whitespace-nowrap py-4 px-6 border-b-2 font-medium text-sm ${selectedTab === 'competitive'
-                    ? 'border-blue-500 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  ? 'border-blue-500 text-blue-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                   }`}
               >
                 {t('admin.tabs.competitive')}
-              </button>
+              </button> */}
             </nav>
           </div>
 

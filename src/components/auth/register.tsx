@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Eye, EyeOff, Lock, Mail, User } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { Eye, EyeOff, Lock, Mail, User, RotateCw } from 'lucide-react';
 import TermsOfUse from '../TermsOfUse';
 import PrivacyPolicy from '../PrivacyPolicy';
 import PasswordStrength from '../PasswordStrength';
@@ -17,9 +17,14 @@ export default function Register({ onToggleMode }: AuthFormProps) {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [showPrivacyPolicy, setShowPrivacyPolicy] = useState(false);
   const [showTermsOfUse, setShowTermsOfUse] = useState(false);
+  const [captcha, setCaptcha] = useState(null);
+  const [captchaError, setCaptchaError] = useState(false)
+
+  const [captchaValue, setCaptchaValue] = useState("")
   const { register, loading } = useAuth();
   const navigate = useNavigate()
   const { t } = useLanguage();
+  const [rotation, setRotation] = useState(0);
 
   const [formData, setFormData] = useState({
     email: '',
@@ -62,12 +67,19 @@ export default function Register({ onToggleMode }: AuthFormProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (validateForm()) {
+    let result = null
+    console.log(captcha);
+    if (captcha) {
+      result = eval(captcha)
+    }
+    
+    if (validateForm() && captchaValue == result) {
       const sendDAta = {
         username: formData.username,
         email: formData.email,
         password: formData.password,
-        password_confirmation: formData.confirmPassword
+        password_confirmation: formData.confirmPassword,
+        captcha:captchaValue,
       }
       const response = await register(sendDAta)
       if (!response.message) {
@@ -75,6 +87,12 @@ export default function Register({ onToggleMode }: AuthFormProps) {
         navigate("/dashboard")
       }
       setApiError(response.message)
+    }
+    else if (captchaValue != result) {
+      setCaptchaError(true)
+    }
+    else if (captchaValue == result) {
+      setCaptchaError(false)
     }
   };
 
@@ -88,6 +106,22 @@ export default function Register({ onToggleMode }: AuthFormProps) {
       setErrors(prev => ({ ...prev, [name]: '' }));
     }
   };
+
+
+  const GetCaptcha = () => {
+    setRotation((prevRotation) => (prevRotation === 0 ? 360 : 0));
+    fetch("api/getCaptcha")
+      .then(response => response.json())
+      .then(data => setCaptcha(data.message))
+      .catch(error => console.error("Ошибка:", error));
+  }
+  useEffect(() => {
+    console.log(!captcha, 'captcha')
+    if (!captcha) {
+      GetCaptcha()
+    }
+  }, [captcha]);
+  // 
 
   return (
     <>
@@ -219,6 +253,36 @@ export default function Register({ onToggleMode }: AuthFormProps) {
               )}
             </div>
             <div>
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                Проверка безопасности
+              </label>
+              <div className="flex items-center gap-2">
+                <div className="bg-[#f0f1f4] px-4 py-2 rounded-md">
+                  {captcha}
+                </div>
+
+
+                <input
+                  type="text"
+                  id="captcha"
+                  name="captcha"
+                  value={captchaValue}
+                  onChange={(e) => setCaptchaValue(e?.target?.value)}
+                  className={`appearance-none block w-12 px-2 py-2 bg-sky-50 border ${captchaError ? 'border-red-500' : 'border-sky-200'
+                    } rounded-lg shadow-sm placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-2 focus:ring-sky-500 
+                    focus:border-transparent sm:text-sm transition-colors`}
+                  placeholder="?"
+                />
+
+                <div
+                  style={{ transform: `rotate(${rotation}deg)`, transition: 'transform 0.3s ease' }}
+                  onClick={() => GetCaptcha()}
+                >
+                  <RotateCw className="w-4 h-4  text-gray-400" />
+                </div>
+              </div>
+            </div>
+            <div>
               <button
                 type="submit"
                 className="w-full flex justify-center py-2 px-4 border border-transparent rounded-lg 
@@ -243,7 +307,6 @@ export default function Register({ onToggleMode }: AuthFormProps) {
           <p className="mt-4 text-center text-sm text-gray-600">
             {"Уже есть аккаунт?"}{' '}
             <button
-              // onClick={}
               className="font-medium text-sky-600 hover:text-sky-500"
             >
               {'Зарегистрироваться'}

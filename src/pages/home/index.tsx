@@ -206,16 +206,6 @@ function Home() {
     setIsAdmin(false);
   };
 
-  if (true) {
-    return true && (
-      <AdminDashboard
-        campaigns={campaigns}
-        onUpdateCampaign={handleUpdateCampaign}
-        onSignOut={handleSignOut}
-      />
-    )
-  }
-
   const formatTime = (date: Date) => {
     return {
       hours: date.getHours().toString().padStart(2, '0'),
@@ -353,11 +343,6 @@ function Home() {
             <div>
               <h3 className="font-semibold text-gray-900 mb-4">{t('footer.resources.title')}</h3>
               <ul className="space-y-2">
-                <li>
-                  <a href="#" className="text-gray-600 hover:text-gray-900 text-sm">
-                    {t('footer.resources.docs')}
-                  </a>
-                </li>
                 <li>
                   <a href="#" className="text-gray-600 hover:text-gray-900 text-sm">
                     {t('footer.resources.api')}
