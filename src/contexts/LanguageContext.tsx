@@ -142,6 +142,7 @@ const translations = {
     'budget.remaining': 'Remaining Budget',
     'budget.add': 'Add',
     'budget.cancel': 'Cancel',
+    'budget.description2':"If certain symbols aren't allowed, you can try spacing (e.g., 'dot' instead of '.') or replacing @ with (at).",
 
     // Campaign Countries
     'campaign.countries.label': 'Target Countries',
@@ -340,6 +341,9 @@ const translations = {
     'budget.remaining': 'Остаток бюджета',
     'budget.add': 'Добавить',
     'budget.cancel': 'Отмена',
+    "budget.description2":"Если определенные символы не разрешены, вы можете попробовать использовать пробелы (например, 'точка' вместо '.') или заменить @ на (at)",
+
+
 
     // Campaign Countries
     'campaign.countries.label': 'Целевые страны',

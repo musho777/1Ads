@@ -27,6 +27,8 @@ function PaymentModal({ isOpen, onClose, amount, userEmail }: PaymentModalProps)
   const fileInputRef = useRef<HTMLInputElement>(null);
   const currencySymbol = '₽';
   const { token, ChaneUserData } = useAuth();
+  const { t } = useLanguage();
+
 
 
   if (!isOpen) return null;
@@ -147,6 +149,9 @@ function PaymentModal({ isOpen, onClose, amount, userEmail }: PaymentModalProps)
                         {emailCopied ? <Check className="w-5 h-5 text-green-500" /> : <Copy className="w-5 h-5" />}
                       </button>
                     </div>
+                    <label className="block font-medium  text-gray-400 mt-3 text-xs ">
+                      {t("budget.description2")}
+                    </label>
                   </div>
                 )}
               </div>
