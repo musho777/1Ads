@@ -48,6 +48,7 @@ const translations = {
     'password.error': "Password must be at least 8 characters long",
     'no.password': "Enter password",
     'enter.email': "Enter email",
+    'confirm.password': "Confirm password",
 
     // Hero Section
     'hero.timeForAds': 'Perfect time for your advertising',
@@ -163,7 +164,7 @@ const translations = {
     'profile.settings': 'Settings',
     'profile.billing': 'Billing',
     'profile.help': 'Help & Support',
-    'profile.logout': 'Log Out',
+    'profile.logout': 'Log out',
     "profile.edit": "edit profile",
     "profile.save": "save",
 
@@ -298,7 +299,7 @@ const translations = {
     'password.error': "Пароль должен быть не менее 8 символов",
     'no.password': "Введите пароль",
     'enter.email': 'Введите email',
-
+    'confirm.password': "Подтвердите пароль",
 
 
     // Hero Section

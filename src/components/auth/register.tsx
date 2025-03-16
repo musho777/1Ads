@@ -57,7 +57,7 @@ export default function Register({ onToggleMode }: AuthFormProps) {
     }
 
     if (!formData.confirmPassword) {
-      newErrors.confirmPassword = 'Подтвердите пароль';
+      newErrors.confirmPassword = t("confirm.password");
     } else if (formData.password !== formData.confirmPassword) {
       newErrors.confirmPassword = 'Пароли не совпадают';
     }
@@ -69,7 +69,6 @@ export default function Register({ onToggleMode }: AuthFormProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     let result = null
-    console.log(captcha);
     if (captcha) {
       result = eval(captcha)
     }
@@ -111,7 +110,7 @@ export default function Register({ onToggleMode }: AuthFormProps) {
 
   const GetCaptcha = () => {
     setRotation((prevRotation) => (prevRotation === 0 ? 360 : 0));
-    fetch(`${API_URL}api/getCaptcha`)
+    fetch(`${API_URL}/api/getCaptcha`)
       .then(response => response.json())
       .then(data => setCaptcha(data.message))
       .catch(error => console.error("Ошибка:", error));

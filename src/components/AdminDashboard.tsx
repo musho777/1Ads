@@ -5,6 +5,7 @@ import { useLanguage } from '../contexts/LanguageContext';
 import LanguageSwitch from './LanguageSwitch';
 import axios from 'axios';
 import { useAuth } from '../contexts/AuthContext';
+import { ClipLoader } from 'react-spinners';
 
 
 interface PaymentDocumentsModalProps {
@@ -308,6 +309,7 @@ export default function AdminDashboard({ onUpdateCampaign }: AdminDashboardProps
   const [topCPMCampaigns, setTopCPMCampaigns] = useState([])
   const [company, setCompany] = useState([])
   const [adminSelect, setAdminSelect] = useState(null)
+  const [loadingTop, setLoadingTop] = useState(false)
   const API_URL = import.meta.env.VITE_URL;
 
 
@@ -534,17 +536,23 @@ export default function AdminDashboard({ onUpdateCampaign }: AdminDashboardProps
   };
 
   const activatePriorityCompany = async (id: string) => {
+    setLoadingTop(true)
     const local_token = localStorage.getItem("token");
     try {
-      await axios.post(`${API_URL}/api/activatePriorityCompany`, {
+      const respons = await axios.post(`${API_URL}/api/activatePriorityCompany`, {
         company_id: id,
       }, {
         headers: {
           Authorization: `Bearer ${local_token}`,
         },
       });
+      console.log(respons.data.data)
+      setAdminSelect(respons.data.data)
     } catch (error: any) {
       console.log(error)
+    }
+    finally {
+      setLoadingTop(false)
     }
   }
 
@@ -608,6 +616,17 @@ export default function AdminDashboard({ onUpdateCampaign }: AdminDashboardProps
               </div>
             </div>
           })}
+          {loadingTop &&
+            <div className='flex items-center justify-center'>
+              <ClipLoader
+                color={"black"}
+                loading={true}
+                size={15}
+                aria-label="Loading Spinner"
+                data-testid="loader"
+              />
+            </div>
+          }
           {adminSelect &&
             <div key={adminSelect.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
               <div className="flex items-center space-x-4">
@@ -668,8 +687,9 @@ export default function AdminDashboard({ onUpdateCampaign }: AdminDashboardProps
                 <button
                   onClick={() => {
                     if (campaign.id !== adminSelect?.id) {
+                      setAdminSelect(null)
                       activatePriorityCompany(campaign.id)
-                      setAdminSelect(campaign)
+                      // setAdminSelect(campaign)
                     }
                     else {
                       setAdminSelect(null)
@@ -783,7 +803,7 @@ export default function AdminDashboard({ onUpdateCampaign }: AdminDashboardProps
                 transition-colors rounded-lg hover:bg-red-50"
             >
               <LogOut className="w-4 h-4 mr-2" />
-              Выйти
+              {t("profile.logout")}
             </button>
           </div>
         </div>
