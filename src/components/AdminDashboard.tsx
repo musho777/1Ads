@@ -95,7 +95,9 @@ function RejectionModal({ isOpen, onClose, onConfirm }: RejectionModalProps) {
 
 function BudgetIncreaseModal({ isOpen, onClose, onVerify, budgetIncrease }: BudgetIncreaseModalProps) {
   if (!isOpen) return null;
+
   const date = new Date(budgetIncrease.created_at);
+
   const year = date.getFullYear();
   const { t } = useLanguage();
   const month = (date.getMonth() + 1).toString().padStart(2, '0');
@@ -306,6 +308,7 @@ export default function AdminDashboard({ onUpdateCampaign }: AdminDashboardProps
   const [topCPMCampaigns, setTopCPMCampaigns] = useState([])
   const [company, setCompany] = useState([])
   const [adminSelect, setAdminSelect] = useState(null)
+  const API_URL = import.meta.env.VITE_URL;
 
 
 
@@ -339,7 +342,7 @@ export default function AdminDashboard({ onUpdateCampaign }: AdminDashboardProps
 
     const local_token = localStorage.getItem("token");
     try {
-      await axios.post(`/api/confirm_company`, {
+      await axios.post(`${API_URL}/api/confirm_company`, {
         company_id: campaign.id,
       }, {
         headers: {
@@ -374,7 +377,7 @@ export default function AdminDashboard({ onUpdateCampaign }: AdminDashboardProps
       setCompany(item)
       const local_token = localStorage.getItem("token");
       try {
-        const response = await axios.post(`/api/bow_out_company`, {
+        const response = await axios.post(`${API_URL}/api/bow_out_company`, {
           company_id: campaignToReject.id,
           reason_for_refusal: reason
         }, {
@@ -426,7 +429,7 @@ export default function AdminDashboard({ onUpdateCampaign }: AdminDashboardProps
     };
 
     try {
-      const response = await fetch(`/api/confirm_payment`, requestOptions);
+      const response = await fetch(`${API_URL}/api/confirm_payment`, requestOptions);
       const result: any = await response.json();
       console.log(result)
     } catch (error) {
@@ -533,7 +536,7 @@ export default function AdminDashboard({ onUpdateCampaign }: AdminDashboardProps
   const activatePriorityCompany = async (id: string) => {
     const local_token = localStorage.getItem("token");
     try {
-      await axios.post(`/api/activatePriorityCompany`, {
+      await axios.post(`${API_URL}/api/activatePriorityCompany`, {
         company_id: id,
       }, {
         headers: {
@@ -548,7 +551,7 @@ export default function AdminDashboard({ onUpdateCampaign }: AdminDashboardProps
   const disactivatePriorityCompany = async (id: string) => {
     const local_token = localStorage.getItem("token");
     try {
-      await axios.post(`/api/disactivatePriorityCompany`, {
+      await axios.post(`${API_URL}/api/disactivatePriorityCompany`, {
         company_id: id,
       }, {
         headers: {
@@ -694,7 +697,7 @@ export default function AdminDashboard({ onUpdateCampaign }: AdminDashboardProps
   const getCompanyStatistic = async () => {
     const local_token = localStorage.getItem("token");
     try {
-      const response = await axios.get(`/api/getCompanyStatistic`, {
+      const response = await axios.get(`${API_URL}/api/getCompanyStatistic`, {
         headers: {
           Authorization: `Bearer ${local_token}`,
         },
@@ -707,7 +710,7 @@ export default function AdminDashboard({ onUpdateCampaign }: AdminDashboardProps
   const getPaymentOnModeration = async () => {
     const local_token = localStorage.getItem("token");
     try {
-      const response = await axios.get(`/api/getPaymentOnModeration`, {
+      const response = await axios.get(`${API_URL}/api/getPaymentOnModeration`, {
         headers: {
           Authorization: `Bearer ${local_token}`,
         },
@@ -720,7 +723,7 @@ export default function AdminDashboard({ onUpdateCampaign }: AdminDashboardProps
   const getBestCompany = async () => {
     const local_token = localStorage.getItem("token");
     try {
-      const response = await axios.get(`/api/getBestCompany`, {
+      const response = await axios.get(`${API_URL}/api/getBestCompany`, {
         headers: {
           Authorization: `Bearer ${local_token}`,
         },
@@ -734,7 +737,7 @@ export default function AdminDashboard({ onUpdateCampaign }: AdminDashboardProps
   const getPrioretCompany = async () => {
     const local_token = localStorage.getItem("token");
     try {
-      const response = await axios.get(`/api/getPriorityCompanies`, {
+      const response = await axios.get(`${API_URL}/api/getPriorityCompanies`, {
         headers: {
           Authorization: `Bearer ${local_token}`,
         },
@@ -747,7 +750,7 @@ export default function AdminDashboard({ onUpdateCampaign }: AdminDashboardProps
   const getCompanyАwaitingМoderation = async () => {
     const local_token = localStorage.getItem("token");
     try {
-      const response = await axios.get(`/api/getCompanyАwaitingМoderation`, {
+      const response = await axios.get(`${API_URL}/api/getCompanyАwaitingМoderation`, {
         headers: {
           Authorization: `Bearer ${local_token}`,
         },

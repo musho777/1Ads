@@ -46,12 +46,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [token, setToken] = useState<string>("");
   const [loadingEdit, setLoadingEdit] = useState(false)
+  const API_URL = import.meta.env.VITE_URL;
 
   const getUser = async () => {
     setLoading(true)
     const local_token = localStorage.getItem("token");
     try {
-      const response = await axios.get<User>(`/api/getProfileInfo`, {
+      const response = await axios.get<User>(`${API_URL}/api/getProfileInfo`, {
         headers: {
           Authorization: `Bearer ${local_token}`,
         },
@@ -77,7 +78,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
     let responseData: { message: string; status: boolean } = { message: "", status: false };
     try {
-      const response = await fetch(`/api/login`, requestOptions);
+      const response = await fetch(`${API_URL}/api/login`, requestOptions);
       const result: AuthResponse = await response.json();
 
       responseData = { message: result.message, status: result.status };
@@ -108,7 +109,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
     let responseData: { message: string; status: boolean } = { message: "", status: false };
     try {
-      const response = await fetch(`/api/editProfileInfo`, requestOptions);
+      const response = await fetch(`${API_URL}/api/editProfileInfo`, requestOptions);
       const result: any = await response.json();
       let item = { ...user }
       item.data.username = result.data.username
@@ -161,7 +162,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
     let responseData: { message: string; status: boolean } = { message: "", status: false };
     try {
-      const response = await fetch(`/api/register`, requestOptions);
+      const response = await fetch(`${API_URL}/api/register`, requestOptions);
       const result: any = await response.json();
       responseData = { message: result.errors, status: result.status };
       if (response.ok) {

@@ -19,6 +19,7 @@ interface PaymentModalProps {
 }
 
 function PaymentModal({ isOpen, onClose, amount, userEmail }: PaymentModalProps) {
+  const API_URL = import.meta.env.VITE_URL;
   const [copied, setCopied] = useState(false);
   const [emailCopied, setEmailCopied] = useState(false);
   const [showUpload, setShowUpload] = useState(false);
@@ -50,6 +51,7 @@ function PaymentModal({ isOpen, onClose, amount, userEmail }: PaymentModalProps)
 
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+
     const file = event.target.files?.[0];
     if (file) {
       setUploading(true);
@@ -62,7 +64,7 @@ function PaymentModal({ isOpen, onClose, amount, userEmail }: PaymentModalProps)
       myHeaders.append("Accept", "application/json");
       try {
         const response = await
-          fetch(`/api/user_payment`, {
+          fetch(`${API_URL}/api/user_payment`, {
             method: "POST",
             headers: myHeaders,
             body: formData,

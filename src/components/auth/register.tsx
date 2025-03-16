@@ -19,6 +19,7 @@ export default function Register({ onToggleMode }: AuthFormProps) {
   const [showTermsOfUse, setShowTermsOfUse] = useState(false);
   const [captcha, setCaptcha] = useState(null);
   const [captchaError, setCaptchaError] = useState(false)
+  const API_URL = import.meta.env.VITE_URL;
 
   const [captchaValue, setCaptchaValue] = useState("")
   const { register, loading } = useAuth();
@@ -110,7 +111,7 @@ export default function Register({ onToggleMode }: AuthFormProps) {
 
   const GetCaptcha = () => {
     setRotation((prevRotation) => (prevRotation === 0 ? 360 : 0));
-    fetch("api/getCaptcha")
+    fetch(`${API_URL}api/getCaptcha`)
       .then(response => response.json())
       .then(data => setCaptcha(data.message))
       .catch(error => console.error("Ошибка:", error));

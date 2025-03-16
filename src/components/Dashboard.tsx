@@ -289,6 +289,7 @@ function Dashboard() {
   const [editLoading, setEditLoading] = useState(false)
   const [loadingCampaigns, setLoadingCampaigns] = useState(false)
   const [success, setSuccess] = useState(false)
+  const API_URL = import.meta.env.VITE_URL;
 
   const totalBudget = 10000;
   const totalSpent = 0;
@@ -343,7 +344,7 @@ function Dashboard() {
     myHeaders.append("Accept", "application/json");
     try {
       const response = await
-        fetch(`/api/createCompany`, {
+        fetch(`${API_URL}/api/createCompany`, {
           method: "POST",
           headers: myHeaders,
           body: formData,
@@ -394,7 +395,7 @@ function Dashboard() {
     };
 
     try {
-      const response = await fetch(`/api/getCompanies?page=${page}`, requestOptions);
+      const response = await fetch(`${API_URL}/api/getCompanies?page=${page}`, requestOptions);
       const result: any = await response.json();
       if (!result.errors) {
         setCampaigns(result.data)
@@ -446,7 +447,7 @@ function Dashboard() {
       // }),
     };
     try {
-      const response = await fetch(`/api/editCompany`, requestOptions);
+      const response = await fetch(`${API_URL}/api/editCompany`, requestOptions);
       const data = await response.json();
       if (!response.ok) {
         setEditLoading(false)
@@ -489,7 +490,7 @@ function Dashboard() {
     if (window.confirm('Are you sure you want to delete this campaign?')) {
       setCampaigns(campaigns.filter(campaign => campaign?.id !== id));
       try {
-        fetch(`/api/deleteCompany`, requestOptions);
+        fetch(`${API_URL}/api/deleteCompany`, requestOptions);
       }
       catch (error) {
       }
@@ -523,7 +524,7 @@ function Dashboard() {
         data-testid="loader"
       />
     </div>
-  if (user?.data?.roll =="admin") {
+  if (user?.data?.roll == "admin") {
     return <AdminDashboard
       campaigns={initialCampaigns}
       onUpdateCampaign={handleUpdateCampaign}

@@ -14,7 +14,7 @@ export default function SettingsModal({ setSettings }: AuthFormProps) {
   const { t } = useLanguage();
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
-
+  const API_URL = import.meta.env.VITE_URL;
   const [notifcation, setNotifcation] = useState("false")
   const [autoNotifcation, setAutoNotifcation] = useState("false")
 
@@ -34,7 +34,7 @@ export default function SettingsModal({ setSettings }: AuthFormProps) {
     };
 
     try {
-      const response = await fetch(`/api/editProfileSetting`, requestOptions);
+      const response = await fetch(`${API_URL}/api/editProfileSetting`, requestOptions);
 
       if (!response.ok) {
         setSuccess(false)
