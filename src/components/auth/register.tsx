@@ -40,15 +40,15 @@ export default function Register({ onToggleMode }: AuthFormProps) {
     const newErrors: Record<string, string> = {};
 
     if (!formData.email) {
-      newErrors.email = 'Введите email';
+      newErrors.email = t("enter.email");
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
       newErrors.email = 'Введите корректный email';
     }
 
     if (!formData.password) {
-      newErrors.password = 'Введите пароль';
+      newErrors.password = t("no.password");
     } else if (formData.password.length < 8) {
-      newErrors.password = 'Пароль должен быть не менее 8 символов';
+      newErrors.password = t("password.error");
     }
 
     if (!formData.username) {
@@ -72,14 +72,14 @@ export default function Register({ onToggleMode }: AuthFormProps) {
     if (captcha) {
       result = eval(captcha)
     }
-    
+
     if (validateForm() && captchaValue == result) {
       const sendDAta = {
         username: formData.username,
         email: formData.email,
         password: formData.password,
         password_confirmation: formData.confirmPassword,
-        captcha:captchaValue,
+        captcha: captchaValue,
       }
       const response = await register(sendDAta)
       if (!response.message) {
@@ -125,12 +125,13 @@ export default function Register({ onToggleMode }: AuthFormProps) {
 
   return (
     <>
+
       <div className="w-full max-w-md mx-auto bg-white rounded-2xl shadow-xl overflow-hidden border border-sky-100">
         <div className="px-8 py-6">
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label htmlFor="username" className="block text-sm font-medium text-gray-700">
-                Имя или Название Компании
+                {t("auth.name")}
               </label>
               <div className="mt-1 relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -145,7 +146,7 @@ export default function Register({ onToggleMode }: AuthFormProps) {
                   className={`appearance-none block w-full px-3 py-2 bg-sky-50 border ${errors.username ? 'border-red-500' : 'border-sky-200'
                     } rounded-lg shadow-sm placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-2 focus:ring-sky-500 
                     focus:border-transparent sm:text-sm transition-colors pl-10`}
-                  placeholder="Иван Иванов или ООО Компания"
+                  placeholder={t("auth.plaseholder")}
                 />
               </div>
               {errors.username && (
@@ -154,7 +155,7 @@ export default function Register({ onToggleMode }: AuthFormProps) {
             </div>
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                Email
+                {t("auth.email")}
               </label>
               <div className="mt-1 relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -182,7 +183,7 @@ export default function Register({ onToggleMode }: AuthFormProps) {
 
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                Пароль
+                {t("auth.password")}
               </label>
               <div className="mt-1 relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -219,7 +220,7 @@ export default function Register({ onToggleMode }: AuthFormProps) {
 
             <div>
               <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
-                Подтверждение пароля
+                {t("auth.confirm")}
               </label>
               <div className="mt-1 relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -254,7 +255,7 @@ export default function Register({ onToggleMode }: AuthFormProps) {
             </div>
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                Проверка безопасности
+                {t("auth.security")}
               </label>
               <div className="flex items-center gap-2">
                 <div className="bg-[#f0f1f4] px-4 py-2 rounded-md">
@@ -298,35 +299,35 @@ export default function Register({ onToggleMode }: AuthFormProps) {
                     aria-label="Loading Spinner"
                     data-testid="loader"
                   /> :
-                  'Создать аккаунт'
+                  t("auth.creat")
                 }
               </button>
             </div>
           </form>
 
           <p className="mt-4 text-center text-sm text-gray-600">
-            {"Уже есть аккаунт?"}{' '}
+            {t("auth.have.accaunt")}{' '}
             <button
               className="font-medium text-sky-600 hover:text-sky-500"
             >
-              {'Зарегистрироваться'}
+              {t("auth.Register")}
             </button>
           </p>
 
           <p className="mt-4 text-center text-xs text-gray-500">
-            Регистрируясь, вы соглашаетесь с{' '}
+            {t("auth.agee")}{' '}
             <button
               onClick={() => setShowTermsOfUse(true)}
               className="text-sky-600 hover:text-sky-500"
             >
-              условиями использования
+              {t('footer.legal.terms')}
             </button>
             {' '}и{' '}
             <button
               onClick={() => setShowPrivacyPolicy(true)}
               className="text-sky-600 hover:text-sky-500"
             >
-              политикой конфиденциальности
+              {t("footer.legal.privacy")}
             </button>
           </p>
         </div>

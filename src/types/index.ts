@@ -1,8 +1,8 @@
 export interface Campaign {
   id: string;
-  name: string;
-  budget: number;
-  spent: number;
+  company_name: string;
+  budget: string;
+  spent: string;
   status: 'active' | 'paused' | 'completed' | 'pending';
   startDate: string;
   endDate: string;
@@ -10,28 +10,9 @@ export interface Campaign {
   clicks: number;
   ctr: number;
   CPM: number;
-  adContent: {
-    title: string;
-    description: string;
-    imageUrl: File | null | string;
-    targetUrl: string;
-    mediaType: 'image' | 'video';
-    thumbnailUrl?: File | null;
-    fileUrl: string;
-  };
   moderationStatus?: 'pending' | 'approved' | 'rejected';
   moderationNote?: string;
   targetCountries: string[];
-  paymentStatus?: {
-    verified: boolean;
-    documents?: {
-      id: string;
-      type: 'receipt' | 'invoice' | 'transfer';
-      url: string;
-      date: string;
-      amount: number;
-    }[];
-  };
 }
 
 export interface BudgetIncrease {

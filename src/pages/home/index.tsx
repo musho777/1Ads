@@ -377,10 +377,10 @@ function Home() {
       {/* Auth Modal */}
       {showAuthModal && (
         <div className="fixed inset-0 bg-black/20 backdrop-blur-sm flex items-center justify-center z-50">
-          <div className="relative max-w-md w-full mx-4">
+          <div className="relative max-w-md w-full mx-4 max-h-[95%] overflow-auto">
             <button
               onClick={() => setShowAuthModal(false)}
-              className="absolute -top-12 right-0 text-white hover:text-gray-200 transition-colors"
+              className="absolute top-3 right-3 text-black hover:text-gray-200 transition-colors"
             >
               <X className="w-6 h-6" />
             </button>

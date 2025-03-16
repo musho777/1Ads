@@ -45,15 +45,15 @@ export default function EditAccaunt({ setIsEditMode }: AuthFormProps) {
     const newErrors: Record<string, string> = {};
 
     if (!formData.email) {
-      newErrors.email = 'Введите email';
+      newErrors.email = t("enter.email")
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
       newErrors.email = 'Введите корректный email';
     }
 
     if (!formData.password) {
-      newErrors.password = 'Введите пароль';
+      newErrors.password = t("no.password");
     } else if (formData.password.length < 8) {
-      newErrors.password = 'Пароль должен быть не менее 8 символов';
+      newErrors.password = t("password.error");
     }
 
     if (!formData.username) {
@@ -125,7 +125,7 @@ export default function EditAccaunt({ setIsEditMode }: AuthFormProps) {
             <form onSubmit={handleSubmit} className="relative space-y-4">
               <div>
                 <label htmlFor="username" className="block text-sm font-medium text-gray-700">
-                  Имя или Название Компании
+                  {t("auth.name")}
                 </label>
                 <div className="mt-1 relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -149,7 +149,7 @@ export default function EditAccaunt({ setIsEditMode }: AuthFormProps) {
               </div>
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                  Email
+                  {t("auth.email")}
                 </label>
                 <div className="mt-1 relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -178,7 +178,7 @@ export default function EditAccaunt({ setIsEditMode }: AuthFormProps) {
 
               <div>
                 <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                  Пароль
+                  {t("auth.password")}
                 </label>
                 <div className="mt-1 relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -215,7 +215,7 @@ export default function EditAccaunt({ setIsEditMode }: AuthFormProps) {
 
               <div>
                 <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
-                  Подтверждение пароля
+                  {t("auth.confirm")}
                 </label>
                 <div className="mt-1 relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">

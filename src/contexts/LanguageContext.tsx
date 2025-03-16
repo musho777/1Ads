@@ -10,14 +10,44 @@ interface LanguageContextType {
 
 const translations = {
   en: {
+    "yes": "yes",
+    "no": "no",
     // Auth
     'auth.login': 'Login',
     'auth.register': 'Register',
+    'auth.remember': "Remember me",
+    "auth.email": "Email",
+    "auth.forgot.password": "Forgot your password?",
+    "auth.no.account": "No account?",
+    'auth.Register': "Register",
+    'auth.password': "Password",
+    "auth.name": "Name or Company Name",
+    "auth.plaseholder": "Ivan Ivanov or LLC Company",
+    "auth.confirm": "Confirm password",
+    "auth.security": "Security check",
+    "auth.creat": "Create an account",
+    "auth.have.accaunt": "Already have an account?",
+    "auth.agee": "By registering, you agree to",
+    "auth.strength": "Password strength:",
 
+
+    //password
+    "passowrd.min": "Minimum 8 characters",
+    "password.lowercase": "One lowercase letter",
+    "password.capital": "One capital letter",
+    "password.digit": "One digit",
+    "password.special": "One special character",
+    "password.very.weak": "Very weak",
+    "password.weak": "weak",
+    "password.average": "Average",
+    "password.good": "Good",
+    "password.strong": "Strong",
     //error  
     'login.error': 'login or password is wrong',
     'mail.error': "The email has already been taken.",
-
+    'password.error': "Password must be at least 8 characters long",
+    'no.password': "Enter password",
+    'enter.email': "Enter email",
 
     // Hero Section
     'hero.timeForAds': 'Perfect time for your advertising',
@@ -125,7 +155,9 @@ const translations = {
     'settings.language': 'Change Language',
     'settings.english': 'English',
     'settings.russian': 'Русский',
-    'settings.success': "Настройки успешно сохранены",
+    'settings.success': "Settings saved successfully",
+    'settings.email': "Notify via Email about campaign pause due to CPM threshold increase.",
+    'settings.cpm': "Automatically increase CPM",
 
     // Profile Menu
     'profile.settings': 'Settings',
@@ -142,7 +174,7 @@ const translations = {
     'budget.remaining': 'Remaining Budget',
     'budget.add': 'Add',
     'budget.cancel': 'Cancel',
-    'budget.description2':"If certain symbols aren't allowed, you can try spacing (e.g., 'dot' instead of '.') or replacing @ with (at).",
+    'budget.description2': "If certain symbols aren't allowed, you can try spacing (e.g., 'dot' instead of '.') or replacing @ with (at).",
 
     // Campaign Countries
     'campaign.countries.label': 'Target Countries',
@@ -169,6 +201,8 @@ const translations = {
     'admin.moderation.reject': 'Reject',
     'admin.moderation.budget': 'Budget',
     'admin.moderation.cpm': 'CPM',
+    'admin.awaiting.moderation': "Awaiting moderation",
+    'admin.no.campaigns': "No campaigns are being moderated",
 
     'admin.stats.highestCpm': 'Highest CPM',
     'admin.stats.pendingModeration': 'Pending Moderation',
@@ -191,6 +225,20 @@ const translations = {
     'admin.moderation.rejectReason.placeholder': 'Enter the reason for rejecting this campaign...',
     'admin.moderation.rejectReason.cancel': 'Cancel',
     'admin.moderation.rejectReason.confirm': 'Reject Campaign',
+    //Payment
+    "payment.info": "Payment information",
+    "payment.ammount": "Amount to be paid",
+    "payment.card": "Sberbank card",
+    "payment.description": "Payment description (your email)",
+    "payment.receipt": "Upload receipt",
+    "payment.paid": "I paid",
+    "payment.upload.description": "Please upload your payment receipt. After moderator verification, your budget will be replenished.",
+    "payemnt.click": "Click to download the receipt",
+    "payment.loading": "Loading receipt...",
+    "payment.success": "Receipt successfully uploaded! Wait for moderator verification.",
+
+
+
 
     // Payment Verification
     'admin.payment.verify': 'Verify Payment',
@@ -205,17 +253,52 @@ const translations = {
     'admin.payment.documents.amount': 'Amount',
     'admin.payment.documents.date': 'Date',
     'admin.payment.documents.type': 'Document Type',
-    'admin.payment.documents.empty': 'No payment documents available'
+    'admin.payment.documents.empty': 'No payment documents available',
+    'admin.payment.documents.request': "Request for budget replenishment",
+    "admin.payment.documents.user": "User",
+    "admin.payment.documents.request.date": "Request date",
+
+
   },
   ru: {
+    "yes": "да",
+    "no": "нет",
     // Auth
     'auth.login': 'Войти',
     'auth.register': 'Регистрация',
+    'auth.remember': "Запомнить меня",
+    "auth.email": "Электронная почта",
+    "auth.forgot.password": "Забыли пароль?",
+    "auth.no.account": "Нет аккаунта?",
+    'auth.Register': "Зарегистрироваться",
+    'auth.password': "Пароль",
+    "auth.name": "Имя или Название Компании",
+    "auth.plaseholder": "Иван Иванов или ООО Компания",
+    "auth.confirm": "Подтверждение пароля",
+    "auth.security": "Проверка безопасности",
+    "auth.creat": "Создать аккаунт",
+    "auth.have.accaunt": "Уже есть аккаунт?",
+    "auth.agee": "Регистрируясь, вы соглашаетесь с",
+    "auth.strength": "Надежность пароля:",
 
-
+    //password
+    "passowrd.min": "Минимум 8 символов",
+    "password.lowercase": "Одна строчная буква",
+    "password.capital": "Одна заглавная буква",
+    "password.digit": "Одна цифра",
+    "password.special": "Один специальный символ",
+    "password.very.weak": "Очень слабый",
+    "password.weak": "Слабый",
+    "password.average": "Средний",
+    "password.good": "Хороший",
+    "password.strong": "Сильный",
     //error  
     'login.error': 'Неправильный логин или пароль',
     'mail.error': "Электронная почта уже занята.",
+    'password.error': "Пароль должен быть не менее 8 символов",
+    'no.password': "Введите пароль",
+    'enter.email': 'Введите email',
+
 
 
     // Hero Section
@@ -326,7 +409,8 @@ const translations = {
     'settings.english': 'English',
     'settings.russian': 'Русский',
     'settings.success': "Настройки успешно сохранены",
-
+    'settings.email': "уведомлять по Email о приостановке кампании из-за увеличения порогового CPM.",
+    'settings.cpm': "Автоматически увеличивать CPM",
     // Profile Menu
     'profile.settings': 'Настройки',
     'profile.billing': 'Оплата',
@@ -341,7 +425,7 @@ const translations = {
     'budget.remaining': 'Остаток бюджета',
     'budget.add': 'Добавить',
     'budget.cancel': 'Отмена',
-    "budget.description2":"Если определенные символы не разрешены, вы можете попробовать использовать пробелы (например, 'точка' вместо '.') или заменить @ на (at)",
+    "budget.description2": "Если определенные символы не разрешены, вы можете попробовать использовать пробелы (например, 'точка' вместо '.') или заменить @ на (at)",
 
 
 
@@ -368,6 +452,8 @@ const translations = {
     'admin.moderation.reject': 'Отклонить',
     'admin.moderation.budget': 'Бюджет',
     'admin.moderation.cpm': 'CPM',
+    'admin.awaiting.moderation': " Ожидают модерации",
+    'admin.no.campaigns': "Нет кампаний на модерации",
 
     'admin.stats.highestCpm': 'Наивысший CPM',
     'admin.stats.pendingModeration': 'На модерации',
@@ -391,6 +477,18 @@ const translations = {
     'admin.moderation.rejectReason.cancel': 'Отмена',
     'admin.moderation.rejectReason.confirm': 'Отклонить кампанию',
 
+    //Payment
+    "payment.info": "Платежная информация",
+    "payment.ammount": "Сумма к оплате",
+    "payment.card": "Карта Сбербанка",
+    "payment.description": "Описание платежа (ваш email)",
+    "payment.receipt": "Загрузить квитанцию",
+    "payment.paid": "Я оплатил",
+    "payment.upload.description": "Пожалуйста, загрузите квитанцию об оплате. После проверки модератором ваш бюджет будет пополнен.",
+    "payemnt.click": " Нажмите для загрузки квитанции",
+    "payment.loading": "Загрузка квитанции...",
+    "payment.success": " Квитанция успешно загружена! Ожидайте проверки модератором.",
+
     // Payment Verification
     'admin.payment.verify': 'Проверить оплату',
     'admin.payment.verified': 'Оплата подтверждена',
@@ -404,7 +502,11 @@ const translations = {
     'admin.payment.documents.amount': 'Сумма',
     'admin.payment.documents.date': 'Дата',
     'admin.payment.documents.type': 'Тип документа',
-    'admin.payment.documents.empty': 'Нет платежных документов'
+    'admin.payment.documents.empty': 'Нет платежных документов',
+    'admin.payment.documents.request': "Запрос на пополнение бюджета",
+    "admin.payment.documents.user": "Пользователь",
+    "admin.payment.documents.request.date": "Дата запроса",
+
   }
 };
 

@@ -38,15 +38,15 @@ export default function Login({ onToggleMode }: AuthFormProps) {
     const newErrors: Record<string, string> = {};
 
     if (!formData.email) {
-      newErrors.email = 'Введите email';
+      newErrors.email = t("enter.email")
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
       newErrors.email = 'Введите корректный email';
     }
 
     if (!formData.password) {
-      newErrors.password = 'Введите пароль';
+      newErrors.password = t("no.password");
     } else if (formData.password.length < 8) {
-      newErrors.password = 'Пароль должен быть не менее 8 символов';
+      newErrors.password = t("password.error");
     }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -89,7 +89,7 @@ export default function Login({ onToggleMode }: AuthFormProps) {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                Email
+                {t("auth.email")}
               </label>
               <div className="mt-1 relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -114,7 +114,7 @@ export default function Login({ onToggleMode }: AuthFormProps) {
 
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                Пароль
+                {t("auth.password")}
               </label>
               <div className="mt-1 relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -161,12 +161,12 @@ export default function Login({ onToggleMode }: AuthFormProps) {
                   className="h-4 w-4 text-sky-500 focus:ring-sky-500 border-sky-300 rounded"
                 />
                 <label htmlFor="rememberMe" className="ml-2 block text-sm text-gray-700">
-                  Запомнить меня
+                  {t("auth.remember")}
                 </label>
               </div>
               <div className="text-sm">
                 <a href="#" className="font-medium text-sky-600 hover:text-sky-500">
-                  Забыли пароль?
+                  {t("auth.forgot.password")}
                 </a>
               </div>
             </div>
@@ -197,12 +197,12 @@ export default function Login({ onToggleMode }: AuthFormProps) {
             </p>
           }
           <p className="mt-4 text-center text-sm text-gray-600">
-            {"Нет аккаунта?"}{' '}
+            {t("auth.no.account")}{' '}
             <button
               onClick={onToggleMode}
               className="font-medium text-sky-600 hover:text-sky-500"
             >
-              {'Зарегистрироваться'}
+              {t('auth.Register')}
             </button>
           </p>
         </div>

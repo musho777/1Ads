@@ -80,6 +80,7 @@ function RejectionModal({ isOpen, onClose, onConfirm }: RejectionModalProps) {
               Отмена
             </button>
             <button
+              // onClick={() => bow_out_company()}
               type="submit"
               className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700"
             >
@@ -94,13 +95,17 @@ function RejectionModal({ isOpen, onClose, onConfirm }: RejectionModalProps) {
 
 function BudgetIncreaseModal({ isOpen, onClose, onVerify, budgetIncrease }: BudgetIncreaseModalProps) {
   if (!isOpen) return null;
-
+  const date = new Date(budgetIncrease.created_at);
+  const year = date.getFullYear();
+  const { t } = useLanguage();
+  const month = (date.getMonth() + 1).toString().padStart(2, '0');
+  const day = date.getDate().toString().padStart(2, '0');
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg w-full max-w-2xl p-6">
         <div className="flex justify-between items-center mb-6">
           <h3 className="text-lg font-medium text-gray-900">
-            Платежные документы
+            {t("admin.payment.documents.title")}
           </h3>
           <button
             onClick={onClose}
@@ -114,27 +119,25 @@ function BudgetIncreaseModal({ isOpen, onClose, onVerify, budgetIncrease }: Budg
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
             <div className="flex justify-between items-center">
               <div>
-                <h4 className="text-sm font-medium text-blue-900">Сумма пополнения</h4>
-                <p className="text-2xl font-bold text-blue-900">₽{budgetIncrease.amount.toLocaleString()}</p>
+                <h4 className="text-sm font-medium text-blue-900">{t("admin.payment.documents.amount")}</h4>
+                <p className="text-2xl font-bold text-blue-900">₽{budgetIncrease.payment_amount}</p>
               </div>
-              {/* <div  className="w-8 h-8 text-blue-500" >
-              ₽
-              </div> */}
-              <DollarSign className="w-8 h-8 text-blue-500" />
+              <div className="w-8 h-8 text-blue-500 text-lg">
+                ₽
+              </div>
             </div>
           </div>
 
           <div className="bg-gray-50 rounded-lg p-4">
             <div className="flex items-center justify-between mb-2">
               <div>
-                <p className="text-sm font-medium text-gray-900">{budgetIncrease.userEmail}</p>
+                <p className="text-sm font-medium text-gray-900">{budgetIncrease.email}</p>
                 <p className="text-sm text-gray-500">
-                  {new Date(budgetIncrease.requestDate).toLocaleDateString()}
+                  {budgetIncrease.date}
                 </p>
               </div>
             </div>
           </div>
-
           <div className="border rounded-lg">
             <div className="p-4 flex items-center justify-between">
               <div className="flex items-center space-x-4">
@@ -143,20 +146,20 @@ function BudgetIncreaseModal({ isOpen, onClose, onVerify, budgetIncrease }: Budg
                 </div>
                 <div>
                   <h4 className="text-sm font-medium text-gray-900">
-                    Квитанция
+                    {t("admin.payment.documents.receipt")}
                   </h4>
                   <p className="text-sm text-gray-500">
-                    {new Date(budgetIncrease.receipt.uploadDate).toLocaleDateString()}
+                    {year}-{month}-{day}
                   </p>
                 </div>
               </div>
               <a
-                href={budgetIncrease.receipt.url}
+                href={budgetIncrease.image}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center text-blue-600 hover:text-blue-800"
               >
-                <span className="text-sm mr-1">Просмотреть</span>
+                <span className="text-sm mr-1">{t("admin.payment.documents.verify")}</span>
                 <ExternalLink className="w-4 h-4" />
               </a>
             </div>
@@ -167,16 +170,16 @@ function BudgetIncreaseModal({ isOpen, onClose, onVerify, budgetIncrease }: Budg
               onClick={onClose}
               className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
             >
-              Закрыть
+              {t("admin.payment.documents.close")}
             </button>
             <button
               onClick={() => {
-                onVerify();
+                onVerify({ payment_id: budgetIncrease.id });
                 onClose();
               }}
               className="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-md hover:bg-green-700"
             >
-              Подтвердить оплату
+              {t("admin.payment.documents.verify")}
             </button>
           </div>
         </div>
@@ -223,7 +226,7 @@ function PaymentDocumentsModal({ isOpen, onClose, onVerify, campaign }: PaymentD
                 <h4 className="text-sm font-medium text-blue-900">Campaign Budget</h4>
                 <p className="text-2xl font-bold text-blue-900">₽{campaign.budget.toLocaleString()}</p>
               </div>
-              
+
               <DollarSign className="w-8 h-8 text-blue-500" />
             </div>
           </div>
@@ -280,20 +283,6 @@ function PaymentDocumentsModal({ isOpen, onClose, onVerify, campaign }: PaymentD
   );
 }
 
-const mockBudgetIncreases: BudgetIncrease[] = [
-  {
-    id: 'bi1',
-    userId: 'user1',
-    userEmail: 'advertiser@example.com',
-    amount: 5000,
-    requestDate: '2024-03-20',
-    status: 'pending',
-    receipt: {
-      url: 'https://example.com/receipt.pdf',
-      uploadDate: '2024-03-20'
-    }
-  }
-];
 
 interface AdminDashboardProps {
   campaigns: Campaign[];
@@ -301,29 +290,66 @@ interface AdminDashboardProps {
   onSignOut: () => void;
 }
 
-export default function AdminDashboard({ campaigns, onUpdateCampaign, onSignOut }: AdminDashboardProps) {
+export default function AdminDashboard({ onUpdateCampaign }: AdminDashboardProps) {
   const [selectedTab, setSelectedTab] = useState<'all' | 'moderation' | 'competitive'>('all');
   const [showRejectionModal, setShowRejectionModal] = useState(false);
-  const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [showBudgetIncreaseModal, setShowBudgetIncreaseModal] = useState(false);
   const [selectedCampaign, setSelectedCampaign] = useState<Campaign | null>(null);
   const [selectedBudgetIncrease, setSelectedBudgetIncrease] = useState<BudgetIncrease | null>(null);
   const [campaignToReject, setCampaignToReject] = useState<Campaign | null>(null);
+  const [payment, setPayment] = useState([])
   const { t } = useLanguage();
-  const { user, logout } = useAuth();
+  const { logout } = useAuth();
   const [companyStatistic, setCompanyStatistic] = useState({})
-  const pendingModeration = campaigns.filter(c => c.moderationStatus === 'pending');
-  const pendingBudgetIncreases = mockBudgetIncreases.filter(bi => bi.status === 'pending');
-  const sortedByCPM = [...campaigns].sort((a, b) => b.cpm - a.cpm);
-  const topCPMCampaigns = sortedByCPM.slice(0, 4);
+  const [campaigns, setCampaigns] = useState([])
+  const [sortedByCPM, setSortedByCPM] = useState([])
+  const [topCPMCampaigns, setTopCPMCampaigns] = useState([])
+  const [company, setCompany] = useState([])
+  const [adminSelect, setAdminSelect] = useState(null)
 
-  const handleModerate = (campaign: Campaign, status: 'approved' | 'rejected', note?: string) => {
-    onUpdateCampaign({
-      ...campaign,
-      moderationStatus: status,
-      moderationNote: note,
-      status: status === 'approved' ? 'active' : 'paused'
-    });
+
+
+  useEffect(() => {
+    let item = [...campaigns].sort((a, b) => b.CPM - a.CPM);
+    setSortedByCPM(item)
+  }, [campaigns])
+
+  const handleModerate = async (campaign: Campaign, status: 'approved' | 'rejected', note?: string) => {
+    // onUpdateCampaign({
+    //   ...campaign,
+    //   moderationStatus: status,
+    //   moderationNote: note,
+    //   status: status === 'approved' ? 'active' : 'paused'
+    // });
+
+    let item = [...company]
+    let index = item.findIndex((elm) => elm.id == campaign.id)
+    if (index > -1) {
+      item.splice(index, 1)
+    }
+    let statistic = { ...companyStatistic }
+    statistic.under_moderation -= 1
+    setCompanyStatistic(statistic)
+    setCompany(item)
+
+
+    let temp = [...campaigns]
+    temp.push(campaign)
+    setCampaigns(temp)
+
+    const local_token = localStorage.getItem("token");
+    try {
+      await axios.post(`/api/confirm_company`, {
+        company_id: campaign.id,
+      }, {
+        headers: {
+          Authorization: `Bearer ${local_token}`,
+        },
+      });
+    } catch (error: any) {
+      console.log(error)
+    }
+
   };
 
   const handleRejectClick = (campaign: Campaign) => {
@@ -331,11 +357,35 @@ export default function AdminDashboard({ campaigns, onUpdateCampaign, onSignOut 
     setShowRejectionModal(true);
   };
 
-  const handleRejectConfirm = (reason: string) => {
+  const handleRejectConfirm = async (reason: string) => {
+
     if (campaignToReject) {
       handleModerate(campaignToReject, 'rejected', reason);
       setShowRejectionModal(false);
       setCampaignToReject(null);
+      let item = [...company]
+      let index = item.findIndex((elm) => elm.id == campaignToReject.id)
+      if (index > -1) {
+        item.splice(index, 1)
+      }
+      let statistic = { ...companyStatistic }
+      statistic.under_moderation -= 1
+      setCompanyStatistic(statistic)
+      setCompany(item)
+      const local_token = localStorage.getItem("token");
+      try {
+        const response = await axios.post(`/api/bow_out_company`, {
+          company_id: campaignToReject.id,
+          reason_for_refusal: reason
+        }, {
+          headers: {
+            Authorization: `Bearer ${local_token}`,
+          },
+        });
+        console.log(response)
+      } catch (error: any) {
+        console.log(error)
+      }
     }
   };
 
@@ -356,19 +406,41 @@ export default function AdminDashboard({ campaigns, onUpdateCampaign, onSignOut 
     }
   };
 
-  const handleBudgetIncreaseVerified = () => {
-    // Handle budget increase verification
-    console.log('Budget increase verified:', selectedBudgetIncrease);
+
+  const handleBudgetIncreaseVerified = async (data: any) => {
+    const local_token = localStorage.getItem("token");
+    let item = [...payment]
+
+    let index = item.findIndex((elm) => elm.id == data.payment_id)
+    if (index > -1) {
+      item.splice(index, 1)
+    }
+    setPayment(item)
+    const requestOptions = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${local_token}`
+      },
+      body: JSON.stringify(data),
+    };
+
+    try {
+      const response = await fetch(`/api/confirm_payment`, requestOptions);
+      const result: any = await response.json();
+      console.log(result)
+    } catch (error) {
+    }
   };
 
-  const ModerationQueue = () => (
-    <div className="space-y-6">
+
+  const ModerationQueue = () => {
+    return <div className="space-y-6">
       <h3 className="text-lg font-medium text-gray-900">
-        Ожидают модерации ({pendingModeration.length + pendingBudgetIncreases.length})
+        {t("admin.awaiting.moderation")} ({payment.length + company.length})
       </h3>
 
-      {/* Budget Increase Requests */}
-      {pendingBudgetIncreases.map(budgetIncrease => (
+      {payment.map(budgetIncrease => (
         <div key={budgetIncrease.id} className="bg-white rounded-lg shadow p-6 border-l-4 border-blue-500">
           <div className="flex items-start justify-between">
             <div className="space-y-2">
@@ -376,40 +448,39 @@ export default function AdminDashboard({ campaigns, onUpdateCampaign, onSignOut 
                 <p className="w-5 h-5 text-blue-500" >₽</p>
                 {/* <DollarSign className="w-5 h-5 text-blue-500" /> */}
                 <h4 className="text-lg font-medium text-gray-900">
-                  Запрос на пополнение бюджета
+                  {t("admin.payment.documents.request")}
                 </h4>
               </div>
               <p className="text-sm text-gray-500">
-                Пользователь: {budgetIncrease.userEmail}
+                {t("admin.payment.documents.user")}: {budgetIncrease.email}
               </p>
               <p className="text-sm text-gray-500">
-                Сумма: ₽{budgetIncrease.amount.toLocaleString()}
+                {t("admin.payment.documents.amount")}: ₽{budgetIncrease.payment_amount}
               </p>
               <p className="text-sm text-gray-500">
-                Дата запроса: {new Date(budgetIncrease.requestDate).toLocaleDateString()}
+                {t("admin.payment.documents.request.date")}: {budgetIncrease.date}
               </p>
             </div>
             <button
               onClick={() => handleVerifyBudgetIncrease(budgetIncrease)}
               className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
             >
-              <p  className="w-4 h-4 mr-1" >₽</p>
+              <p className="w-4 h-4 mr-1" >₽</p>
               {/* <DollarSign className="w-4 h-4 mr-1" /> */}
-              Проверить оплату
+              {t("admin.payment.verify")}
             </button>
           </div>
         </div>
       ))}
 
-      {/* Campaign Moderation Requests */}
-      {pendingModeration.map(campaign => (
-        <div key={campaign.id} className="bg-white rounded-lg shadow p-6">
+      {company.map(campaign => {
+        return <div key={campaign.id} className="bg-white rounded-lg shadow p-6">
           <div className="flex items-start space-x-6">
             <div className="w-48 flex-shrink-0">
               <div className="aspect-w-16 aspect-h-9 rounded-lg overflow-hidden">
                 <img
-                  src={campaign.adContent.imageUrl}
-                  alt={campaign.adContent.title}
+                  src={campaign.file}
+                  alt={campaign.company_title}
                   className="object-cover w-full h-full"
                 />
               </div>
@@ -418,16 +489,16 @@ export default function AdminDashboard({ campaigns, onUpdateCampaign, onSignOut 
             <div className="flex-1">
               <div className="flex justify-between items-start">
                 <div className="space-y-1">
-                  <h4 className="text-lg font-medium text-gray-900">{campaign.name}</h4>
+                  <h4 className="text-lg font-medium text-gray-900">{campaign.company_name}</h4>
                   <p className="text-sm text-gray-500">
-                    Бюджет: ₽{campaign.budget.toLocaleString()}
+                    {t("campaigns.table.budget")}: ₽{campaign.budget}
                   </p>
                   <p className="text-sm text-gray-500">
-                    CPM: ₽{campaign.cpm.toFixed(2)}
+                    CPM: ₽{campaign.CPM}
                   </p>
                   <div className="mt-2">
-                    <h5 className="text-sm font-medium text-gray-900">{campaign.adContent.title}</h5>
-                    <p className="text-sm text-gray-600">{campaign.adContent.description}</p>
+                    <h5 className="text-sm font-medium text-gray-900">{campaign.company_title}</h5>
+                    <p className="text-sm text-gray-600">{campaign.company_description}</p>
                   </div>
                 </div>
                 <div className="flex space-x-2">
@@ -436,36 +507,67 @@ export default function AdminDashboard({ campaigns, onUpdateCampaign, onSignOut 
                     className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-green-600 hover:bg-green-700"
                   >
                     <CheckCircle className="w-4 h-4 mr-1" />
-                    Одобрить
+                    {t("admin.moderation.approve")}
                   </button>
                   <button
                     onClick={() => handleRejectClick(campaign)}
                     className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-red-600 hover:bg-red-700"
                   >
                     <XCircle className="w-4 h-4 mr-1" />
-                    Отклонить
+                    {t("admin.moderation.reject")}
                   </button>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      ))}
-      {pendingModeration.length === 0 && pendingBudgetIncreases.length === 0 && (
+      })}
+      {payment.length === 0 && company.length === 0 && (
         <div className="text-center py-12 bg-white rounded-lg">
-          <p className="text-gray-500">Нет кампаний на модерации</p>
+          <p className="text-gray-500">{t("admin.no.campaigns")}</p>
         </div>
       )}
     </div>
-  );
+  };
+
+  const activatePriorityCompany = async (id: string) => {
+    const local_token = localStorage.getItem("token");
+    try {
+      await axios.post(`/api/activatePriorityCompany`, {
+        company_id: id,
+      }, {
+        headers: {
+          Authorization: `Bearer ${local_token}`,
+        },
+      });
+    } catch (error: any) {
+      console.log(error)
+    }
+  }
+
+  const disactivatePriorityCompany = async (id: string) => {
+    const local_token = localStorage.getItem("token");
+    try {
+      await axios.post(`/api/disactivatePriorityCompany`, {
+        company_id: id,
+      }, {
+        headers: {
+          Authorization: `Bearer ${local_token}`,
+        },
+      });
+    } catch (error: any) {
+      console.log(error)
+    }
+  }
+
 
   const CompetitiveAnalysis = () => (
     <div className="space-y-6">
       <div className="bg-white rounded-lg shadow p-6">
         <h3 className="text-lg font-medium text-gray-900 mb-4">{t('admin.competitive.title')}</h3>
         <div className="space-y-4">
-          {topCPMCampaigns.map((campaign, index) => (
-            <div key={campaign.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+          {topCPMCampaigns?.map((campaign, index) => {
+            return <div key={campaign.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
               <div className="flex items-center space-x-4">
                 <div className={`w-8 h-8 flex items-center justify-center rounded-full ${index === 0 ? 'bg-yellow-100 text-yellow-800' :
                   index === 1 ? 'bg-gray-100 text-gray-800' :
@@ -475,15 +577,15 @@ export default function AdminDashboard({ campaigns, onUpdateCampaign, onSignOut 
                   {index + 1}
                 </div>
                 <div>
-                  <h4 className="font-medium text-gray-900">{campaign.name}</h4>
+                  <h4 className="font-medium text-gray-900">{campaign.company_name}</h4>
                   <p className="text-sm text-gray-500">
-                    {t('admin.competitive.budget')}: ₽{campaign.budget.toLocaleString()} | {t('admin.competitive.spent')}: ₽{campaign.spent.toLocaleString()}
+                    {t('admin.competitive.budget')}: ₽{campaign.budget} | {t('admin.competitive.spent')}: ₽{campaign.budget_difference}
                   </p>
                 </div>
               </div>
               <div className="flex items-center space-x-4">
                 <div className="text-right">
-                  <div className="text-lg font-semibold text-gray-900">₽{campaign.cpm.toFixed(2)}</div>
+                  <div className="text-lg font-semibold text-gray-900">₽{campaign.CPM}</div>
                   <div className="text-sm text-gray-500">CPM</div>
                 </div>
                 {index === 3 && (
@@ -502,18 +604,56 @@ export default function AdminDashboard({ campaigns, onUpdateCampaign, onSignOut 
                 )}
               </div>
             </div>
-          ))}
+          })}
+          {adminSelect &&
+            <div key={adminSelect.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+              <div className="flex items-center space-x-4">
+                <div className={`w-8 h-8 flex items-center justify-center rounded-full bg-blue-100 text-blue-800`}>
+                  4
+                </div>
+                <div>
+                  <h4 className="font-medium text-gray-900">{adminSelect.company_name}</h4>
+                  <p className="text-sm text-gray-500">
+                    {t('admin.competitive.budget')}: ₽{adminSelect.budget} | {t('admin.competitive.spent')}: ₽{adminSelect.budget_difference}
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center space-x-4">
+                <div className="text-right">
+                  <div className="text-lg font-semibold text-gray-900">₽{adminSelect.CPM}</div>
+                  <div className="text-sm text-gray-500">CPM</div>
+                </div>
+                <button
+                  onClick={() => {
+                    setAdminSelect(null)
+                    disactivatePriorityCompany(adminSelect.id)
+                  }
+                    //   onUpdateCampaign({
+                    //   ...campaign,
+                    //   status: campaign.status === 'active' ? 'paused' : 'active'
+                    // })
+                  }
+                  className={`px-3 py-1 rounded-full text-sm font-medium ${adminSelect.status === 'active'
+                    ? 'bg-green-100 text-green-800'
+                    : 'bg-yellow-100 text-yellow-800'
+                    }`}
+                >
+                  {adminSelect.status === 'active' ? t('admin.competitive.pause') : t('admin.competitive.activate')}
+                </button>
+              </div>
+            </div>
+          }
         </div>
       </div>
 
       <div className="bg-white rounded-lg shadow p-6">
         <h3 className="text-lg font-medium text-gray-900 mb-4">{t('admin.competitive.management')}</h3>
         <div className="space-y-4">
-          {sortedByCPM.map(campaign => (
-            <div key={campaign.id} className="flex items-center justify-between p-4 border-b last:border-0">
+          {sortedByCPM.map(campaign => {
+            return <div key={campaign.id} className="flex items-center justify-between p-4 border-b last:border-0">
               <div>
-                <h4 className="font-medium text-gray-900">{campaign.name}</h4>
-                <p className="text-sm text-gray-500">CPM: ₽{campaign.cpm.toFixed(2)}</p>
+                <h4 className="font-medium text-gray-900">{campaign.company_name}</h4>
+                <p className="text-sm text-gray-500">CPM: ₽{campaign.CPM}</p>
               </div>
               <div className="flex items-center space-x-2">
                 <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${campaign.status === 'active' ? 'bg-green-100 text-green-800' :
@@ -523,24 +663,35 @@ export default function AdminDashboard({ campaigns, onUpdateCampaign, onSignOut 
                   {campaign.status}
                 </span>
                 <button
-                  onClick={() => onUpdateCampaign({
-                    ...campaign,
-                    status: campaign.status === 'active' ? 'paused' : 'active'
-                  })}
+                  onClick={() => {
+                    if (campaign.id !== adminSelect?.id) {
+                      activatePriorityCompany(campaign.id)
+                      setAdminSelect(campaign)
+                    }
+                    else {
+                      setAdminSelect(null)
+                      disactivatePriorityCompany(campaign.id)
+                    }
+                  }
+                    //   onUpdateCampaign({
+                    //   ...campaign,
+                    //   status: campaign.status === 'active' ? 'paused' : 'active'
+                    // })
+                  }
                   className="text-sm text-blue-600 hover:text-blue-800"
                 >
-                  {campaign.status === 'active' ? t('admin.competitive.pause') : t('admin.competitive.activate')}
+                  {campaign.id === adminSelect?.id ? t('admin.competitive.pause') : t('admin.competitive.activate')}
                 </button>
               </div>
             </div>
-          ))}
+          })}
+
         </div>
       </div>
     </div>
   );
 
   const getCompanyStatistic = async () => {
-    // setLoading(true)
     const local_token = localStorage.getItem("token");
     try {
       const response = await axios.get(`/api/getCompanyStatistic`, {
@@ -548,19 +699,71 @@ export default function AdminDashboard({ campaigns, onUpdateCampaign, onSignOut 
           Authorization: `Bearer ${local_token}`,
         },
       });
-      console.log(response.data, 'dasd')
-      // setUser(response.data);
       setCompanyStatistic(response.data)
     } catch (error: any) {
-      if (error.response?.status === 403) localStorage.removeItem("token");
-      // setUser(null);
-    } finally {
-      // setLoading(false);
+    }
+  }
+
+  const getPaymentOnModeration = async () => {
+    const local_token = localStorage.getItem("token");
+    try {
+      const response = await axios.get(`/api/getPaymentOnModeration`, {
+        headers: {
+          Authorization: `Bearer ${local_token}`,
+        },
+      });
+      setPayment(response.data.message)
+    } catch (error: any) {
+    }
+  }
+
+  const getBestCompany = async () => {
+    const local_token = localStorage.getItem("token");
+    try {
+      const response = await axios.get(`/api/getBestCompany`, {
+        headers: {
+          Authorization: `Bearer ${local_token}`,
+        },
+      });
+      setTopCPMCampaigns(response.data.bestCompany)
+      setAdminSelect(response.data.admin_company)
+    } catch (error: any) {
+    }
+  }
+
+  const getPrioretCompany = async () => {
+    const local_token = localStorage.getItem("token");
+    try {
+      const response = await axios.get(`/api/getPriorityCompanies`, {
+        headers: {
+          Authorization: `Bearer ${local_token}`,
+        },
+      });
+      setCampaigns(response.data.data)
+    } catch (error: any) {
+    }
+  }
+
+  const getCompanyАwaitingМoderation = async () => {
+    const local_token = localStorage.getItem("token");
+    try {
+      const response = await axios.get(`/api/getCompanyАwaitingМoderation`, {
+        headers: {
+          Authorization: `Bearer ${local_token}`,
+        },
+      });
+
+      setCompany(response.data[1])
+    } catch (error: any) {
     }
   }
 
   useEffect(() => {
     getCompanyStatistic()
+    getPaymentOnModeration()
+    getCompanyАwaitingМoderation()
+    getBestCompany()
+    getPrioretCompany()
   }, [])
 
 
@@ -568,11 +771,11 @@ export default function AdminDashboard({ campaigns, onUpdateCampaign, onSignOut 
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex justify-between items-center mb-8">
-          <h2 className="text-2xl font-bold text-gray-900">Панель администратора</h2>
+          <h2 className="text-2xl font-bold text-gray-900">{t("admin.title")}</h2>
           <div className="flex items-center space-x-4">
             <LanguageSwitch />
             <button
-              onClick={()=>logout()}
+              onClick={() => logout()}
               className="inline-flex items-center px-4 py-2 text-sm font-medium text-red-600 hover:text-red-700 
                 transition-colors rounded-lg hover:bg-red-50"
             >
@@ -647,15 +850,6 @@ export default function AdminDashboard({ campaigns, onUpdateCampaign, onSignOut 
               >
                 {t('admin.tabs.moderation')}
               </button>
-              {/* <button
-                onClick={() => setSelectedTab('competitive')}
-                className={`whitespace-nowrap py-4 px-6 border-b-2 font-medium text-sm ${selectedTab === 'competitive'
-                  ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                  }`}
-              >
-                {t('admin.tabs.competitive')}
-              </button> */}
             </nav>
           </div>
 

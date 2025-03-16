@@ -55,7 +55,7 @@ function PaymentModal({ isOpen, onClose, amount, userEmail }: PaymentModalProps)
       setUploading(true);
       const formData = new FormData();
       formData.append("payment", amount);
-      formData.append("file", file);
+      formData.append("image", file);
 
       var myHeaders = new Headers();
       myHeaders.append("Authorization", `Bearer ${token}`)
@@ -68,7 +68,7 @@ function PaymentModal({ isOpen, onClose, amount, userEmail }: PaymentModalProps)
             body: formData,
             redirect: 'follow'
           });
-        const data = await response.json();
+        await response.json();
         if (!response.ok) {
           const errorData = await response.json();
           alert(errorData?.message)
@@ -77,7 +77,7 @@ function PaymentModal({ isOpen, onClose, amount, userEmail }: PaymentModalProps)
         }
         setUploading(false);
         setUploadComplete(true);
-        ChaneUserData("balance", amount)
+        // ChaneUserData("balance", amount)
       } catch (error) {
       }
     }
@@ -88,7 +88,7 @@ function PaymentModal({ isOpen, onClose, amount, userEmail }: PaymentModalProps)
       <div className="bg-white rounded-lg w-full max-w-md p-6">
         <div className="flex justify-between items-center mb-6">
           <h3 className="text-lg font-medium text-gray-900">
-            {showUpload ? 'Загрузить квитанцию' : 'Информация об оплате'}
+            {showUpload ? t("payment.receipt") : t("payment.info")}
           </h3>
           {!uploading && (
             <button onClick={() => {
@@ -108,17 +108,21 @@ function PaymentModal({ isOpen, onClose, amount, userEmail }: PaymentModalProps)
               <div className="bg-blue-50 border border-blue-100 rounded-lg p-4">
                 <div className="flex justify-between items-center">
                   <div>
-                    <p className="text-sm font-medium text-blue-900">Сумма к оплате</p>
+                    <p className="text-sm font-medium text-blue-900">{t("payment.ammount")}</p>
                     <p className="text-2xl font-bold text-blue-900">{currencySymbol}{amount}</p>
                   </div>
-                  <DollarSign className="w-8 h-8 text-blue-500" />
+                  <div className="w-8 h-8 text-blue-500 text-xl">
+                    ₽
+                  </div>
+                  {/* <DollarSign className="w-8 h-8 text-blue-500" /> */}
                 </div>
               </div>
 
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Карта Сбербанка
+                    {/* Карта Сбербанка */}
+                    {t("payment.card")}
                   </label>
                   <div className="flex items-center space-x-2">
                     <div className="flex-1 px-4 py-2 bg-gray-50 rounded-lg font-mono text-gray-900">
@@ -136,7 +140,7 @@ function PaymentModal({ isOpen, onClose, amount, userEmail }: PaymentModalProps)
                 {userEmail && (
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Описание платежа (ваш email)
+                      {t("payment.description")}
                     </label>
                     <div className="flex items-center space-x-2">
                       <div className="flex-1 px-4 py-2 bg-gray-50 rounded-lg text-gray-900">
@@ -163,7 +167,7 @@ function PaymentModal({ isOpen, onClose, amount, userEmail }: PaymentModalProps)
                     shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 
                     focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                 >
-                  Я оплатил
+                  {t("payment.paid")}
                 </button>
               </div>
             </div>
@@ -171,7 +175,8 @@ function PaymentModal({ isOpen, onClose, amount, userEmail }: PaymentModalProps)
         ) : (
           <div className="space-y-4">
             <p className="text-sm text-gray-600">
-              Пожалуйста, загрузите квитанцию об оплате. После проверки модератором ваш бюджет будет пополнен.
+              {t("payment.upload.description")}
+              {/* Пожалуйста, загрузите квитанцию об оплате. После проверки модератором ваш бюджет будет пополнен. */}
             </p>
 
             <div className="mt-2">
@@ -193,7 +198,7 @@ function PaymentModal({ isOpen, onClose, amount, userEmail }: PaymentModalProps)
                   <div className="text-center">
                     <Upload className="mx-auto h-12 w-12 text-gray-400" />
                     <p className="mt-1 text-sm text-gray-600">
-                      Нажмите для загрузки квитанции
+                      {t("payemnt.click")}
                     </p>
                   </div>
                 </button>
@@ -204,7 +209,7 @@ function PaymentModal({ isOpen, onClose, amount, userEmail }: PaymentModalProps)
                   border-blue-300 rounded-lg bg-blue-50">
                   <div className="text-center">
                     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
-                    <p className="mt-2 text-sm text-blue-600">Загрузка квитанции...</p>
+                    <p className="mt-2 text-sm text-blue-600">{t("payment.loading")}</p>
                   </div>
                 </div>
               )}
@@ -215,7 +220,7 @@ function PaymentModal({ isOpen, onClose, amount, userEmail }: PaymentModalProps)
                   <div className="text-center">
                     <Check className="mx-auto h-12 w-12 text-green-500" />
                     <p className="mt-2 text-sm text-green-600">
-                      Квитанция успешно загружена! Ожидайте проверки модератором.
+                      {t("payment.success")}
                     </p>
                   </div>
                 </div>
