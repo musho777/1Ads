@@ -14,168 +14,13 @@ import ReactPaginate from 'react-paginate';
 import AdminDashboard from './AdminDashboard';
 
 
-const initialCampaigns: Campaign[] = [
-  {
-    id: '1',
-    name: 'Halal Food Delivery',
-    budget: 25000,
-    spent: 9800,
-    status: 'active',
-    startDate: '2024-02-01',
-    endDate: '2024-04-30',
-    impressions: 1500000,
-    clicks: 60000,
-    ctr: 4.0,
-    cpm: 9.50,
-    moderationStatus: 'approved',
-    targetCountries: ['US', 'CA', 'GB', 'AU', 'NZ'],
-    adContent: {
-      title: "Certified Halal Food Delivery",
-      description: "Your favorite halal restaurants delivered to your doorstep. Order now!",
-      imageUrl: "https://images.unsplash.com/photo-1526016650454-68a6f488910a",
-      targetUrl: "https://example.com/halal-delivery",
-      mediaType: 'image'
-    }
-  },
-  {
-    id: '2',
-    name: 'Ramadan Collection 2024',
-    budget: 15000,
-    spent: 4500,
-    status: 'active',
-    startDate: '2024-03-01',
-    endDate: '2024-04-15',
-    impressions: 850000,
-    clicks: 25500,
-    ctr: 3.0,
-    cpm: 8.50,
-    moderationStatus: 'approved',
-    targetCountries: ['SA', 'AE', 'KW', 'QA', 'BH'],
-    adContent: {
-      title: "Ramadan Collection 2024",
-      description: "Discover our exclusive Ramadan collection. Elegant abayas, modest fashion, and more.",
-      imageUrl: "https://images.unsplash.com/photo-1584551246679-0daf3d275d0f",
-      targetUrl: "https://example.com/ramadan-2024",
-      mediaType: 'image'
-    }
-  },
-  {
-    id: '3',
-    name: 'Islamic Education Platform',
-    budget: 12000,
-    spent: 3200,
-    status: 'active',
-    startDate: '2024-03-10',
-    endDate: '2024-05-10',
-    impressions: 420000,
-    clicks: 18900,
-    ctr: 4.5,
-    cpm: 7.50,
-    moderationStatus: 'approved',
-    targetCountries: ['GB', 'US', 'CA', 'AU', 'FR'],
-    adContent: {
-      title: "Learn Islam Online",
-      description: "Quality Islamic education from certified scholars. Start your journey today.",
-      imageUrl: "https://images.unsplash.com/photo-1577451820952-05f58f41c779",
-      targetUrl: "https://example.com/learn-islam",
-      mediaType: 'image'
-    }
-  },
-  {
-    id: '4',
-    name: 'Islamic Finance Course',
-    budget: 18000,
-    spent: 5400,
-    status: 'paused',
-    startDate: '2024-03-05',
-    endDate: '2024-05-05',
-    impressions: 720000,
-    clicks: 28800,
-    ctr: 4.0,
-    cpm: 7.00,
-    moderationStatus: 'approved',
-    targetCountries: ['MY', 'ID', 'SG', 'BN', 'AE'],
-    adContent: {
-      title: "Master Islamic Finance",
-      description: "Comprehensive course on Islamic banking and finance. AAOIFI certified.",
-      imageUrl: "https://images.unsplash.com/photo-1554224155-8d04cb21cd6c",
-      targetUrl: "https://example.com/islamic-finance",
-      mediaType: 'image'
-    }
-  },
-  {
-    id: '5',
-    name: 'Halal Investment App',
-    budget: 20000,
-    spent: 7800,
-    status: 'paused',
-    startDate: '2024-02-15',
-    endDate: '2024-04-15',
-    impressions: 1200000,
-    clicks: 42000,
-    ctr: 3.5,
-    cpm: 6.50,
-    moderationStatus: 'pending',
-    targetCountries: ['ID', 'MY', 'TR', 'SA', 'AE'],
-    adContent: {
-      title: "Shariah-Compliant Investments",
-      description: "Start your halal investment journey today. No riba, no uncertainty.",
-      imageUrl: "https://images.unsplash.com/photo-1553729459-efe14ef6055d",
-      targetUrl: "https://example.com/halal-invest",
-      mediaType: 'image'
-    }
-  },
-  {
-    id: '6',
-    name: 'Prayer Time App',
-    budget: 10000,
-    spent: 2800,
-    status: 'pending',
-    startDate: '2024-03-15',
-    endDate: '2024-04-15',
-    impressions: 350000,
-    clicks: 17500,
-    ctr: 5.0,
-    cpm: 6.00,
-    moderationStatus: 'pending',
-    targetCountries: ['SA', 'EG', 'TR', 'PK', 'BD'],
-    adContent: {
-      title: "Never Miss a Prayer",
-      description: "Accurate prayer times, Qibla finder, and Quran with your phone.",
-      imageUrl: "https://images.unsplash.com/photo-1542816417-0983c9c9ad53",
-      targetUrl: "https://example.com/prayer-app",
-      mediaType: 'image'
-    }
-  },
-  {
-    id: '7',
-    name: 'Modest Fashion Store',
-    budget: 8000,
-    spent: 1200,
-    status: 'pending',
-    startDate: '2024-03-20',
-    endDate: '2024-04-20',
-    impressions: 150000,
-    clicks: 4500,
-    ctr: 3.0,
-    cpm: 5.50,
-    moderationStatus: 'pending',
-    targetCountries: ['TR', 'FR', 'DE', 'UK', 'NL'],
-    adContent: {
-      title: "Modest Fashion for Every Occasion",
-      description: "Stylish and modest clothing for modern Muslim women. Free worldwide shipping.",
-      imageUrl: "https://images.unsplash.com/photo-1572804013309-59a88b7e92f1",
-      targetUrl: "https://example.com/modest-fashion",
-      mediaType: 'image'
-    }
-  }
-];
 
-const StatCard = ({ title, value, icon: Icon, color }: {
+const StatCard = ({ title, value, icon: Icon, color, rub }: {
   title: string;
   value: string;
   icon: React.ElementType;
   color: string;
+  rub: boolean;
 }) => (
   <div className="bg-white rounded-lg p-6 shadow-md">
     <div className="flex items-center justify-between">
@@ -184,7 +29,10 @@ const StatCard = ({ title, value, icon: Icon, color }: {
         <p className="text-2xl font-bold mt-1">{value}</p>
       </div>
       <div className={`p-3 rounded-full ${color}`}>
-        <Icon className="w-6 h-6 text-white" />
+        {rub ?
+          <p className="w-6 h-6 text-white text-center text-xl">₽</p> :
+          <Icon className="w-6 h-6 text-white" />
+        }
       </div>
     </div>
   </div>
@@ -197,28 +45,48 @@ const CompetitiveStatus = ({ campaign, highestCpm }: {
   const { t } = useLanguage();
   const isCompetitive = campaign.CPM >= highestCpm;
   const currencySymbol = '₽';
-  console.log(campaign.admin_status)
+  let activeText = ""
   let activeColor = ""
+  let status = ""
   if (campaign.admin_status == "На модерации") {
     activeColor = "#a0a0a0"
+    activeText = t("competitive.in.moderation")
+    status = t("На модерации")
   }
   else if (campaign.admin_status == "Допущена") {
     activeColor = "#5b89e6"
+    activeText = t("competitive.in.access")
+    status = t("competitive.access")
+
   }
-  else if (campaign.admin_status == "Допущена") {
+  else if (campaign.admin_status == "Активна") {
     activeColor = "#a8d097"
+    activeText = t("competitive.showing")
+    status = t("competitive.active")
+
   }
   else if (campaign.admin_status == "Не допущена") {
     activeColor = "#d0d0d0"
+    activeText = t("competitive.comments")
+    status = t("competitive.reject")
   }
   else if (campaign.admin_status == "Приостановлена") {
     activeColor = "#ffe188"
+    activeText = t("competitive.over")
+    status = t("competitive.pause")
+
   }
   else if (campaign.admin_status == "Завершена") {
     activeColor = "#e28987"
+    activeText = t("competitive.date.end")
+    status = t("Завершена")
+
   }
   else if (campaign.admin_status == "Запланирована") {
     activeColor = "#5b89e6"
+    activeText = t("competitive.completed")
+    status = t("competitive.planned")
+
   }
   return (
     <div
@@ -240,7 +108,8 @@ const CompetitiveStatus = ({ campaign, highestCpm }: {
               style={{ color: activeColor }}
               className="flex items-center  mb-2">
               <span className="font-medium">
-                Oплачена, находится на ручной модерации у администратора
+                {activeText}
+                {/* Oплачена, находится на ручной модерации у администратора */}
                 {/* {t('competitive.needsBoost', { name: campaign.company_name })} */}
               </span>
             </div>
@@ -253,8 +122,10 @@ const CompetitiveStatus = ({ campaign, highestCpm }: {
               {t('competitive.highestCpm')}: <span className="font-semibold">{currencySymbol}{highestCpm}</span>
             </p>
             <p className="text-sm text-gray-600">
-              {t('competitive.status')}: <span className={`font-semibold ${isCompetitive ? 'text-green-600' : 'text-[#a0a0a0]'}`}>
-                На модерации
+              {t('competitive.status')}: <span
+                style={{ color: activeColor }}
+                className={`font-semibold`}>
+                {status}
               </span>
             </p>
             {/* {!isCompetitive && (
@@ -318,10 +189,6 @@ function Dashboard() {
   const [warningText, setWarningText] = useState("")
   const API_URL = import.meta.env.VITE_URL;
 
-
-  const totalBudget = 100000;
-  const totalSpent = 0;
-  const remainingBudget = totalBudget - totalSpent;
   const currencySymbol = '₽';
 
   const handleEditProfile = () => {
@@ -329,15 +196,9 @@ function Dashboard() {
   };
 
   const handleUpdateCampaign = (updatedCampaign: Campaign) => {
-    // setCampaigns(prevCampaigns =>
-    //   prevCampaigns.map(campaign =>
-    //     campaign.id === updatedCampaign.id ? updatedCampaign : campaign
-    //   )
-    // );
+
   };
   const handleSignOut = () => {
-    // setIsAuthenticated(false);
-    // setIsAdmin(false);
   };
 
 
@@ -355,10 +216,8 @@ function Dashboard() {
     formData.append("company_url", campaignData.adContent.targetUrl)
     formData.append("media_type", campaignData.adContent.mediaType)
     formData.append("status", campaignData.status)
-    console.log(campaignData.max_CPM_need)
     // formData.append("coutries", campaignData.targetCountries)
     campaignData.targetCountries.forEach(country => {
-      console.log(country, 'country')
       formData.append("countries[]", country);
     });
     formData.append("company_title", campaignData.adContent.title)
@@ -566,7 +425,6 @@ function Dashboard() {
     </div>
   if (user?.data?.roll == "admin") {
     return <AdminDashboard
-      campaigns={initialCampaigns}
       onUpdateCampaign={handleUpdateCampaign}
       onSignOut={handleSignOut}
     />
@@ -604,7 +462,7 @@ function Dashboard() {
           <StatCard
             title={t('dashboard.stats.totalSpent')}
             value={user?.allTimeStatistic?.Total_spent}
-            icon={DollarSign}
+            rub
             color="bg-green-500"
           />
           <StatCard

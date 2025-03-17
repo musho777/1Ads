@@ -319,6 +319,12 @@ export default function AdminDashboard({ onUpdateCampaign }: AdminDashboardProps
     setSortedByCPM(item)
   }, [campaigns])
 
+
+  function parseDate(dateString) {
+    const [day, month, year] = dateString.split('.');
+    return new Date(year, month - 1, day);
+  }
+
   const handleModerate = async (campaign: Campaign, status: 'approved' | 'rejected', note?: string) => {
     // onUpdateCampaign({
     //   ...campaign,
@@ -339,8 +345,14 @@ export default function AdminDashboard({ onUpdateCampaign }: AdminDashboardProps
 
 
     let temp = [...campaigns]
-    temp.push(campaign)
-    setCampaigns(temp)
+    const today = new Date();
+    const startDate = parseDate(campaign.start_date);
+    const finishDate = parseDate(campaign.finish_date);
+    const isInRange = today >= startDate && today <= finishDate;
+    if (temp.status == "active" && isInRange) {
+      temp.push(campaign)
+      setCampaigns(temp)
+    }
 
     const local_token = localStorage.getItem("token");
     try {
@@ -539,6 +551,7 @@ export default function AdminDashboard({ onUpdateCampaign }: AdminDashboardProps
     setLoadingTop(true)
     const local_token = localStorage.getItem("token");
     try {
+      console.log(id, local_token)
       const respons = await axios.post(`${API_URL}/api/activatePriorityCompany`, {
         company_id: id,
       }, {
@@ -789,6 +802,8 @@ export default function AdminDashboard({ onUpdateCampaign }: AdminDashboardProps
     getPrioretCompany()
   }, [])
 
+
+  console.log(company)
 
   return (
     <div className="min-h-screen bg-gray-50">

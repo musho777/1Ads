@@ -156,6 +156,27 @@ const translations = {
     'competitive.paused': 'Paused (Low CPM)',
     'competitive.recommendation': 'Recommendation: Increase your CPM to {amount} to become competitive and resume the campaign',
 
+    "competitive.in.moderation": "paid, under manual moderation by an administrator",
+    "competitive.moderation": "Under moderation",
+
+    "competitive.in.access": "can be launched, manual moderation passed",
+    "competitive.access": "Approved",
+
+    "competitive.showing": "ads are being displayed",
+
+    "competitive.comments": "there are remarks after manual moderation",
+    "competitive.reject": "Not approved",
+
+    "competitive.over": "ad display has been suspended for the following reasons: - budget exhausted - CPM lower than competitors",
+    "competitive.pause": "Suspended",
+
+    "competitive.date.end": "campaign end date has passed",
+    "competitive.end": "Completed",
+
+    "competitive.completed": "moderation passed, budget available, but campaign start date has not yet arrived",
+    "competitive.planned": "Planned",
+
+
     // Settings
     'settings.language': 'Change Language',
     'settings.english': 'English',
@@ -410,6 +431,28 @@ const translations = {
     'competitive.active': 'Активна',
     'competitive.paused': 'Приостановлена (Низкий CPM)',
     'competitive.recommendation': 'Рекомендация: Повысьте ваш CPM до {amount} для возобновления конкурентоспособности кампании',
+
+    "competitive.in.moderation": "оплачена, находится на ручной модерации у администратора",
+    "competitive.moderation": "На модерации",
+
+    "competitive.in.access": "можно запускать, ручная модерация пройдена",
+    "competitive.access": "Допущена",
+
+    "competitive.showing": "показ объявлений идет",
+
+    "competitive.comments": "есть замечания после ручной модерации",
+    "competitive.reject": "Не допущена",
+
+    "competitive.over": "показ объявлений приостановлен по причинам: -закончился бюджет-CPM ниже конкурентов",
+    "competitive.pause": "Приостановлена",
+
+    "competitive.date.end": "дата завершения кампании прошла",
+    "competitive.end": "Завершена",
+
+    "competitive.completed": "модерация пройдена, есть бюджет, но дата старта кампании еще не наступила",
+    "competitive.planned": "Запланирована",
+
+
 
     // Settings
     'settings.language': 'Изменить язык',

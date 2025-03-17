@@ -81,6 +81,8 @@ export default function CampaignForm({ isOpen, onClose, onSubmit, initialData, l
   const defaultPreviewImage = 'https://images.unsplash.com/photo-1590845947676-fa2576f401b2?w=1200&h=600&fit=crop&q=80';
   const isEditing = !!initialData;
 
+  console.log(formData.endDate, 'fdsfjsd')
+
   useEffect(() => {
     if (initialData) {
       setFileUrl(initialData?.file)
@@ -221,13 +223,19 @@ export default function CampaignForm({ isOpen, onClose, onSubmit, initialData, l
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-
+    let { name, value } = e.target;
+    console.log(value, name)
+    if (name === "startDate") {
+      value = value.replace(/-/g, ".")
+    }
+    else if (name === "endDate") {
+      value = value.replace(/-/g, ".")
+    }
+    console.log(value)
     // If editing and trying to change ad content fields, don't update
     if (isEditing && (name === 'adTitle' || name === 'adDescription' || name === 'targetUrl')) {
       return;
     }
-
     setFormData(prev => ({
       ...prev,
       [name]: value
@@ -434,7 +442,8 @@ export default function CampaignForm({ isOpen, onClose, onSubmit, initialData, l
                       type="date"
                       name="startDate"
                       id="startDate"
-                      value={formData.startDate}
+                      pattern="\d{4}\.\d{2}\.\d{2}"
+                      value={formData.startDate.split(".").join("-")}
                       onChange={handleInputChange}
                       required
                       className="block w-full rounded-md border-gray-300 pl-9 pr-12 focus:border-sky-500 focus:ring-sky-500 sm:text-sm h-10 border shadow-sm"
@@ -454,7 +463,8 @@ export default function CampaignForm({ isOpen, onClose, onSubmit, initialData, l
                       type="date"
                       name="endDate"
                       id="endDate"
-                      value={formData.endDate}
+                      value={formData.endDate.split(".").join("-")}
+                      // value={formData.endDate}
                       onChange={handleInputChange}
                       required
                       className="block w-full rounded-md border-gray-300 pl-9 pr-12 focus:border-sky-500 focus:ring-sky-500 sm:text-sm h-10 border shadow-sm"
@@ -951,34 +961,6 @@ export default function CampaignForm({ isOpen, onClose, onSubmit, initialData, l
                   {selectedCISCountries.length + selectedOtherCountries.length} {t('campaign.countries.label')}
                 </span>
               </div>
-              {/* <div className="flex space-x-3">
-                <button
-                  type="button"
-                  onClick={onClose}
-                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500"
-                >
-                  {t('campaign.button.cancel')}
-                </button>
-                <button
-                  type="submit"
-                  disabled={!isFormValid() || loading}
-                  className={`px-4 py-2 text-sm font-medium text-white rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500 ${isFormValid()
-                    ? 'bg-sky-600 hover:bg-sky-700'
-                    : 'bg-sky-400 cursor-not-allowed'
-                    }`}
-                >
-                  {loading ?
-                    <ClipLoader
-                      color={"white"}
-                      loading={loading}
-                      size={20}
-                      aria-label="Loading Spinner"
-                      data-testid="loader"
-                    /> :
-                    initialData ? t('campaign.button.save') : t('campaign.button.create')
-                  }
-                </button>
-              </div> */}
             </div>
           </div>
         </div>
