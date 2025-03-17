@@ -116,7 +116,6 @@ export default function Register({ onToggleMode }: AuthFormProps) {
       .catch(error => console.error("Ошибка:", error));
   }
   useEffect(() => {
-    console.log(!captcha, 'captcha')
     if (!captcha) {
       GetCaptcha()
     }

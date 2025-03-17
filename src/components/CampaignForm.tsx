@@ -81,8 +81,6 @@ export default function CampaignForm({ isOpen, onClose, onSubmit, initialData, l
   const defaultPreviewImage = 'https://images.unsplash.com/photo-1590845947676-fa2576f401b2?w=1200&h=600&fit=crop&q=80';
   const isEditing = !!initialData;
 
-  console.log(formData.endDate, 'fdsfjsd')
-
   useEffect(() => {
     if (initialData) {
       setFileUrl(initialData?.file)
@@ -113,7 +111,6 @@ export default function CampaignForm({ isOpen, onClose, onSubmit, initialData, l
       })
     }
     else {
-      console.log("Errrrrr")
       setFileUrl("")
       setVideoPhotoUrl("")
       setMediaType("image")
@@ -224,14 +221,12 @@ export default function CampaignForm({ isOpen, onClose, onSubmit, initialData, l
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     let { name, value } = e.target;
-    console.log(value, name)
     if (name === "startDate") {
       value = value.replace(/-/g, ".")
     }
     else if (name === "endDate") {
       value = value.replace(/-/g, ".")
     }
-    console.log(value)
     // If editing and trying to change ad content fields, don't update
     if (isEditing && (name === 'adTitle' || name === 'adDescription' || name === 'targetUrl')) {
       return;

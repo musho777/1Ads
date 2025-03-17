@@ -241,7 +241,6 @@ function Dashboard() {
         });
       const data = await response.json()
       if (!response.ok) {
-        console.log(data)
         // const errorData = await response.json();
         setLoading(false)
         setSuccess(false)
@@ -345,7 +344,6 @@ function Dashboard() {
     try {
       const response = await fetch(`${API_URL}/api/editCompany`, requestOptions);
       const data = await response.json();
-      console.log(data)
       if (!response.ok) {
         setEditLoading(false)
         // setIsFormOpen(false)

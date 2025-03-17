@@ -6,7 +6,6 @@ import { useAuth } from './contexts/AuthContext';
 
 export const Navigation = () => {
   const { isAuthenticated } = useAuth()
-  // const isAuthenticated = !!localStorage.getItem("token");
   return <BrowserRouter>
     <Routes>
       <Route

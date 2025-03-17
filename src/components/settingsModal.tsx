@@ -53,7 +53,6 @@ export default function SettingsModal({ setSettings }: AuthFormProps) {
 
   useEffect(() => {
     if (user) {
-      console.log(user?.data.get_profile_setting[0].notify_by_email)
       setNotifcation(user?.data.get_profile_setting[0].notify_by_email)
       setAutoNotifcation(user?.data.get_profile_setting[0].automatically_increase_CPM)
     }

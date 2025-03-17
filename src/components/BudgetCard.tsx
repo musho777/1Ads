@@ -253,7 +253,6 @@ export default function BudgetCard({ userEmail = "user@example.com" }: BudgetCar
 
   useEffect(() => {
     if (user) {
-      console.log(user?.data?.get_budget[0].budget)
       const percentage = ((user?.data?.get_budget[0].budget - user?.data?.get_budget[0]?.budget_balance) / user?.data?.get_budget[0].budget) * 100;
       if (user?.data?.get_budget[0].budget == 0 && user?.data?.get_budget[0]?.budget_balance == 0) {
         setSpentPercentage(100)

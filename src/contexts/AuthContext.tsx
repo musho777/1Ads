@@ -139,14 +139,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
     }
     else {
-      console.log(value)
       item.data.get_profile_setting[0].notify_by_email = value.notifcation
       item.data.get_profile_setting[0].automatically_increase_CPM = value.autoNotifcation
-      console.log(item.data.get_profile_setting[0].notify_by_email, item.data.get_profile_setting[0].automatically_increase_CPM)
     }
     setUser(item)
-    // console.log(user)
-    // console.log("das")
   }
 
 
