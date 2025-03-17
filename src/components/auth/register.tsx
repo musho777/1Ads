@@ -43,7 +43,7 @@ export default function Register({ onToggleMode }: AuthFormProps) {
     if (!formData.email) {
       newErrors.email = t("enter.email");
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = 'Введите корректный email';
+      newErrors.email = t("valid.email");
     }
 
     if (!formData.password) {
@@ -53,13 +53,13 @@ export default function Register({ onToggleMode }: AuthFormProps) {
     }
 
     if (!formData.username) {
-      newErrors.username = 'Введите имя или название компании';
+      newErrors.username = t("enter.company.name");
     }
 
     if (!formData.confirmPassword) {
       newErrors.confirmPassword = t("confirm.password");
     } else if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = 'Пароли не совпадают';
+      newErrors.confirmPassword = t("passwords.not.match");
     }
 
     setErrors(newErrors);

@@ -40,7 +40,7 @@ export default function Login({ onToggleMode }: AuthFormProps) {
     if (!formData.email) {
       newErrors.email = t("enter.email")
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = 'Введите корректный email';
+      newErrors.email = t("valid.email");
     }
 
     if (!formData.password) {
@@ -186,7 +186,7 @@ export default function Login({ onToggleMode }: AuthFormProps) {
                     aria-label="Loading Spinner"
                     data-testid="loader"
                   /> :
-                  'Войти'
+                  t("auth.login")
                 }
               </button>
             </div>

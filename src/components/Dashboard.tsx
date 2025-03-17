@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { BarChart3, DollarSign, MousePointerClick, Eye, Pencil, Trash2, ExternalLink, AlertTriangle, TrendingUp, TrendingDown, MoreVertical } from 'lucide-react';
+import { BarChart3, DollarSign, MousePointerClick, Eye, Pencil, Trash2, ExternalLink, TrendingUp, MoreVertical } from 'lucide-react';
 import { Campaign } from '../types';
 import CampaignForm from './CampaignForm';
 import { useLanguage } from '../contexts/LanguageContext';
@@ -197,9 +197,34 @@ const CompetitiveStatus = ({ campaign, highestCpm }: {
   const { t } = useLanguage();
   const isCompetitive = campaign.CPM >= highestCpm;
   const currencySymbol = '₽';
+  console.log(campaign.admin_status)
+  let activeColor = ""
+  if (campaign.admin_status == "На модерации") {
+    activeColor = "#a0a0a0"
+  }
+  else if (campaign.admin_status == "Допущена") {
+    activeColor = "#5b89e6"
+  }
+  else if (campaign.admin_status == "Допущена") {
+    activeColor = "#a8d097"
+  }
+  else if (campaign.admin_status == "Не допущена") {
+    activeColor = "#d0d0d0"
+  }
+  else if (campaign.admin_status == "Приостановлена") {
+    activeColor = "#ffe188"
+  }
+  else if (campaign.admin_status == "Завершена") {
+    activeColor = "#e28987"
+  }
+  else if (campaign.admin_status == "Запланирована") {
+    activeColor = "#5b89e6"
+  }
   return (
-    <div className={`bg-white rounded-lg shadow-md p-6 mb-6 ${isCompetitive ? 'border-l-4 border-green-500' : 'border-l-4 border-[#a0a0a0]'
-      }`}>
+    <div
+      style={{ borderColor: activeColor }}
+      className={`bg-white rounded-lg shadow-md p-6 mb-6 ${isCompetitive ? 'border-l-4 border-green-500' : 'border-l-4'
+        }`}>
       <div className="flex items-start justify-between">
         <div>
           <h3 className="text-lg font-semibold mb-2">{t('competitive.title')}</h3>
@@ -211,9 +236,9 @@ const CompetitiveStatus = ({ campaign, highestCpm }: {
               </span>
             </div>
           ) : (
-            <div className="flex items-center text-[#a0a0a0] mb-2">
-
-              {/* <TrendingDown className="w-5 h-5 mr-2" /> */}
+            <div
+              style={{ color: activeColor }}
+              className="flex items-center  mb-2">
               <span className="font-medium">
                 Oплачена, находится на ручной модерации у администратора
                 {/* {t('competitive.needsBoost', { name: campaign.company_name })} */}
@@ -289,9 +314,12 @@ function Dashboard() {
   const [editLoading, setEditLoading] = useState(false)
   const [loadingCampaigns, setLoadingCampaigns] = useState(false)
   const [success, setSuccess] = useState(false)
+  const [warningModal, setWarningModal] = useState(false)
+  const [warningText, setWarningText] = useState("")
   const API_URL = import.meta.env.VITE_URL;
 
-  const totalBudget = 10000;
+
+  const totalBudget = 100000;
   const totalSpent = 0;
   const remainingBudget = totalBudget - totalSpent;
   const currencySymbol = '₽';
@@ -322,10 +350,12 @@ function Dashboard() {
     formData.append("CPM", JSON.stringify(campaignData.cpm));
     formData.append("start_date", campaignData.startDate)
     formData.append("finish_date", campaignData.endDate)
+    formData.append("max_CPM_need", campaignData.max_CPM_need)
     formData.append("company_description", campaignData.adContent.description)
     formData.append("company_url", campaignData.adContent.targetUrl)
     formData.append("media_type", campaignData.adContent.mediaType)
     formData.append("status", campaignData.status)
+    console.log(campaignData.max_CPM_need)
     // formData.append("coutries", campaignData.targetCountries)
     campaignData.targetCountries.forEach(country => {
       console.log(country, 'country')
@@ -351,8 +381,8 @@ function Dashboard() {
           redirect: 'follow'
         });
       const data = await response.json()
-      console.log(data)
       if (!response.ok) {
+        console.log(data)
         // const errorData = await response.json();
         setLoading(false)
         setSuccess(false)
@@ -361,13 +391,19 @@ function Dashboard() {
           if (data.message === "минимальная сумма CPM 1000 рублей") {
             alert(t("campaign.CPM.error"))
           }
+          else if (data.message.includes("Цена ниже, чем у конкурентов")) {
+            setWarningModal(true)
+            setWarningText(data.message)
+          }
           else {
             alert(JSON.stringify(data.message))
           }
 
         }
+        setLoading(false)
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
+
 
       // setCampaigns([...campaigns, newData]);
       setEditingCampaign(undefined);
@@ -412,6 +448,7 @@ function Dashboard() {
     }
   };
 
+
   const handleEditCampaign = async (campaignData: Omit<Campaign, 'id' | 'impressions' | 'clicks' | 'CTR' | 'spent'>) => {
     if (!editingCampaign) return;
     setEditLoading(true)
@@ -424,7 +461,7 @@ function Dashboard() {
     formData.append("finish_date", campaignData.endDate)
     formData.append("status", campaignData.status)
     formData.append("comapny_id", editingCampaign.id)
-
+    formData.append("max_CPM_need", campaignData.max_CPM_need)
     campaignData.targetCountries.forEach(country => {
       formData.append("countries[]", country);
     });
@@ -449,33 +486,36 @@ function Dashboard() {
     try {
       const response = await fetch(`${API_URL}/api/editCompany`, requestOptions);
       const data = await response.json();
+      console.log(data)
       if (!response.ok) {
         setEditLoading(false)
-        setIsFormOpen(false)
+        // setIsFormOpen(false)
         if (data.message == "минимальная сумма CPM 1000 рублей") {
           alert(t("campaign.CPM.error"));
         }
+        else if (data.message.includes("Цена ниже, чем у конкурентов")) {
+          setWarningModal(true)
+          setWarningText(data.message)
+        }
       }
       else {
-        console.log(data)
         setEditLoading(false)
         setIsFormOpen(false)
         let item = [...campaigns]
         let index = campaigns?.findIndex((elm) => elm.id == editingCampaign.id)
         item[index] = data.data
         item[index].CTR = data.CTR
-        console.log()
         setCampaigns(item)
-        console.log("sfdk;fsdkfjdslkfjklsdfjksd")
         setEditingCampaign(undefined);
       }
 
     }
     catch (error) {
+
       setEditLoading(false)
       setEditingCampaign(undefined);
     }
-    setEditingCampaign(undefined);
+    // setEditingCampaign(undefined);
   };
 
   const handleDeleteCampaign = (id: string) => {
@@ -558,7 +598,7 @@ function Dashboard() {
         </div>
 
         <div className="mb-8">
-          <BudgetCard totalBudget={totalBudget} remainingBudget={remainingBudget} />
+          <BudgetCard />
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <StatCard
@@ -777,6 +817,9 @@ function Dashboard() {
         loading={loading1 || editLoading}
         isOpen={isFormOpen}
         success={success}
+        warningModal={warningModal}
+        warningText={warningText}
+        setWarningModal={(e: boolean) => setWarningModal(e)}
         onClose={() => {
           setIsFormOpen(false);
           setEditingCampaign(undefined);

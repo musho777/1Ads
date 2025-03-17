@@ -38,9 +38,17 @@ interface CampaignFormProps {
   initialData?: Campaign;
   loading: boolean,
   success: boolean,
+  warningModal: boolean,
+  setWarningModal: () => void,
+  warningText: string,
+}
+interface ModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onConfirm: () => void;
 }
 
-export default function CampaignForm({ isOpen, onClose, onSubmit, initialData, loading, success }: CampaignFormProps) {
+export default function CampaignForm({ isOpen, onClose, onSubmit, initialData, loading, success, warningModal, setWarningModal, warningText }: CampaignFormProps) {
   const { t, language } = useLanguage();
   const [activeTab, setActiveTab] = useState<'details' | 'content' | 'targeting'>('details');
   const [mediaType, setMediaType] = useState<'image' | 'video'>(initialData?.media_type || 'image');
@@ -49,6 +57,7 @@ export default function CampaignForm({ isOpen, onClose, onSubmit, initialData, l
   const [videoPhoroUrl, setVideoPhotoUrl] = useState<string>("");
   const [videoImage, setVideoImage] = useState<File | null>(null);
   const [fileUrl, setFileUrl] = useState<string>("");
+  const [max_CPM_need, setMax_CPM_need] = useState(true)
   const [formData, setFormData] = useState({
     name: initialData?.company_name || '',
     budget: initialData?.budget?.toString() || '',
@@ -102,6 +111,7 @@ export default function CampaignForm({ isOpen, onClose, onSubmit, initialData, l
       })
     }
     else {
+      console.log("Errrrrr")
       setFileUrl("")
       setVideoPhotoUrl("")
       setMediaType("image")
@@ -148,10 +158,10 @@ export default function CampaignForm({ isOpen, onClose, onSubmit, initialData, l
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
+    setWarningModal(false)
     // Combine CIS and other countries
     const allSelectedCountries = [...selectedCISCountries, ...selectedOtherCountries];
-
+    setMax_CPM_need(true)
     const campaign = {
       name: formData.name,
       budget: Number(formData.budget),
@@ -159,9 +169,10 @@ export default function CampaignForm({ isOpen, onClose, onSubmit, initialData, l
       startDate: formData.startDate,
       endDate: formData.endDate,
       cpm: Number(formData.cpm),
+      max_CPM_need: max_CPM_need,
       targetCountries: allSelectedCountries.length > 0 ? allSelectedCountries : ['RU'],
       adContent: isEditing
-        ? initialData.adContent // Keep original ad content when editing
+        ? initialData.adContent
         : {
           title: formData.adTitle,
           description: formData.adDescription,
@@ -205,8 +216,6 @@ export default function CampaignForm({ isOpen, onClose, onSubmit, initialData, l
       // Clear the preview URL when switching media types
       if (type !== mediaType) {
         setPreviewUrl(null);
-        if (type === 'video') {
-        }
       }
     }
   };
@@ -284,6 +293,30 @@ export default function CampaignForm({ isOpen, onClose, onSubmit, initialData, l
         videoPhoroUrl !== ""
     }
   };
+
+
+
+  const CustomModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
+    if (!isOpen) return null;
+    setMax_CPM_need(false)
+    return (
+      <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+        <div className="bg-white p-5 rounded-lg shadow-md max-w-xs">
+          <p className="text-sm text-center">{warningText}</p>
+          <div className="flex justify-center items-center gap-10 mt-2">
+            <button
+              type="submit">{t("yes")}</button>
+            <button type="button"
+              onClick={() => {
+                setMax_CPM_need(true)
+                onClose()
+              }}>{t("no")}</button>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
 
   // Helper function to safely extract hostname from URL
   const getHostnameFromUrl = (url: string): string => {
@@ -950,6 +983,10 @@ export default function CampaignForm({ isOpen, onClose, onSubmit, initialData, l
           </div>
         </div>
       </div>
+      <CustomModal
+        isOpen={warningModal}
+        onClose={() => setWarningModal(false)}
+      />
     </form>
   );
 }

@@ -4,8 +4,6 @@ import { useLanguage } from '../contexts/LanguageContext';
 import { useAuth } from '../contexts/AuthContext';
 
 interface BudgetCardProps {
-  totalBudget: number;
-  remainingBudget: number;
   userEmail?: string;
 }
 
@@ -27,7 +25,7 @@ function PaymentModal({ isOpen, onClose, amount, userEmail }: PaymentModalProps)
   const [uploadComplete, setUploadComplete] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const currencySymbol = '₽';
-  const { token, ChaneUserData } = useAuth();
+  const { token } = useAuth();
   const { t } = useLanguage();
 
 
@@ -235,7 +233,7 @@ function PaymentModal({ isOpen, onClose, amount, userEmail }: PaymentModalProps)
   );
 }
 
-export default function BudgetCard({ totalBudget, userEmail = "user@example.com" }: BudgetCardProps) {
+export default function BudgetCard({ userEmail = "user@example.com" }: BudgetCardProps) {
   const [showAddFunds, setShowAddFunds] = useState(false);
   const [amount, setAmount] = useState('');
   const [showPaymentModal, setShowPaymentModal] = useState(false);
@@ -255,7 +253,8 @@ export default function BudgetCard({ totalBudget, userEmail = "user@example.com"
 
   useEffect(() => {
     if (user) {
-      const percentage = ((user?.data?.get_budget[0].budget - user?.data?.get_budget[0]?.budget_balance) / totalBudget) * 100;
+      console.log(user?.data?.get_budget[0].budget)
+      const percentage = ((user?.data?.get_budget[0].budget - user?.data?.get_budget[0]?.budget_balance) / user?.data?.get_budget[0].budget) * 100;
       if (user?.data?.get_budget[0].budget == 0 && user?.data?.get_budget[0]?.budget_balance == 0) {
         setSpentPercentage(100)
       }

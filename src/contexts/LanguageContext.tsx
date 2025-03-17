@@ -49,6 +49,10 @@ const translations = {
     'no.password': "Enter password",
     'enter.email': "Enter email",
     'confirm.password': "Confirm password",
+    'valid.email': "Please enter a valid email",
+    "enter.company.name": "Enter your name or company name",
+    "passwords.not.match": "The passwords do not match",
+    "cpm.error": "Price is lower than competitors. For a quick campaign launch",
 
     // Hero Section
     'hero.timeForAds': 'Perfect time for your advertising',
@@ -300,7 +304,9 @@ const translations = {
     'no.password': "Введите пароль",
     'enter.email': 'Введите email',
     'confirm.password': "Подтвердите пароль",
-
+    'valid.email': "Пожалуйста, введите действительный адрес электронной почты",
+    "enter.company.name": "Введите имя или название компании",
+    "passwords.not.match": "Пароли не совпадают",
 
     // Hero Section
     'hero.timeForAds': 'Идеальное время для вашей рекламы',
