@@ -95,7 +95,7 @@ const CompetitiveStatus = ({ campaign, highestCpm }: {
         }`}>
       <div className="flex items-start justify-between">
         <div>
-          <h3 className="text-lg font-semibold mb-2">{t('competitive.title')}</h3>
+          <h3 className="text-lg font-semibold mb-2">{t('competitive.title')}:{campaign.company_name}</h3>
           {isCompetitive ? (
             <div className="flex items-center text-green-600 mb-2">
               <TrendingUp className="w-5 h-5 mr-2" />
