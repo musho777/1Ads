@@ -12,6 +12,7 @@ import SettingsModal from './settingsModal';
 import { ClipLoader } from 'react-spinners';
 import ReactPaginate from 'react-paginate';
 import AdminDashboard from './AdminDashboard';
+import { ChartModal } from './chart';
 
 
 
@@ -38,9 +39,10 @@ const StatCard = ({ title, value, icon: Icon, color, rub }: {
   </div>
 );
 
-const CompetitiveStatus = ({ campaign, highestCpm }: {
+const CompetitiveStatus = ({ campaign, highestCpm, setOpenChart }: {
   campaign: Campaign;
   highestCpm: number;
+  setOpenChart: boolean;
 }) => {
   const { t } = useLanguage();
   const isCompetitive = campaign.CPM >= highestCpm;
@@ -188,6 +190,7 @@ function Dashboard() {
   const [warningModal, setWarningModal] = useState(false)
   const [warningText, setWarningText] = useState("")
   const API_URL = import.meta.env.VITE_URL;
+  const [openChart, setOpenChart] = useState(false)
 
   const currencySymbol = '₽';
 
@@ -497,6 +500,7 @@ function Dashboard() {
           <div className="lg:col-span-2">
             {campaigns?.map(campaign => (
               <CompetitiveStatus
+                setOpenChart={(e) => setOpenChart(e)}
                 key={campaign?.id}
                 campaign={campaign}
                 highestCpm={highestCpm}
@@ -531,7 +535,10 @@ function Dashboard() {
                         <div className="p-4 sm:px-6">
                           <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center">
                             <div className="mb-2 sm:mb-0">
-                              <h3 className="text-base font-medium text-gray-900">{campaign?.company_name}</h3>
+                              <div className='flex items-center gap-5'>
+                                <h3 className="text-base font-medium text-gray-900">{campaign?.company_name}</h3>
+                                <button onClick={() => setOpenChart(true)} className="inline-flex items-center px-2 py-1 border border-transparent text-xs font-medium rounded-md text-white bg-sky-600 hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500">Статистика</button>
+                              </div>
                               <p className="text-sm text-gray-500 mt-1">
                                 {campaign?.start_date} - {campaign?.finish_date}
                               </p>
@@ -703,7 +710,10 @@ function Dashboard() {
           <SettingsModal setSettings={(e: any) => setSettings(e)} onToggleMode={() => setIsEditMode(!isEditMode)} />
         </div>
       }
-
+      {openChart && <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+        <ChartModal onClose={() => setOpenChart(false)} />
+      </div>
+      }
     </div>
   );
 }
