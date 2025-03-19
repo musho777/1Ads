@@ -175,7 +175,7 @@ function Dashboard() {
   const [editingCampaign, setEditingCampaign] = useState<Campaign | undefined>();
   const [selectedCampaign, setSelectedCampaign] = useState<Campaign | null>(null);
   const [actionMenuOpen, setActionMenuOpen] = useState<string | null>(null);
-  const { token, user, loading } = useAuth();
+  const { token, user, loading, ChaneUserData } = useAuth();
   const [settings, setSettings] = useState(false)
   const [isEditMode, setIsEditMode] = useState(false)
   const [highestCpm, setHighestCpm] = useState(0)
@@ -269,6 +269,8 @@ function Dashboard() {
       setSuccess(true)
       setLoading(false)
       GetCompanys()
+      console.log("campaignData.budget", campaignData.budget)
+      ChaneUserData("balance", campaignData.budget)
     } catch (error) {
       setLoading(false)
       setSuccess(false)
@@ -354,6 +356,9 @@ function Dashboard() {
           setWarningModal(true)
           setWarningText(data.message)
         }
+        else {
+          alert(data.message);
+        }
       }
       else {
         setEditLoading(false)
@@ -362,11 +367,16 @@ function Dashboard() {
         let index = campaigns?.findIndex((elm) => elm.id == editingCampaign.id)
         item[index] = data.data
         item[index].CTR = data.CTR
+        /////////
+        // ChaneUserData()
         setCampaigns(item)
         setEditingCampaign(undefined);
       }
 
     }
+
+
+    // user?.data?.get_budget[0].budget_balance
     catch (error) {
 
       setEditLoading(false)

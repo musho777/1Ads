@@ -131,11 +131,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     let item = { ...user }
     if (key == "balance") {
       let budget_balance = +item.data.get_budget[0].budget_balance
-      let budget = +item.data.get_budget[0].budget
-      budget_balance += +value
-      budget += +value
+      // let budget = +item.data.get_budget[0].budget
+      budget_balance -= value
+      // budget += +value
       item.data.get_budget[0].budget_balance = budget_balance
-      item.data.get_budget[0].budget = budget
+      // item.data.get_budget[0].budget = budget
 
     }
     else {

@@ -1,5 +1,4 @@
-import React from 'react';
-import { User, Bell } from 'lucide-react';
+import { User } from 'lucide-react';
 
 interface ProfileButtonProps {
   onClick: () => void;
@@ -7,8 +6,8 @@ interface ProfileButtonProps {
   ariaLabel?: string;
 }
 
-export default function ProfileButton({ 
-  onClick, 
+export default function ProfileButton({
+  onClick,
   notificationCount = 0,
   ariaLabel = 'Open profile menu'
 }: ProfileButtonProps) {
@@ -23,7 +22,7 @@ export default function ProfileButton({
         shadow-sm hover:shadow-md"
     >
       <User className="w-5 h-5 text-gray-600" />
-      
+
       {notificationCount > 0 && (
         <span className="absolute -top-1 -right-1 flex items-center justify-center w-5 h-5 text-xs font-medium text-white 
           bg-red-500 rounded-full ring-2 ring-white
@@ -32,7 +31,7 @@ export default function ProfileButton({
           {notificationCount > 99 ? '99+' : notificationCount}
         </span>
       )}
-      
+
       <span className="sr-only">Open profile menu</span>
     </button>
   );

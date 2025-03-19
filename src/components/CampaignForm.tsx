@@ -221,16 +221,27 @@ export default function CampaignForm({ isOpen, onClose, onSubmit, initialData, l
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     let { name, value } = e.target;
-    if (name === "startDate") {
-      value = value.replace(/-/g, ".")
-    }
-    else if (name === "endDate") {
-      value = value.replace(/-/g, ".")
+    if (name === "startDate" || name === "endDate") {
+
+
+      let newValue = value.replace(/-/g, ".")
+      const dateArray = newValue.split(".").map(Number);
+      let year = dateArray[0]
+      let mount = JSON.stringify(dateArray[1])
+      let day = JSON.stringify(dateArray[2])
+      if (day.length == 1) {
+        day = `0${day}`
+      }
+      if (mount.length == 1) {
+        mount = `0${mount}`
+      }
+      value = `${day}.${mount}.${year}`;
     }
     // If editing and trying to change ad content fields, don't update
     if (isEditing && (name === 'adTitle' || name === 'adDescription' || name === 'targetUrl')) {
       return;
     }
+    console.log(value, name)
     setFormData(prev => ({
       ...prev,
       [name]: value
@@ -437,8 +448,7 @@ export default function CampaignForm({ isOpen, onClose, onSubmit, initialData, l
                       type="date"
                       name="startDate"
                       id="startDate"
-                      pattern="\d{4}\.\d{2}\.\d{2}"
-                      value={formData.startDate.split(".").join("-")}
+                      value={formData.startDate.split(".").reverse().join("-")}
                       onChange={handleInputChange}
                       required
                       className="block w-full rounded-md border-gray-300 pl-9 pr-12 focus:border-sky-500 focus:ring-sky-500 sm:text-sm h-10 border shadow-sm"
@@ -458,7 +468,7 @@ export default function CampaignForm({ isOpen, onClose, onSubmit, initialData, l
                       type="date"
                       name="endDate"
                       id="endDate"
-                      value={formData.endDate.split(".").join("-")}
+                      value={formData.endDate.split(".").reverse().join("-")}
                       // value={formData.endDate}
                       onChange={handleInputChange}
                       required

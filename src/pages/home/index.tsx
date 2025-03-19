@@ -1,184 +1,22 @@
 import { useState, useEffect } from 'react';
 import { ArrowRight, BarChart4, Moon, X, Globe, Layers } from 'lucide-react';
-import AdminDashboard from '../../components/AdminDashboard';
 import { useLanguage } from '../../contexts/LanguageContext';
 import LanguageSwitch from '../../components/LanguageSwitch';
-import { Campaign } from '../../types';
 import PrivacyPolicy from '../../components/PrivacyPolicy';
 import TermsOfUse from '../../components/TermsOfUse';
 import Login from '../../components/auth/login';
 import Register from '../../components/auth/register';
 import Cookie from '../../components/cookie';
 
-// Initial campaigns data for demo purposes
-const initialCampaigns: Campaign[] = [
-  {
-    id: '1',
-    name: 'Halal Food Delivery',
-    budget: 25000,
-    spent: 9800,
-    status: 'active',
-    startDate: '2024-02-01',
-    endDate: '2024-04-30',
-    impressions: 1500000,
-    clicks: 60000,
-    ctr: 4.0,
-    cpm: 9.50,
-    moderationStatus: 'approved',
-    targetCountries: ['US', 'CA', 'GB', 'AU', 'NZ'],
-    adContent: {
-      title: "Certified Halal Food Delivery",
-      description: "Your favorite halal restaurants delivered to your doorstep. Order now!",
-      imageUrl: "https://images.unsplash.com/photo-1526016650454-68a6f488910a",
-      targetUrl: "https://example.com/halal-delivery",
-      mediaType: 'image'
-    }
-  },
-  {
-    id: '2',
-    name: 'Ramadan Collection 2024',
-    budget: 15000,
-    spent: 4500,
-    status: 'active',
-    startDate: '2024-03-01',
-    endDate: '2024-04-15',
-    impressions: 850000,
-    clicks: 25500,
-    ctr: 3.0,
-    cpm: 8.50,
-    moderationStatus: 'approved',
-    targetCountries: ['SA', 'AE', 'KW', 'QA', 'BH'],
-    adContent: {
-      title: "Ramadan Collection 2024",
-      description: "Discover our exclusive Ramadan collection. Elegant abayas, modest fashion, and more.",
-      imageUrl: "https://images.unsplash.com/photo-1584551246679-0daf3d275d0f",
-      targetUrl: "https://example.com/ramadan-2024",
-      mediaType: 'image'
-    }
-  },
-  {
-    id: '3',
-    name: 'Islamic Education Platform',
-    budget: 12000,
-    spent: 3200,
-    status: 'active',
-    startDate: '2024-03-10',
-    endDate: '2024-05-10',
-    impressions: 420000,
-    clicks: 18900,
-    ctr: 4.5,
-    cpm: 7.50,
-    moderationStatus: 'approved',
-    targetCountries: ['GB', 'US', 'CA', 'AU', 'FR'],
-    adContent: {
-      title: "Learn Islam Online",
-      description: "Quality Islamic education from certified scholars. Start your journey today.",
-      imageUrl: "https://images.unsplash.com/photo-1577451820952-05f58f41c779",
-      targetUrl: "https://example.com/learn-islam",
-      mediaType: 'image'
-    }
-  },
-  {
-    id: '4',
-    name: 'Islamic Finance Course',
-    budget: 18000,
-    spent: 5400,
-    status: 'paused',
-    startDate: '2024-03-05',
-    endDate: '2024-05-05',
-    impressions: 720000,
-    clicks: 28800,
-    ctr: 4.0,
-    cpm: 7.00,
-    moderationStatus: 'approved',
-    targetCountries: ['MY', 'ID', 'SG', 'BN', 'AE'],
-    adContent: {
-      title: "Master Islamic Finance",
-      description: "Comprehensive course on Islamic banking and finance. AAOIFI certified.",
-      imageUrl: "https://images.unsplash.com/photo-1554224155-8d04cb21cd6c",
-      targetUrl: "https://example.com/islamic-finance",
-      mediaType: 'image'
-    }
-  },
-  {
-    id: '5',
-    name: 'Halal Investment App',
-    budget: 20000,
-    spent: 7800,
-    status: 'paused',
-    startDate: '2024-02-15',
-    endDate: '2024-04-15',
-    impressions: 1200000,
-    clicks: 42000,
-    ctr: 3.5,
-    cpm: 6.50,
-    moderationStatus: 'pending',
-    targetCountries: ['ID', 'MY', 'TR', 'SA', 'AE'],
-    adContent: {
-      title: "Shariah-Compliant Investments",
-      description: "Start your halal investment journey today. No riba, no uncertainty.",
-      imageUrl: "https://images.unsplash.com/photo-1553729459-efe14ef6055d",
-      targetUrl: "https://example.com/halal-invest",
-      mediaType: 'image'
-    }
-  },
-  {
-    id: '6',
-    name: 'Prayer Time App',
-    budget: 10000,
-    spent: 2800,
-    status: 'pending',
-    startDate: '2024-03-15',
-    endDate: '2024-04-15',
-    impressions: 350000,
-    clicks: 17500,
-    ctr: 5.0,
-    cpm: 6.00,
-    moderationStatus: 'pending',
-    targetCountries: ['SA', 'EG', 'TR', 'PK', 'BD'],
-    adContent: {
-      title: "Never Miss a Prayer",
-      description: "Accurate prayer times, Qibla finder, and Quran with your phone.",
-      imageUrl: "https://images.unsplash.com/photo-1542816417-0983c9c9ad53",
-      targetUrl: "https://example.com/prayer-app",
-      mediaType: 'image'
-    }
-  },
-  {
-    id: '7',
-    name: 'Modest Fashion Store',
-    budget: 8000,
-    spent: 1200,
-    status: 'pending',
-    startDate: '2024-03-20',
-    endDate: '2024-04-20',
-    impressions: 150000,
-    clicks: 4500,
-    ctr: 3.0,
-    cpm: 5.50,
-    moderationStatus: 'pending',
-    targetCountries: ['TR', 'FR', 'DE', 'UK', 'NL'],
-    adContent: {
-      title: "Modest Fashion for Every Occasion",
-      description: "Stylish and modest clothing for modern Muslim women. Free worldwide shipping.",
-      imageUrl: "https://images.unsplash.com/photo-1572804013309-59a88b7e92f1",
-      targetUrl: "https://example.com/modest-fashion",
-      mediaType: 'image'
-    }
-  }
-];
 
 function Home() {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [isLoginMode, setIsLoginMode] = useState(true);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(false);
   const [currentTime, setCurrentTime] = useState(new Date());
   const [showPrivacyPolicy, setShowPrivacyPolicy] = useState(false);
   const [showTerms, setShowTerms] = useState(false)
   const [showCookie, setShowCookie] = useState(false)
 
-  const [campaigns, setCampaigns] = useState<Campaign[]>(initialCampaigns);
   const { t } = useLanguage();
   useEffect(() => {
     const timer = setInterval(() => {
@@ -193,18 +31,6 @@ function Home() {
     setShowAuthModal(true);
   };
 
-  const handleUpdateCampaign = (updatedCampaign: Campaign) => {
-    setCampaigns(prevCampaigns =>
-      prevCampaigns.map(campaign =>
-        campaign.id === updatedCampaign.id ? updatedCampaign : campaign
-      )
-    );
-  };
-
-  const handleSignOut = () => {
-    setIsAuthenticated(false);
-    setIsAdmin(false);
-  };
 
   const formatTime = (date: Date) => {
     return {
