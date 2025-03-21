@@ -101,7 +101,7 @@ const CompetitiveStatus = ({ campaign, highestCpm, setOpenChart }: {
           {isCompetitive ? (
             <div className="flex items-center text-green-600 mb-2">
               <TrendingUp className="w-5 h-5 mr-2" />
-              <span className="font-medium">
+              <span className="font-medium bg-[#dadada]">
                 {t('competitive.isCompetitive', { name: campaign?.company_name })}
               </span>
             </div>
@@ -109,7 +109,7 @@ const CompetitiveStatus = ({ campaign, highestCpm, setOpenChart }: {
             <div
               style={{ color: activeColor }}
               className="flex items-center  mb-2">
-              <span className="font-medium">
+              <span className="font-medium bg-[#dadada]">
                 {activeText}
                 {/* Oплачена, находится на ручной модерации у администратора */}
                 {/* {t('competitive.needsBoost', { name: campaign.company_name })} */}
@@ -447,13 +447,15 @@ function Dashboard() {
           <h1 className="text-3xl font-bold text-gray-900">{t('dashboard.title')}</h1>
           <div className="flex items-center space-x-4">
             <button
+              disabled={user?.data?.get_budget[0].budget_balance == 0}
               onClick={() => {
                 setEditingCampaign(undefined);
                 setIsFormOpen(true);
                 setSuccess(false)
               }}
               className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md 
-                text-white bg-sky-600 hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500"
+              text-white bg-sky-600 hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500
+              disabled:bg-gray-400 disabled:cursor-not-allowed"
             >
               {t('dashboard.createCampaign')}
             </button>
@@ -602,12 +604,6 @@ function Dashboard() {
                               <p className="text-xs  font-medium text-gray-500 uppercase">{t('campaigns.table.impressions')}</p>
                               {campaign?.get_company_statistic?.length > 0 &&
                                 <p className="mt-1 text-sm font-medium text-gray-900">{campaign?.get_company_statistic[0].Impressions}</p>
-                              }
-                            </div>
-                            <div>
-                              <p className="text-xs  font-medium text-gray-500 uppercase">{t('campaigns.table.oneDay')}</p>
-                              {campaign?.get_company_statistic?.length > 0 &&
-                                <p className="mt-1 text-sm font-medium text-gray-900">{campaign?.get_company_statistic[0].oneDayClicks}</p>
                               }
                             </div>
                             <div>

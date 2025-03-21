@@ -10,7 +10,6 @@ interface LanguageContextType {
 
 const translations = {
   en: {
-    "yes": "yes",
     "no": "no",
     // Auth
     'auth.login': 'Login',
@@ -104,6 +103,8 @@ const translations = {
     'campaign.languages.label': 'Target Languages',
     'campaign.languages.description': 'Select languages for your target audience',
     'campaign.CPM.error': "Minimum CPM amount 1000 rubles",
+    "campaign.status.accept": "Yes, I agree to increase it to the recommended level.",
+    "campaign.status.reject": "Ignore",
 
     // Ad Content Section
     'campaign.ad.title': 'Ad Content',
@@ -167,7 +168,7 @@ const translations = {
     "competitive.comments": "there are remarks after manual moderation",
     "competitive.reject": "Not approved",
 
-    "competitive.over": "ad display has been suspended for the following reasons: - budget exhausted - CPM lower than competitors",
+    "competitive.over": "ad display has been suspended for the following reasons: - budget exhausted или CPM lower than competitors",
     "competitive.pause": "Suspended",
 
     "competitive.date.end": "campaign end date has passed",
@@ -379,6 +380,8 @@ const translations = {
     'campaign.languages.label': 'Целевые языки',
     'campaign.languages.description': 'Выберите языки целевой аудитории',
     'campaign.CPM.error': "Минимальная сумма CPM 1000 руб.",
+    "campaign.status.accept": "Да согласен повысить до рекомендованной.",
+    "campaign.status.reject": "Игнорировать",
 
     // Ad Content Section
     'campaign.ad.title': 'Содержание рекламы',
@@ -443,7 +446,7 @@ const translations = {
     "competitive.comments": "есть замечания после ручной модерации",
     "competitive.reject": "Не допущена",
 
-    "competitive.over": "показ объявлений приостановлен по причинам: -закончился бюджет-CPM ниже конкурентов",
+    "competitive.over": "показ объявлений приостановлен по причинам: -закончился бюджет или CPM ниже конкурентов",
     "competitive.pause": "Приостановлена",
 
     "competitive.date.end": "дата завершения кампании прошла",

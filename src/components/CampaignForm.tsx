@@ -315,16 +315,27 @@ export default function CampaignForm({ isOpen, onClose, onSubmit, initialData, l
     setMax_CPM_need(false)
     return (
       <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-        <div className="bg-white p-5 rounded-lg shadow-md max-w-xs">
-          <p className="text-sm text-center">{warningText}</p>
-          <div className="flex justify-center items-center gap-10 mt-2">
+        <div className="bg-white p-5 rounded-lg shadow-md max-w-[350px]">
+          <p className="text-sm text-center">
+            {warningText.split(/(\d+р\.)/).map((part, index) =>
+              /\d+р\./.test(part) ? (
+                <span key={index} className="text-green-500">{part}</span>
+              ) : (
+                part
+              )
+            )}
+          </p>
+          <div className="flex justify-center items-center gap-5 mt-2">
             <button
-              type="submit">{t("yes")}</button>
+              className="text-xs text-green-500 max-w-[150px]"
+              type="submit">{t("campaign.status.accept")}</button>
+
             <button type="button"
+              className="text-xs text-red-500"
               onClick={() => {
                 setMax_CPM_need(true)
                 onClose()
-              }}>{t("no")}</button>
+              }}>{t("campaign.status.reject")}</button>
           </div>
         </div>
       </div>
@@ -864,7 +875,7 @@ export default function CampaignForm({ isOpen, onClose, onSubmit, initialData, l
   return (
     <form onSubmit={handleSubmit} className="flex flex-col flex-1 overflow-hidden">
       <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-        <div className="bg-white rounded-xl shadow-xl w-full max-w-4xl max-h-[90vh] overflow-scroll">
+        <div className="bg-white rounded-xl shadow-xl w-full max-w-4xl max-h-[90vh] overflow-auto">
           <div className="flex flex-col h-full">
             {/* Header */}
             <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center bg-white sticky top-0 z-10">
