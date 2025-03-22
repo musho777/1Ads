@@ -533,7 +533,7 @@ const translations = {
     //Payment
     "payment.info": "Платежная информация",
     "payment.ammount": "Сумма к оплате",
-    "payment.card": "Карта Сбербанка",
+    "payment.card": "На карту Сбербанка",
     "payment.description": "Описание платежа (ваш email)",
     "payment.receipt": "Загрузить квитанцию",
     "payment.paid": "Я оплатил",

@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Plus, DollarSign, Copy, Upload, X, Check } from 'lucide-react';
+import { Plus, Copy, Upload, X, Check } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -7,7 +7,7 @@ interface BudgetCardProps {
   userEmail?: string;
 }
 
-const SBERBANK_CARD = '1234 5676 8888 0000';
+const SBERBANK_CARD = '2202 2062 4625 6403';
 
 interface PaymentModalProps {
   isOpen: boolean;
