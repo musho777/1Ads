@@ -539,7 +539,7 @@ function Dashboard() {
                             <div className="mb-2 sm:mb-0">
                               <div className='flex items-center gap-5'>
                                 <h3 className="text-base font-medium text-gray-900">{campaign?.company_name}</h3>
-                                <button onClick={() => setOpenChart(true)} className="inline-flex items-center px-2 py-1 border border-transparent text-xs font-medium rounded-md text-white bg-sky-600 hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500">Статистика</button>
+                                <img onClick={() => setOpenChart(true)} src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%230EA5E9' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 3v18h18'/%3E%3Cpath d='m19 9-5 5-4-4-3 3'/%3E%3C/svg%3E" />
                               </div>
                               <p className="text-sm text-gray-500 mt-1">
                                 {campaign?.start_date} - {campaign?.finish_date}
