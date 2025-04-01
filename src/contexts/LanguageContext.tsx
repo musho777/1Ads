@@ -77,6 +77,7 @@ const translations = {
     'footer.resources.api': 'API Reference',
     'footer.resources.support': 'Support',
     'footer.copyright': '© {year} 1Muslim Ads. All rights reserved.',
+    'footer.resources.language': 'Change language',
 
     // Dashboard
     'dashboard.title': 'Dashboard',
@@ -91,7 +92,7 @@ const translations = {
     'campaign.edit.title': 'Edit Campaign',
     'campaign.details.title': 'Campaign Details',
     'campaign.name.label': 'Campaign Name',
-    'campaign.budget.label': 'Budget (RUB)',
+    'campaign.budget.label': 'Fill up the budget (RUB)',
     'campaign.cpm.label': 'Cost per 1000 Views (CPM)',
     'campaign.cpm.description': 'Amount charged per 1,000 ad views',
     'campaign.status.label': 'Status',
@@ -350,10 +351,13 @@ const translations = {
     'footer.legal.terms': 'Условия использования',
     'footer.legal.cookies': 'Политика использования файлов cookie',
     'footer.resources.title': 'Ресурсы',
+    'footer.resources.language': 'Изменить язык',
+
     'footer.resources.docs': 'Документация',
     'footer.resources.api': 'API справочник',
     'footer.resources.support': 'Поддержка',
     'footer.copyright': '© {year} 1Muslim Ads. Все права защищены.',
+
 
     // Dashboard
     'dashboard.title': 'Панель управления',
@@ -368,7 +372,7 @@ const translations = {
     'campaign.edit.title': 'Редактировать кампанию',
     'campaign.details.title': 'Детали кампании',
     'campaign.name.label': 'Название кампании',
-    'campaign.budget.label': 'Бюджет (RUB)',
+    'campaign.budget.label': 'Пополнить бюджет (RUB)',
     'campaign.cpm.label': 'Стоимость за 1000 показов (CPM)',
     'campaign.cpm.description': 'Сумма, взимаемая за 1000 показов рекламы',
     'campaign.status.label': 'Статус',
@@ -551,7 +555,7 @@ const translations = {
     'admin.payment.documents.transfer': 'Перевод',
     'admin.payment.documents.view': 'Просмотр документа',
     'admin.payment.documents.close': 'Закрыть',
-    'admin.payment.documents.verify': 'Подтвердить оплату',
+    'admin.payment.documents.verify': 'Посмотреть квитанцию',
     'admin.payment.documents.amount': 'Сумма',
     'admin.payment.documents.date': 'Дата',
     'admin.payment.documents.type': 'Тип документа',

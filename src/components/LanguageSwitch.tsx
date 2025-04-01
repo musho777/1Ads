@@ -11,8 +11,8 @@ export default function LanguageSwitch() {
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
-        menuRef.current && 
-        buttonRef.current && 
+        menuRef.current &&
+        buttonRef.current &&
         !menuRef.current.contains(event.target as Node) &&
         !buttonRef.current.contains(event.target as Node)
       ) {
@@ -53,18 +53,16 @@ export default function LanguageSwitch() {
         >
           <div className="py-1" role="menu" aria-orientation="vertical">
             <button
-              className={`w-full text-left px-4 py-2 text-sm ${
-                language === 'en' ? 'bg-sky-50 text-sky-700' : 'text-gray-700 hover:bg-gray-50'
-              }`}
+              className={`w-full text-left px-4 py-2 text-sm ${language === 'en' ? 'bg-sky-50 text-sky-700' : 'text-gray-700 hover:bg-gray-50'
+                }`}
               onClick={() => handleLanguageChange('en')}
               role="menuitem"
             >
               {t('settings.english')}
             </button>
             <button
-              className={`w-full text-left px-4 py-2 text-sm ${
-                language === 'ru' ? 'bg-sky-50 text-sky-700' : 'text-gray-700 hover:bg-gray-50'
-              }`}
+              className={`w-full text-left px-4 py-2 text-sm ${language === 'ru' ? 'bg-sky-50 text-sky-700' : 'text-gray-700 hover:bg-gray-50'
+                }`}
               onClick={() => handleLanguageChange('ru')}
               role="menuitem"
             >

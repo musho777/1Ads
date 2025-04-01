@@ -100,7 +100,7 @@ export default function SettingsModal({ setSettings }: AuthFormProps) {
                 </div>
               </div>
               <div className='mt-5'>
-                <div>
+                {/* <div>
                   <label htmlFor="status" className="block text-sm font-medium text-gray-700">
                     {t("settings.cpm")}
                   </label>
@@ -114,7 +114,7 @@ export default function SettingsModal({ setSettings }: AuthFormProps) {
                     <option value="true">{t("yes")}</option>
                     <option value="false">{t("no")}</option>
                   </select>
-                </div>
+                </div> */}
               </div>
               <button
                 onClick={() => Save()}

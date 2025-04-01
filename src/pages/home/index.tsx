@@ -16,8 +16,12 @@ function Home() {
   const [showPrivacyPolicy, setShowPrivacyPolicy] = useState(false);
   const [showTerms, setShowTerms] = useState(false)
   const [showCookie, setShowCookie] = useState(false)
+  const { language, setLanguage, t } = useLanguage();
 
-  const { t } = useLanguage();
+  const handleLanguageChange = (newLanguage: 'en' | 'ru') => {
+    setLanguage(newLanguage);
+  };
+
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentTime(new Date());
@@ -53,7 +57,7 @@ function Home() {
             </span>
           </div>
           <div className="flex items-center space-x-4">
-            <LanguageSwitch />
+            {/* <LanguageSwitch /> */}
             <button
               onClick={() => handleAuthClick(true)}
               className="px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors"
@@ -134,7 +138,7 @@ function Home() {
       {/* Footer */}
       <footer className="w-full px-4 py-8 bg-white/80 backdrop-blur-md border-t border-sky-100 mt-16">
         <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div>
               <div className="flex items-center space-x-2 mb-4">
                 <Layers className="w-6 h-6 text-sky-500" />
@@ -181,6 +185,30 @@ function Home() {
                 </li>
               </ul>
             </div>
+            <div>
+              <h3 className="font-semibold text-gray-900 mb-4">  {t('footer.resources.language')}</h3>
+              <ul className="space-y-2">
+                <li>
+                  <button
+                    className={`w-full text-left px-4 py-2 text-sm ${language === 'en' ? 'bg-sky-50 text-sky-700' : 'text-gray-700 hover:bg-gray-50'
+                      }`}
+                    onClick={() => handleLanguageChange('en')}
+                    role="menuitem"
+                  >
+                    {t('settings.english')}
+                  </button>
+                </li>
+                <button
+                  className={`w-full text-left px-4 py-2 text-sm ${language === 'ru' ? 'bg-sky-50 text-sky-700' : 'text-gray-700 hover:bg-gray-50'
+                    }`}
+                  onClick={() => handleLanguageChange('ru')}
+                  role="menuitem"
+                >
+                  {t('settings.russian')}
+                </button>
+              </ul>
+            </div>
+
           </div>
           <div className="mt-8 pt-8 border-t border-sky-100">
             <p className="text-center text-gray-600 text-sm">

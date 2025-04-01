@@ -51,41 +51,41 @@ const CompetitiveStatus = ({ campaign, highestCpm, setOpenChart }: {
   let activeColor = ""
   let status = ""
   if (campaign.admin_status == "На модерации") {
-    activeColor = "#a0a0a0"
+    activeColor = "#515151"
     activeText = t("competitive.in.moderation")
     status = t("На модерации")
   }
   else if (campaign.admin_status == "Допущена") {
-    activeColor = "#5b89e6"
+    activeColor = "#3860b1"
     activeText = t("competitive.in.access")
     status = t("competitive.access")
 
   }
   else if (campaign.admin_status == "Активна") {
-    activeColor = "#a8d097"
+    activeColor = "#45b117"
     activeText = t("competitive.showing")
     status = t("competitive.active")
 
   }
   else if (campaign.admin_status == "Не допущена") {
-    activeColor = "#d0d0d0"
+    activeColor = "#b3b2b2"
     activeText = t("competitive.comments")
     status = t("competitive.reject")
   }
   else if (campaign.admin_status == "Приостановлена") {
-    activeColor = "#ffe188"
+    activeColor = "#e1b42c"
     activeText = t("competitive.over")
     status = t("competitive.pause")
 
   }
   else if (campaign.admin_status == "Завершена") {
-    activeColor = "#e28987"
+    activeColor = "#af5857"
     activeText = t("competitive.date.end")
     status = t("Завершена")
 
   }
   else if (campaign.admin_status == "Запланирована") {
-    activeColor = "#5b89e6"
+    activeColor = "#516da5"
     activeText = t("competitive.completed")
     status = t("competitive.planned")
 
@@ -101,7 +101,7 @@ const CompetitiveStatus = ({ campaign, highestCpm, setOpenChart }: {
           {isCompetitive ? (
             <div className="flex items-center text-green-600 mb-2">
               <TrendingUp className="w-5 h-5 mr-2" />
-              <span className="font-medium bg-[#dadada]">
+              <span className="font-medium">
                 {t('competitive.isCompetitive', { name: campaign?.company_name })}
               </span>
             </div>
@@ -109,7 +109,7 @@ const CompetitiveStatus = ({ campaign, highestCpm, setOpenChart }: {
             <div
               style={{ color: activeColor }}
               className="flex items-center  mb-2">
-              <span className="font-medium bg-[#dadada]">
+              <span className="font-medium">
                 {activeText}
                 {/* Oплачена, находится на ручной модерации у администратора */}
                 {/* {t('competitive.needsBoost', { name: campaign.company_name })} */}
