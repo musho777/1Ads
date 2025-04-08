@@ -56,13 +56,13 @@ function PaymentModal({ isOpen, onClose, amount, userEmail }: PaymentModalProps)
       const formData = new FormData();
       formData.append("payment", amount);
       formData.append("image", file);
-
+      const id = localStorage.getItem("id")
       var myHeaders = new Headers();
-      myHeaders.append("Authorization", `Bearer ${token}`)
+      // myHeaders.append("Authorization", `Bearer ${token}`)
       myHeaders.append("Accept", "application/json");
       try {
         const response = await
-          fetch(`${API_URL}/api/user_payment`, {
+          fetch(`${API_URL}/api/user_payment?token=${token}&user_id=${id}`, {
             method: "POST",
             headers: myHeaders,
             body: formData,

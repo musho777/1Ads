@@ -29,6 +29,7 @@ interface AuthContextType {
   editAccaunt: (data: any) => Promise<{ message: any; status: any }>;
   logout: () => void;
   token: string;
+  id: string;
   successEdit: boolean,
   ChaneUserData: any,
 }
@@ -45,18 +46,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [token, setToken] = useState<string>("");
+  const [id, setId] = useState(null)
   const [loadingEdit, setLoadingEdit] = useState(false)
   const API_URL = import.meta.env.VITE_URL;
 
   const getUser = async () => {
     setLoading(true)
     const local_token = localStorage.getItem("token");
+    const id = localStorage.getItem("id");
     try {
-      const response = await axios.get<User>(`${API_URL}/api/getProfileInfo`, {
-        headers: {
-          Authorization: `Bearer ${local_token}`,
-        },
-      });
+      const response = await axios.get<User>(`/api/getProfileInfo?token=${local_token}&&user_id=${id}`);
       setUser(response.data);
     } catch (error: any) {
       if (error.response?.status === 403) localStorage.removeItem("token");
@@ -84,7 +83,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       responseData = { message: result.message, status: result.status };
       if (!result.message) {
         setToken(result.token);
+        setId(result.user.id)
         localStorage.setItem("token", result.token);
+        localStorage.setItem("id", result.user.id);
+
         setUser(result.user);
         setIsAuthenticated(true);
       }
@@ -98,18 +100,18 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const editAccaunt = async (data: any) => {
     setLoadingEdit(true)
+    const id = localStorage.getItem("id")
     const requestOptions = {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`
       },
       body: JSON.stringify(data),
     };
 
     let responseData: { message: string; status: boolean } = { message: "", status: false };
     try {
-      const response = await fetch(`${API_URL}/api/editProfileInfo`, requestOptions);
+      const response = await fetch(`${API_URL}/api/editProfileInfo?token=${token}&&user_id=${id}`, requestOptions);
       const result: any = await response.json();
       let item = { ...user }
       item.data.username = result.data.username
@@ -163,7 +165,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       responseData = { message: result.errors, status: result.status };
       if (response.ok) {
         setToken(result.token);
+        setId(result.user.id)
         localStorage.setItem("token", result.token);
+        localStorage.setItem("id", result.user.id);
+
         setUser(result.user);
         setIsAuthenticated(true);
       }
@@ -181,16 +186,21 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     return responseData;
   };
 
-  const logout = () => {
+  const logout = async () => {
+    const id = localStorage.getItem("id")
     localStorage.removeItem("token");
     setIsAuthenticated(false);
     setToken("");
+    setId("")
     setUser(null);
+    await axios.get<User>(`/api/logout?token=${token}&&user_id=${id}`);
   };
 
   useEffect(() => {
     const local_token = localStorage.getItem("token");
+    const ids = localStorage.getItem("id");
     setToken(local_token || "");
+    setId(ids || "")
     if (local_token) setIsAuthenticated(true);
     else setIsAuthenticated(false);
     getUser();

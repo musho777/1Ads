@@ -19,6 +19,7 @@ export default function SettingsModal({ setSettings }: AuthFormProps) {
   const [autoNotifcation, setAutoNotifcation] = useState("false")
 
   const Save = async () => {
+    const id = localStorage.getItem("id")
     setLoading(true)
     const data = {
       notify_by_email: notifcation,
@@ -28,13 +29,13 @@ export default function SettingsModal({ setSettings }: AuthFormProps) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`
+
       },
       body: JSON.stringify(data),
     };
 
     try {
-      const response = await fetch(`${API_URL}/api/editProfileSetting`, requestOptions);
+      const response = await fetch(`${API_URL}/api/editProfileSetting?token=${token}&&user_id=${id}`, requestOptions);
 
       if (!response.ok) {
         setSuccess(false)

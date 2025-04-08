@@ -191,6 +191,7 @@ function Dashboard() {
   const [warningText, setWarningText] = useState("")
   const API_URL = import.meta.env.VITE_URL;
   const [openChart, setOpenChart] = useState(false)
+  const [companyId, setCopmanyId] = useState(null)
 
   const currencySymbol = '₽';
 
@@ -208,6 +209,7 @@ function Dashboard() {
 
   const handleCreateCampaign = async (campaignData: Omit<Campaign, 'id' | 'impressions' | 'clicks' | 'CTR' | 'spent'>) => {
     setLoading(true)
+    const id = localStorage.getItem("id")
     const formData = new FormData();
     formData.append("company_name", campaignData.name);
     formData.append("budget", JSON.stringify(campaignData.budget));
@@ -232,11 +234,11 @@ function Dashboard() {
     if (campaignData.adContent.thumbnailUrl) {
     }
     var myHeaders = new Headers();
-    myHeaders.append("Authorization", `Bearer ${token}`)
+    // myHeaders.append("Authorization", `Bearer ${token}`)
     myHeaders.append("Accept", "application/json");
     try {
       const response = await
-        fetch(`${API_URL}/api/createCompany`, {
+        fetch(`${API_URL}/api/createCompany?token=${token}&user_id=${id}`, {
           method: "POST",
           headers: myHeaders,
           body: formData,
@@ -289,12 +291,13 @@ function Dashboard() {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`,
+        // "Authorization": `Bearer ${token}`,
       },
     };
 
     try {
-      const response = await fetch(`${API_URL}/api/getCompanies?page=${page}`, requestOptions);
+      const id = localStorage.getItem("id")
+      const response = await fetch(`${API_URL}/api/getCompanies?token=${token}&user_id=${id}&page=${page}`, requestOptions);
       const result: any = await response.json();
       if (!result.errors) {
         setCampaigns(result.data)
@@ -315,7 +318,6 @@ function Dashboard() {
   const handleEditCampaign = async (campaignData: Omit<Campaign, 'id' | 'impressions' | 'clicks' | 'CTR' | 'spent'>) => {
     if (!editingCampaign) return;
     setEditLoading(true)
-
     const formData = new FormData();
     formData.append("company_name", campaignData.name);
     formData.append("budget", JSON.stringify(campaignData.budget));
@@ -330,10 +332,10 @@ function Dashboard() {
     });
     const requestOptions = {
       method: "POST",
-      headers: {
-        // "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`,
-      },
+      // headers: {
+      //   // "Content-Type": "application/json",
+      //   "Authorization": `Bearer ${token}`,
+      // },
       body: formData,
       // body: JSON.stringify({
       //   company_name: campaignData.name,
@@ -347,7 +349,8 @@ function Dashboard() {
       // }),
     };
     try {
-      const response = await fetch(`${API_URL}/api/editCompany`, requestOptions);
+      const id = localStorage.getItem("id")
+      const response = await fetch(`${API_URL}/api/editCompany?token=${token}&&user_id=${id}`, requestOptions);
       const data = await response.json();
       if (!response.ok) {
         setEditLoading(false)
@@ -389,18 +392,20 @@ function Dashboard() {
   };
 
   const handleDeleteCampaign = (id: string) => {
+    const ids = localStorage.getItem("id")
+
     const requestOptions = {
       method: "POST",
       body: JSON.stringify({ "company_id": id }),
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`
+
       },
     };
     if (window.confirm('Are you sure you want to delete this campaign?')) {
       setCampaigns(campaigns.filter(campaign => campaign?.id !== id));
       try {
-        fetch(`${API_URL}/api/deleteCompany`, requestOptions);
+        fetch(`${API_URL}/api/deleteCompany?token=${token}&&user_id=${ids}`, requestOptions);
       }
       catch (error) {
       }
@@ -539,7 +544,11 @@ function Dashboard() {
                             <div className="mb-2 sm:mb-0">
                               <div className='flex items-center gap-5'>
                                 <h3 className="text-base font-medium text-gray-900">{campaign?.company_name}</h3>
-                                <img onClick={() => setOpenChart(true)} src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%230EA5E9' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 3v18h18'/%3E%3Cpath d='m19 9-5 5-4-4-3 3'/%3E%3C/svg%3E" />
+                                <img onClick={() => {
+                                  console.log(campaign)
+                                  setCopmanyId(campaign.id)
+                                  setOpenChart(true)
+                                }} src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%230EA5E9' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 3v18h18'/%3E%3Cpath d='m19 9-5 5-4-4-3 3'/%3E%3C/svg%3E" />
                               </div>
                               <p className="text-sm text-gray-500 mt-1">
                                 {campaign?.start_date} - {campaign?.finish_date}
@@ -707,7 +716,7 @@ function Dashboard() {
         </div>
       }
       {openChart && <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-        <ChartModal onClose={() => setOpenChart(false)} />
+        <ChartModal companyId={companyId} onClose={() => setOpenChart(false)} />
       </div>
       }
     </div>
