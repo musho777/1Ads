@@ -77,7 +77,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
     let responseData: { message: string; status: boolean } = { message: "", status: false };
     try {
-      const response = await fetch(`${API_URL}/api/login`, requestOptions);
+      const response = await fetch(`/api/login`, requestOptions);
       const result: AuthResponse = await response.json();
 
       responseData = { message: result.message, status: result.status };
