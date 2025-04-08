@@ -217,7 +217,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setToken("");
     setId("")
     setUser(null);
-    await axios.get<User>(`${API_URL}/api/logout?token=${token}&&user_id=${id}`);
+    await fetch(`${API_URL}/api/logout?token=${token}&user_id=${id}`);
   };
 
   useEffect(() => {
@@ -227,7 +227,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setId(ids || "")
     if (local_token) setIsAuthenticated(true);
     else setIsAuthenticated(false);
-    getUser();
+    if (local_token && ids) {
+      getUser();
+    }
   }, [isAuthenticated, token]);
 
   return (

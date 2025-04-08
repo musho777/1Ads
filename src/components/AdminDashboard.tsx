@@ -353,15 +353,11 @@ export default function AdminDashboard({ onUpdateCampaign }: AdminDashboardProps
       temp.push(campaign)
       setCampaigns(temp)
     }
-
+    const id = localStorage.getItem("id")
     const local_token = localStorage.getItem("token");
     try {
-      await axios.post(`${API_URL}/api/confirm_company`, {
+      await axios.post(`${API_URL}/api/confirm_company?token=${local_token}&user_id=${id}`, {
         company_id: campaign.id,
-      }, {
-        headers: {
-          Authorization: `Bearer ${local_token}`,
-        },
       });
     } catch (error: any) {
       console.log(error)
@@ -390,16 +386,12 @@ export default function AdminDashboard({ onUpdateCampaign }: AdminDashboardProps
       setCompanyStatistic(statistic)
       setCompany(item)
       const local_token = localStorage.getItem("token");
+      const id = localStorage.getItem("id")
       try {
-        const response = await axios.post(`${API_URL}/api/bow_out_company`, {
+        const response = await axios.post(`${API_URL}/api/bow_out_company?token=${local_token}&user_id=${id}`, {
           company_id: campaignToReject.id,
           reason_for_refusal: reason
-        }, {
-          headers: {
-            Authorization: `Bearer ${local_token}`,
-          },
         });
-        console.log(response)
       } catch (error: any) {
         console.log(error)
       }
@@ -437,13 +429,12 @@ export default function AdminDashboard({ onUpdateCampaign }: AdminDashboardProps
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${local_token}`
       },
       body: JSON.stringify(data),
     };
-
+    const id = localStorage.getItem("id")
     try {
-      const response = await fetch(`${API_URL}/api/confirm_payment`, requestOptions);
+      const response = await fetch(`${API_URL}/api/confirm_payment?token=${local_token}&user_id=${id}`, requestOptions);
       const result: any = await response.json();
       console.log(result)
     } catch (error) {
@@ -551,13 +542,9 @@ export default function AdminDashboard({ onUpdateCampaign }: AdminDashboardProps
     setLoadingTop(true)
     const local_token = localStorage.getItem("token");
     try {
-      console.log(id, local_token)
-      const respons = await axios.post(`${API_URL}/api/activatePriorityCompany`, {
+      const ids = localStorage.getItem("id")
+      const respons = await axios.post(`${API_URL}/api/activatePriorityCompany?token=${local_token}&user_id=${ids}`, {
         company_id: id,
-      }, {
-        headers: {
-          Authorization: `Bearer ${local_token}`,
-        },
       });
       console.log(respons.data.data)
       setAdminSelect(respons.data.data)
@@ -571,13 +558,10 @@ export default function AdminDashboard({ onUpdateCampaign }: AdminDashboardProps
 
   const disactivatePriorityCompany = async (id: string) => {
     const local_token = localStorage.getItem("token");
+    const ids = localStorage.getItem("id")
     try {
-      await axios.post(`${API_URL}/api/disactivatePriorityCompany`, {
+      await axios.post(`${API_URL}/api/disactivatePriorityCompany?token=${local_token}&user_id=${ids}`, {
         company_id: id,
-      }, {
-        headers: {
-          Authorization: `Bearer ${local_token}`,
-        },
       });
     } catch (error: any) {
       console.log(error)
@@ -729,12 +713,9 @@ export default function AdminDashboard({ onUpdateCampaign }: AdminDashboardProps
 
   const getCompanyStatistic = async () => {
     const local_token = localStorage.getItem("token");
+    const ids = localStorage.getItem("id")
     try {
-      const response = await axios.get(`${API_URL}/api/getCompanyStatistic`, {
-        headers: {
-          Authorization: `Bearer ${local_token}`,
-        },
-      });
+      const response = await axios.get(`${API_URL}/api/getCompanyStatistic?token=${local_token}&user_id=${ids}`);
       setCompanyStatistic(response.data)
     } catch (error: any) {
     }
@@ -742,12 +723,9 @@ export default function AdminDashboard({ onUpdateCampaign }: AdminDashboardProps
 
   const getPaymentOnModeration = async () => {
     const local_token = localStorage.getItem("token");
+    const ids = localStorage.getItem("id")
     try {
-      const response = await axios.get(`${API_URL}/api/getPaymentOnModeration`, {
-        headers: {
-          Authorization: `Bearer ${local_token}`,
-        },
-      });
+      const response = await axios.get(`${API_URL}/api/getPaymentOnModeration?token=${local_token}&user_id=${ids}`);
       setPayment(response.data.message)
     } catch (error: any) {
     }
@@ -755,12 +733,9 @@ export default function AdminDashboard({ onUpdateCampaign }: AdminDashboardProps
 
   const getBestCompany = async () => {
     const local_token = localStorage.getItem("token");
+    const ids = localStorage.getItem("id")
     try {
-      const response = await axios.get(`${API_URL}/api/getBestCompany`, {
-        headers: {
-          Authorization: `Bearer ${local_token}`,
-        },
-      });
+      const response = await axios.get(`${API_URL}/api/getBestCompany?token=${local_token}&user_id=${ids}`);
       setTopCPMCampaigns(response.data.bestCompany)
       setAdminSelect(response.data.admin_company)
     } catch (error: any) {
@@ -769,12 +744,9 @@ export default function AdminDashboard({ onUpdateCampaign }: AdminDashboardProps
 
   const getPrioretCompany = async () => {
     const local_token = localStorage.getItem("token");
+    const id = localStorage.getItem("id")
     try {
-      const response = await axios.get(`${API_URL}/api/getPriorityCompanies`, {
-        headers: {
-          Authorization: `Bearer ${local_token}`,
-        },
-      });
+      const response = await axios.get(`${API_URL}/api/getPriorityCompanies?token=${local_token}&user_id=${id}`);
       setCampaigns(response.data.data)
     } catch (error: any) {
     }
@@ -782,12 +754,9 @@ export default function AdminDashboard({ onUpdateCampaign }: AdminDashboardProps
 
   const getCompanyАwaitingМoderation = async () => {
     const local_token = localStorage.getItem("token");
+    const ids = localStorage.getItem('id')
     try {
-      const response = await axios.get(`${API_URL}/api/getCompanyАwaitingМoderation`, {
-        headers: {
-          Authorization: `Bearer ${local_token}`,
-        },
-      });
+      const response = await axios.get(`${API_URL}/api/getCompanyАwaitingМoderation?token=${local_token}&user_id=${ids}`);
 
       setCompany(response.data[1])
     } catch (error: any) {
