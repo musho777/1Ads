@@ -48,6 +48,7 @@ export const ChartModal = ({ onClose, companyId }) => {
       colors: ["#008FFB", "#FF4560"],
     },
   });
+  const API_URL = import.meta.env.VITE_URL;
 
   useEffect(() => {
     const myHeaders = new Headers();
@@ -59,7 +60,7 @@ export const ChartModal = ({ onClose, companyId }) => {
       redirect: "follow"
     };
 
-    fetch(`https://xn----nbck7b7ald8atlv.xn--y9a3aq/halal.loc/public/api/getDataForDiagram?company_id=${companyId}`, requestOptions)
+    fetch(`${API_URL}/api/getDataForDiagram?company_id=${companyId}`, requestOptions)
       .then((response) => response.json())
       .then((result) => {
         const impressions = [];

@@ -217,7 +217,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setToken("");
     setId("")
     setUser(null);
-    await axios.get<User>(`/api/logout?token=${token}&&user_id=${id}`);
+    await axios.get<User>(`${API_URL}/api/logout?token=${token}&&user_id=${id}`);
   };
 
   useEffect(() => {
