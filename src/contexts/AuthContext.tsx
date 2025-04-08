@@ -50,20 +50,44 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [loadingEdit, setLoadingEdit] = useState(false)
   const API_URL = import.meta.env.VITE_URL;
 
+  // const getUser = async () => {
+  //   setLoading(true)
+  //   const local_token = localStorage.getItem("token");
+  //   const id = localStorage.getItem("id");
+  //   try {
+  //     const response = await axios.get<User>(`/api/getProfileInfo?token=${local_token}&&user_id=${id}`);
+  //     setUser(response.data);
+  //   } catch (error: any) {
+  //     if (error.response?.status === 403) localStorage.removeItem("token");
+  //     setUser(null);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
   const getUser = async () => {
-    setLoading(true)
+    setLoading(true);
     const local_token = localStorage.getItem("token");
     const id = localStorage.getItem("id");
+
     try {
-      const response = await axios.get<User>(`/api/getProfileInfo?token=${local_token}&&user_id=${id}`);
-      setUser(response.data);
-    } catch (error: any) {
-      if (error.response?.status === 403) localStorage.removeItem("token");
+      const res = await fetch(`/api/getProfileInfo?token=${local_token}&&user_id=${id}`);
+      if (res.status === 403) {
+        localStorage.removeItem("token");
+        setUser(null);
+      } else if (!res.ok) {
+        throw new Error(`Error: ${res.status}`);
+      } else {
+        const data = await res.json();
+        setUser(data);
+      }
+    } catch (error) {
+      console.error(error);
       setUser(null);
     } finally {
       setLoading(false);
     }
   };
+
 
   const login = async (email: string, password: string) => {
     setLoading(true)
