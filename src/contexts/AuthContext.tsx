@@ -70,7 +70,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const id = localStorage.getItem("id");
 
     try {
-      const res = await fetch(`/api/getProfileInfo?token=${local_token}&&user_id=${id}`);
+      const res = await fetch(`${API_URL}/api/getProfileInfo?token=${local_token}&&user_id=${id}`);
       if (res.status === 403) {
         localStorage.removeItem("token");
         setUser(null);
