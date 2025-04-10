@@ -52,43 +52,42 @@ const CompetitiveStatus = ({ campaign, highestCpm, setOpenChart }: {
   let status = ""
   if (campaign.admin_status == "На модерации") {
     activeColor = "#515151"
-    activeText = t("competitive.in.moderation")
+    activeText = campaign.admin_status_comment || t("competitive.in.moderation")
     status = t("На модерации")
   }
   else if (campaign.admin_status == "Допущена") {
     activeColor = "#3860b1"
-    activeText = t("competitive.in.access")
+    activeText = campaign.admin_status_comment || t("competitive.in.access")
     status = t("competitive.access")
 
   }
   else if (campaign.admin_status == "Активна") {
     activeColor = "#45b117"
-    activeText = t("competitive.showing")
+    activeText = campaign.admin_status_comment || t("competitive.showing")
     status = t("competitive.active")
 
   }
   else if (campaign.admin_status == "Не допущена") {
     activeColor = "#b3b2b2"
-    activeText = t("competitive.comments")
+    activeText = campaign.admin_status_comment || t("competitive.comments")
     status = t("competitive.reject")
   }
   else if (campaign.admin_status == "Приостановлена") {
     activeColor = "#e1b42c"
-    activeText = t("competitive.over")
+    activeText = campaign.admin_status_comment || t("competitive.over")
     status = t("competitive.pause")
 
   }
   else if (campaign.admin_status == "Завершена") {
     activeColor = "#af5857"
-    activeText = t("competitive.date.end")
+    activeText = campaign.admin_status_comment || t("competitive.date.end")
     status = t("Завершена")
 
   }
   else if (campaign.admin_status == "Запланирована") {
     activeColor = "#516da5"
-    activeText = t("competitive.completed")
+    activeText = campaign.admin_status_comment || t("competitive.completed")
     status = t("competitive.planned")
-
   }
   return (
     <div
@@ -99,10 +98,11 @@ const CompetitiveStatus = ({ campaign, highestCpm, setOpenChart }: {
         <div>
           <h3 className="text-lg font-semibold mb-2">{t('competitive.title')}:  {campaign.company_name}</h3>
           {isCompetitive ? (
-            <div className="flex items-center text-green-600 mb-2">
+            <div style={{ color: activeColor }} className="flex items-center text-green-600 mb-2">
               <TrendingUp className="w-5 h-5 mr-2" />
               <span className="font-medium">
-                {t('competitive.isCompetitive', { name: campaign?.company_name })}
+                {activeText}
+                {/* {t('competitive.isCompetitive', { name: campaign?.company_name })} */}
               </span>
             </div>
           ) : (
@@ -111,8 +111,6 @@ const CompetitiveStatus = ({ campaign, highestCpm, setOpenChart }: {
               className="flex items-center  mb-2">
               <span className="font-medium">
                 {activeText}
-                {/* Oплачена, находится на ручной модерации у администратора */}
-                {/* {t('competitive.needsBoost', { name: campaign.company_name })} */}
               </span>
             </div>
           )}
@@ -130,14 +128,6 @@ const CompetitiveStatus = ({ campaign, highestCpm, setOpenChart }: {
                 {status}
               </span>
             </p>
-            {/* {!isCompetitive && (
-              <div className="mt-4 p-4 bg-yellow-50 rounded-lg">
-                <p className="text-sm text-yellow-800">
-                  <AlertTriangle className="w-4 h-4 inline mr-2" />
-                  {t('competitive.recommendation', { amount: recommendedCpm })}
-                </p>
-              </div>
-            )} */}
           </div>
         </div>
       </div>
@@ -234,7 +224,6 @@ function Dashboard() {
     if (campaignData.adContent.thumbnailUrl) {
     }
     var myHeaders = new Headers();
-    // myHeaders.append("Authorization", `Bearer ${token}`)
     myHeaders.append("Accept", "application/json");
     try {
       const response = await
@@ -333,7 +322,6 @@ function Dashboard() {
       method: "POST",
       // headers: {
       //   // "Content-Type": "application/json",
-      //   "Authorization": `Bearer ${token}`,
       // },
       body: formData,
       // body: JSON.stringify({

@@ -58,7 +58,6 @@ function PaymentModal({ isOpen, onClose, amount, userEmail }: PaymentModalProps)
       formData.append("image", file);
       const id = localStorage.getItem("id")
       var myHeaders = new Headers();
-      // myHeaders.append("Authorization", `Bearer ${token}`)
       myHeaders.append("Accept", "application/json");
       try {
         const response = await
@@ -233,13 +232,15 @@ function PaymentModal({ isOpen, onClose, amount, userEmail }: PaymentModalProps)
   );
 }
 
-export default function BudgetCard({ userEmail = "user@example.com" }: BudgetCardProps) {
+export default function BudgetCard({ }: BudgetCardProps) {
   const [showAddFunds, setShowAddFunds] = useState(false);
   const [amount, setAmount] = useState('');
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const { t } = useLanguage();
   const currencySymbol = '₽';
   const { user } = useAuth();
+  const [userEmail, setuserEmail] = useState("")
+
 
   const handleAddFunds = () => {
     const numAmount = parseFloat(amount);
@@ -253,6 +254,7 @@ export default function BudgetCard({ userEmail = "user@example.com" }: BudgetCar
 
   useEffect(() => {
     if (user) {
+      setuserEmail(user.data?.email)
       const percentage = ((user?.data?.get_budget[0].budget - user?.data?.get_budget[0]?.budget_balance) / user?.data?.get_budget[0].budget) * 100;
       if (user?.data?.get_budget[0].budget == 0 && user?.data?.get_budget[0]?.budget_balance == 0) {
         setSpentPercentage(100)

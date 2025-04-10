@@ -7,6 +7,7 @@ import TermsOfUse from '../../components/TermsOfUse';
 import Login from '../../components/auth/login';
 import Register from '../../components/auth/register';
 import Cookie from '../../components/cookie';
+import ChangePassword from '../../components/auth/changePassowrd';
 
 
 function Home() {
@@ -17,6 +18,7 @@ function Home() {
   const [showTerms, setShowTerms] = useState(false)
   const [showCookie, setShowCookie] = useState(false)
   const { language, setLanguage, t } = useLanguage();
+  const [changePassword, setChangePassword] = useState(false)
 
   const handleLanguageChange = (newLanguage: 'en' | 'ru') => {
     setLanguage(newLanguage);
@@ -227,7 +229,6 @@ function Home() {
       {showCookie &&
         <Cookie onClose={() => setShowCookie(false)} />
       }
-
       {/* Auth Modal */}
       {showAuthModal && (
         <div className="fixed inset-0 bg-black/20 backdrop-blur-sm flex items-center justify-center z-50">
@@ -239,8 +240,14 @@ function Home() {
               <X className="w-6 h-6" />
             </button>
             {isLoginMode ?
-              <Login onToggleMode={() => setIsLoginMode(!isLoginMode)} /> :
-              <Register onToggleMode={() => setIsLoginMode(!isLoginMode)} />
+              (
+                changePassword ?
+                  <ChangePassword onChangePassword={(e) => {
+                    setChangePassword(false)
+                  }} onToggleMode={() => setIsLoginMode(!isLoginMode)} /> :
+                  <Login onChangePassword={(e) => setChangePassword(e)} onToggleMode={() => setIsLoginMode(!isLoginMode)} />
+              ) :
+              < Register onToggleMode={() => setIsLoginMode(!isLoginMode)} />
             }
           </div>
         </div>

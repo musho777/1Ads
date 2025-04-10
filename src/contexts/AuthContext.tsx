@@ -187,13 +187,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       const response = await fetch(`${API_URL}/api/register`, requestOptions);
       const result: any = await response.json();
       responseData = { message: result.errors, status: result.status };
+      console.log(response.ok)
       if (response.ok) {
+        console.log(result)
         setToken(result.token);
-        setId(result.user.id)
+        setId(result.username.id)
         localStorage.setItem("token", result.token);
-        localStorage.setItem("id", result.user.id);
+        localStorage.setItem("id", result.username.id);
 
-        setUser(result.user);
+        setUser(result.username);
         setIsAuthenticated(true);
       }
       else {
@@ -203,6 +205,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
       }
     } catch (error) {
+      console.log(error)
       responseData = { message: "Server Error", status: false };
     } finally {
       setLoading(false)
@@ -213,11 +216,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const logout = async () => {
     const id = localStorage.getItem("id")
     localStorage.removeItem("token");
+    localStorage.removeItem("id")
     setIsAuthenticated(false);
     setToken("");
     setId("")
     setUser(null);
-    await fetch(`${API_URL}/api/logout?token=${token}&user_id=${id}`);
+    await fetch(`${API_URL}/api/logouth?token=${token}&user_id=${id}`);
   };
 
   useEffect(() => {

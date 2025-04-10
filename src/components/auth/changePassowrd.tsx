@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Eye, EyeOff, Lock, Mail } from 'lucide-react';
 import TermsOfUse from '../TermsOfUse';
 import PrivacyPolicy from '../PrivacyPolicy';
@@ -9,7 +9,7 @@ import { useNavigate } from 'react-router-dom';
 
 interface AuthFormProps {
   onToggleMode: () => void;
-  onChangePassword: (e: boolean) => void;
+  onChangePassword: () => void
 }
 
 interface Data {
@@ -18,11 +18,14 @@ interface Data {
 }
 
 
-export default function Login({ onToggleMode, onChangePassword }: AuthFormProps) {
-  const { login, loading } = useAuth();
+export default function ChangePassword({ onToggleMode, onChangePassword }: AuthFormProps) {
+  const { login } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [showPrivacyPolicy, setShowPrivacyPolicy] = useState(false);
   const [showTermsOfUse, setShowTermsOfUse] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
+  const [loading, setLoading] = useState(false)
   const [error, setError] = useState(false)
   const navigate = useNavigate()
   const { t } = useLanguage();
@@ -34,8 +37,7 @@ export default function Login({ onToggleMode, onChangePassword }: AuthFormProps)
     rememberMe: false
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
-
-
+  const API_URL = import.meta.env.VITE_URL;
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
 
@@ -44,28 +46,38 @@ export default function Login({ onToggleMode, onChangePassword }: AuthFormProps)
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
       newErrors.email = t("valid.email");
     }
-
-    if (!formData.password) {
-      newErrors.password = t("no.password");
-    } else if (formData.password.length < 8) {
-      newErrors.password = t("password.error");
-    }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (formData.rememberMe) {
-      localStorage.setItem('userEmail', formData.email);
-      localStorage.setItem('userPassword', formData.password);
+    setLoading(true)
+    if (!validateForm()) return;
+
+    try {
+      const response = await fetch(`${API_URL}/api/forgot_password`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email: formData.email }),
+      });
+
+      const result = await response.json();
+      console.log(result, 'result')
+      if (response.ok) {
+        onChangePassword()
+        alert("Инструкция по сбросу пароля отправлена на почту.")
+        setFormData(prev => ({ ...prev, email: '' })); // очищаем email
+      } else {
+        alert(result.message || "Произошла ошибка при сбросе пароля. Попробуйте снова.");
+      }
+    } catch (err) {
+      alert("Произошла ошибка при сбросе пароля. Попробуйте снова.");
     }
-    else {
-      localStorage.removeItem('userEmail');
-      localStorage.removeItem('userPassword');
-    }
-    if (validateForm()) {
-      LoginApi(formData)
+    finally {
+      setLoading(false)
     }
   };
 
@@ -93,21 +105,6 @@ export default function Login({ onToggleMode, onChangePassword }: AuthFormProps)
     }
   }
 
-  useEffect(() => {
-    const savedEmail = localStorage.getItem('userEmail');
-    const savedPassword = localStorage.getItem('userPassword');
-
-    if (savedEmail && savedPassword) {
-      setFormData({
-        email: savedEmail,
-        password: savedPassword,
-        confirmPassword: '',
-        username: '',
-        rememberMe: true
-      });
-    }
-  }, []);
-
   return (
     <>
       <div className="w-full max-w-md mx-auto bg-white rounded-2xl shadow-xl overflow-hidden border border-sky-100">
@@ -125,7 +122,6 @@ export default function Login({ onToggleMode, onChangePassword }: AuthFormProps)
                   type="email"
                   id="email"
                   name="email"
-                  autoComplete="email"
                   value={formData.email}
                   onChange={handleChange}
                   className={`appearance-none block w-full px-3 py-2 bg-sky-50 border ${errors.email ? 'border-red-500' : 'border-sky-200'
@@ -139,46 +135,7 @@ export default function Login({ onToggleMode, onChangePassword }: AuthFormProps)
               )}
             </div>
 
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                {t("auth.password")}
-              </label>
-              <div className="mt-1 relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Lock className="h-5 w-5 text-gray-400" />
-                </div>
-                <input
-                  type={showPassword ? 'text' : 'password'}
-                  id="password"
-                  name="password"
-                  autoComplete="password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  className={`appearance-none block w-full px-3 py-2 bg-sky-50 border ${errors.password ? 'border-red-500' : 'border-sky-200'
-                    } rounded-lg shadow-sm placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-2 focus:ring-sky-500 
-                  focus:border-transparent sm:text-sm transition-colors pl-10 pr-10`}
-                  placeholder="••••••••"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
-                >
-                  {showPassword ? (
-                    <EyeOff className="h-5 w-5" />
-                  ) : (
-                    <Eye className="h-5 w-5" />
-                  )}
-                </button>
-              </div>
-              {errors.password && (
-                <p className="mt-1 text-sm text-red-500">{errors.password}</p>
-              )}
-            </div>
-
-
-
-            <div className="flex items-center justify-between">
+            {/* <div className="flex items-center justify-between">
               <div className="flex items-center">
                 <input
                   id="rememberMe"
@@ -193,11 +150,11 @@ export default function Login({ onToggleMode, onChangePassword }: AuthFormProps)
                 </label>
               </div>
               <div className="text-sm">
-                <p onClick={(e) => onChangePassword(true)} className="font-medium text-sky-600 hover:text-sky-500">
+                <a href="#" className="font-medium text-sky-600 hover:text-sky-500">
                   {t("auth.forgot.password")}
-                </p>
+                </a>
               </div>
-            </div>
+            </div> */}
             <div>
               <button
                 type="submit"
@@ -224,28 +181,9 @@ export default function Login({ onToggleMode, onChangePassword }: AuthFormProps)
               {t('login.error')}
             </p>
           }
-          <p className="mt-4 text-center text-sm text-gray-600">
-            {t("auth.no.account")}{' '}
-            <button
-              onClick={onToggleMode}
-              className="font-medium text-sky-600 hover:text-sky-500"
-            >
-              {t('auth.Register')}
-            </button>
-          </p>
         </div>
-      </div >
+      </div>
 
-      {showPrivacyPolicy && (
-        <PrivacyPolicy onClose={() => setShowPrivacyPolicy(false)} />
-      )
-      }
-
-      {
-        showTermsOfUse && (
-          <TermsOfUse onClose={() => setShowTermsOfUse(false)} />
-        )
-      }
     </>
   );
 }
