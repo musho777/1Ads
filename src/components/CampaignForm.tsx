@@ -336,10 +336,11 @@ export default function CampaignForm({ isOpen, onClose, onSubmit, initialData, l
               className="text-xs text-green-500 max-w-[150px]"
               type="submit">{t("campaign.status.accept")}</button> */}
 
-            <button type="submit"
+            <button type="button"
               className="text-xs  h-[33px] text-red-500 border border-black rounded-[20px] px-[10px] py-0"
-              onClick={() => {
+              onClick={(e) => {
                 setMax_CPM_need(true)
+                handleSubmit(e)
                 // onClose()
               }}>{t("campaign.status.reject")}</button>
           </div>
