@@ -340,7 +340,7 @@ export default function CampaignForm({ isOpen, onClose, onSubmit, initialData, l
               className="text-xs  h-[33px] text-red-500 border border-black rounded-[20px] px-[10px] py-0"
               onClick={() => {
                 setMax_CPM_need(true)
-                onClose()
+                // onClose()
               }}>{t("campaign.status.reject")}</button>
           </div>
         </div>
