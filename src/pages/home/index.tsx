@@ -66,13 +66,13 @@ function Home() {
             >
               {t('auth.login')}
             </button>
-            <button
+            {/* <button
               onClick={() => handleAuthClick(false)}
               className="px-4 py-2 text-sm font-medium text-white bg-sky-500 rounded-lg hover:bg-sky-600 
           transition-colors focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2"
             >
               {t('auth.register')}
-            </button>
+            </button> */}
           </div>
         </div>
       </nav>

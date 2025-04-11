@@ -310,7 +310,7 @@ export default function CampaignForm({ isOpen, onClose, onSubmit, initialData, l
 
 
 
-  const CustomModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
+  const CustomModal: React.FC<ModalProps> = ({ isOpen }) => {
     if (!isOpen) return null;
     setMax_CPM_need(false)
     return (
@@ -339,8 +339,8 @@ export default function CampaignForm({ isOpen, onClose, onSubmit, initialData, l
             <button type="submit"
               className="text-xs  h-[33px] text-red-500 border border-black rounded-[20px] px-[10px] py-0"
               onClick={() => {
-                // setMax_CPM_need(true)
-                // onClose()
+                setMax_CPM_need(true)
+                onClose()
               }}>{t("campaign.status.reject")}</button>
           </div>
         </div>
