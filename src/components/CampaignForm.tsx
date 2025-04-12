@@ -758,7 +758,7 @@ export default function CampaignForm({ isOpen, onClose, onSubmit, initialData, l
                           <img
                             src={fileUrl}
                             alt={fileUrl && "Ad preview"}
-                            className={fileUrl && "absolute inset-0 w-full h-full object-cover"}
+                            className={fileUrl && "absolute inset-0 w-full h-full object-contain"}
                             onError={(e) => {
                               const target = e.target as HTMLImageElement;
                               target.src = "";
@@ -770,7 +770,7 @@ export default function CampaignForm({ isOpen, onClose, onSubmit, initialData, l
                           <img
                             src={videoPhoroUrl}
                             alt={videoPhoroUrl && "Ad preview"}
-                            className={videoPhoroUrl && "absolute inset-0 w-full h-full object-cover"}
+                            className={videoPhoroUrl && "absolute inset-0 w-full h-full object-contain"}
                             onError={(e) => {
                               const target = e.target as HTMLImageElement;
                               target.src = "";

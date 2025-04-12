@@ -307,7 +307,7 @@ export default function BudgetCard({ }: BudgetCardProps) {
         {showAddFunds && (
           <div className="mt-4 p-4 bg-gray-50 rounded-lg">
             <h4 className="text-sm font-medium text-gray-900 mb-3">{t('budget.addFunds')}</h4>
-            <div className="flex space-x-2">
+            <div className="flex space-x-2 flex-wrap gap-1">
               <div className="relative flex-1">
                 <div className="text-gray-400  absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   ₽
@@ -319,30 +319,34 @@ export default function BudgetCard({ }: BudgetCardProps) {
                   onChange={(e) => setAmount(e.target.value)}
                   min="1"
                   step="1"
-                  className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md 
+                  className="
+                  min-w-32
+                  block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md 
                     focus:outline-none focus:ring-1 focus:ring-sky-500 focus:border-sky-500"
                   placeholder="0.00"
                 />
               </div>
-              <button
-                onClick={handleAddFunds}
-                disabled={!isValidAmount}
-                className={`px-4 py-2 border border-transparent text-sm font-medium rounded-md 
+              <div className="flex gap-1">
+                <button
+                  onClick={handleAddFunds}
+                  disabled={!isValidAmount}
+                  className={`px-4 py-2 border border-transparent text-sm font-medium rounded-md 
                   text-white transition-colors
                   ${isValidAmount
-                    ? 'bg-sky-600 hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500'
-                    : 'bg-gray-400 cursor-not-allowed'}`}
-              >
-                {t('budget.add')}
-              </button>
-              <button
-                onClick={() => setShowAddFunds(false)}
-                className="px-4 py-2 border border-gray-300 text-sm font-medium rounded-md 
+                      ? 'bg-sky-600 hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500'
+                      : 'bg-gray-400 cursor-not-allowed'}`}
+                >
+                  {t('budget.add')}
+                </button>
+                <button
+                  onClick={() => setShowAddFunds(false)}
+                  className="px-4 py-2 border border-gray-300 text-sm font-medium rounded-md 
                   text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 
                   focus:ring-offset-2 focus:ring-sky-500"
-              >
-                {t('budget.cancel')}
-              </button>
+                >
+                  {t('budget.cancel')}
+                </button>
+              </div>
             </div>
           </div>
         )}
