@@ -100,8 +100,20 @@ function Home() {
             <p className="text-xl text-gray-600 text-center max-w-3xl mx-auto mb-12">
               {t('hero.description')}
             </p>
+            <div className="flex justify-center">
+              <button
+                onClick={() => handleAuthClick(false)}
+                className="inline-flex items-center px-8 py-4 text-lg font-medium text-white 
+            bg-sky-500 rounded-xl hover:bg-sky-600 transition-colors
+            focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2
+            shadow-lg hover:shadow-xl"
+              >
+                {t('hero.startAdvertising')}
+                <ArrowRight className="ml-2 w-6 h-6" />
+              </button>
+            </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12 mt-10">
               <div className="bg-white/50 backdrop-blur-sm rounded-xl p-8 border border-sky-100 shadow-sm hover:shadow-md transition-all">
                 <Moon className="w-12 h-12 text-sky-500 mb-4" />
                 <h3 className="text-xl font-semibold text-gray-900 mb-3">{t('features.halal.title')}</h3>
@@ -121,18 +133,7 @@ function Home() {
               </div>
             </div>
 
-            <div className="flex justify-center">
-              <button
-                onClick={() => handleAuthClick(false)}
-                className="inline-flex items-center px-8 py-4 text-lg font-medium text-white 
-            bg-sky-500 rounded-xl hover:bg-sky-600 transition-colors
-            focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2
-            shadow-lg hover:shadow-xl"
-              >
-                {t('hero.startAdvertising')}
-                <ArrowRight className="ml-2 w-6 h-6" />
-              </button>
-            </div>
+
           </div>
         </div>
       </main>
