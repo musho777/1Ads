@@ -155,7 +155,7 @@ export default function CampaignForm({ isOpen, onClose, onSubmit, initialData, l
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent, key) => {
     e.preventDefault();
     setWarningModal(false)
     // Combine CIS and other countries
@@ -168,7 +168,7 @@ export default function CampaignForm({ isOpen, onClose, onSubmit, initialData, l
       startDate: formData.startDate,
       endDate: formData.endDate,
       cpm: Number(formData.cpm),
-      max_CPM_need: max_CPM_need,
+      max_CPM_need: key || max_CPM_need,
       targetCountries: allSelectedCountries.length > 0 ? allSelectedCountries : ['RU'],
       adContent: isEditing
         ? initialData.adContent
@@ -328,7 +328,11 @@ export default function CampaignForm({ isOpen, onClose, onSubmit, initialData, l
           <div className="flex justify-center items-center gap-5 mt-2">
             <button
               className="text-xs text-green-500 max-w-[150px] border border-black rounded-[20px]"
-              type="submit"
+              type="button"
+              onClick={(e) => {
+                handleSubmit(e, "подтвердить")
+                // onClose()
+              }}
             >
               {t("campaign.status.accept")}
             </button>
@@ -340,7 +344,7 @@ export default function CampaignForm({ isOpen, onClose, onSubmit, initialData, l
               className="text-xs  h-[33px] text-red-500 border border-black rounded-[20px] px-[10px] py-0"
               onClick={(e) => {
                 setMax_CPM_need(true)
-                handleSubmit(e)
+                handleSubmit(e, "игнор")
                 // onClose()
               }}>{t("campaign.status.reject")}</button>
           </div>
