@@ -463,8 +463,8 @@ export default function CampaignForm({ isOpen, onClose, onSubmit, initialData, l
                 </select>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
+              <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="w-full">
                   <label htmlFor="startDate" className="block text-sm font-medium text-gray-700">
                     {t('campaign.dates.start')}
                   </label>
@@ -484,7 +484,7 @@ export default function CampaignForm({ isOpen, onClose, onSubmit, initialData, l
                   </div>
                 </div>
 
-                <div>
+                <div className="w-full">
                   <label htmlFor="endDate" className="block text-sm font-medium text-gray-700">
                     {t('campaign.dates.end')}
                   </label>
