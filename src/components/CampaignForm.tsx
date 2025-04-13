@@ -493,14 +493,14 @@ export default function CampaignForm({ isOpen, onClose, onSubmit, initialData, l
                       <Calendar className="h-4 w-4 text-gray-400" />
                     </div>
                     <input
-                      // type="date"
+                      type="date"
                       name="endDate"
                       id="endDate"
                       value={formData.endDate.split(".").reverse().join("-")}
                       // value={formData.endDate}
                       onChange={handleInputChange}
                       required
-                      className="block w-full rounded-md border-gray-300 pl-9  focus:border-sky-500 focus:ring-sky-500 sm:text-sm h-10 border shadow-sm"
+                      className="block w-full appearance-none rounded-md border-gray-300 pl-9 pr-12 focus:border-sky-500 focus:ring-sky-500 sm:text-sm h-10 border shadow-sm"
                     />
                   </div>
                 </div>
