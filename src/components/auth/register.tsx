@@ -307,9 +307,10 @@ export default function Register({ onToggleMode }: AuthFormProps) {
           <p className="mt-4 text-center text-sm text-gray-600">
             {t("auth.have.accaunt")}{' '}
             <button
+              onClick={() => onToggleMode()}
               className="font-medium text-sky-600 hover:text-sky-500"
             >
-              {t("auth.Register")}
+              {t("auth.login")}
             </button>
           </p>
 

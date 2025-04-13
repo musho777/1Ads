@@ -39,11 +39,9 @@ function PaymentModal({ isOpen, onClose, amount, userEmail }: PaymentModalProps)
   };
 
   const handleCopyEmail = () => {
-    if (userEmail) {
-      navigator.clipboard.writeText(userEmail);
-      setEmailCopied(true);
-      setTimeout(() => setEmailCopied(false), 2000);
-    }
+    navigator.clipboard.writeText("+79280900821");
+    setEmailCopied(true);
+    setTimeout(() => setEmailCopied(false), 2000);
   };
 
 

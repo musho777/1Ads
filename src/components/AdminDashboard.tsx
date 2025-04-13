@@ -575,6 +575,7 @@ export default function AdminDashboard({ onUpdateCampaign }: AdminDashboardProps
         <h3 className="text-lg font-medium text-gray-900 mb-4">{t('admin.competitive.title')}</h3>
         <div className="space-y-4">
           {topCPMCampaigns?.map((campaign, index) => {
+            console.log(campaign)
             return <div key={campaign.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
               <div className="flex items-center space-x-4">
                 <div className={`w-8 h-8 flex items-center justify-center rounded-full ${index === 0 ? 'bg-yellow-100 text-yellow-800' :
@@ -587,7 +588,7 @@ export default function AdminDashboard({ onUpdateCampaign }: AdminDashboardProps
                 <div>
                   <h4 className="font-medium text-gray-900">{campaign.company_name}</h4>
                   <p className="text-sm text-gray-500">
-                    {t('admin.competitive.budget')}: ₽{campaign.budget} | {t('admin.competitive.spent')}: ₽{campaign.budget_difference}
+                    {t('admin.competitive.budget')}: ₽{campaign.budget} | {t('admin.competitive.spent')}: ₽{campaign.spent}
                   </p>
                 </div>
               </div>

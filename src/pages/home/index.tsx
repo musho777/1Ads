@@ -182,9 +182,9 @@ function Home() {
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="text-gray-600 hover:text-gray-900 text-sm">
+                  <p onClick={() => window.open('https://t.me/app_1Muslim', '_blank')} className="text-gray-600 hover:text-gray-900 text-sm cursor-pointer">
                     {t('footer.resources.support')}
-                  </a>
+                  </p>
                 </li>
               </ul>
             </div>
