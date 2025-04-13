@@ -493,7 +493,7 @@ export default function CampaignForm({ isOpen, onClose, onSubmit, initialData, l
                       <Calendar className="h-4 w-4 text-gray-400" />
                     </div>
                     <input
-                      type="date"
+                      // type="date"
                       name="endDate"
                       id="endDate"
                       value={formData.endDate.split(".").reverse().join("-")}
