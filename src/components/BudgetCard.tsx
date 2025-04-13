@@ -143,7 +143,7 @@ function PaymentModal({ isOpen, onClose, amount, userEmail }: PaymentModalProps)
                     </label>
                     <div className="flex items-center space-x-2">
                       <div className="flex-1 px-4 py-2 bg-gray-50 rounded-lg text-gray-900">
-                        {userEmail}
+                        +79280900821
                       </div>
                       <button
                         onClick={handleCopyEmail}
@@ -272,7 +272,7 @@ export default function BudgetCard({ }: BudgetCardProps) {
 
   return (
     <div className="bg-white rounded-lg shadow-md p-6">
-      <div className="flex justify-between items-start mb-4">
+      <div className="flex justify-between items-start mb-4 flex-wrap gap-1">
         <div>
           <h3 className="text-lg font-medium text-gray-900">{t('budget.title')}</h3>
           <p className="text-sm text-gray-500">{t('budget.description')}</p>

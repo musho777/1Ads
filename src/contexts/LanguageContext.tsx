@@ -360,7 +360,7 @@ const translations = {
 
 
     // Dashboard
-    'dashboard.title': 'Панель управления',
+    'dashboard.title': 'Дашборд',
     'dashboard.createCampaign': 'Создать кампанию',
     'dashboard.stats.totalSpent': 'Всего потрачено',
     'dashboard.stats.impressions': 'Показы',
@@ -368,11 +368,11 @@ const translations = {
     'dashboard.stats.averageCpm': 'Средний CPM',
 
     // Campaign Form
-    'campaign.create.title': 'Создать новую кампанию',
-    'campaign.edit.title': 'Редактировать кампанию',
+    'campaign.create.title': 'Новая Кампания',
+    'campaign.edit.title': 'Редактировать',
     'campaign.details.title': 'Детали кампании',
     'campaign.name.label': 'Название кампании',
-    'campaign.budget.label': 'Пополнить бюджет (RUB)',
+    'campaign.budget.label': 'Назначить бюджет (RUB)',
     'campaign.cpm.label': 'Стоимость за 1000 показов (CPM)',
     'campaign.cpm.description': 'Сумма, взимаемая за 1000 показов рекламы',
     'campaign.status.label': 'Статус',
@@ -394,7 +394,7 @@ const translations = {
     'campaign.ad.description.label': 'Описание рекламы',
     'campaign.ad.description.description': 'Максимум 200 символов',
     'campaign.ad.image.label': 'Выберите файл',
-    'campaign.ad.image.description': 'Введите действительный изображения (требуется соотношение 2:1)',
+    'campaign.ad.image.description': 'JPG или GIF (требуется соотношение 2:1)',
     'campaign.ad.url.label': 'Целевой URL',
     'campaign.ad.url.description': 'Куда пользователи перейдут при клике на рекламу',
     'campaign.ad.preview.title': 'Предпросмотр рекламы',
@@ -497,7 +497,7 @@ const translations = {
     'campaign.ad.mediaType.image': 'Изображение',
     'campaign.ad.mediaType.video': 'Видео',
     'campaign.ad.video.label': 'Выберите видео',
-    'campaign.ad.video.description': 'Введите действительный видео (требуется соотношение 2:1)',
+    'campaign.ad.video.description': 'Формат видео: MP4, M4V (требуется соотношение 2:1)',
     'campaign.ad.thumbnail.label': 'Выберите изображения для видео',
     'campaign.ad.thumbnail.description': 'Изображение, которое будет показано перед воспроизведением видео (требуется соотношение 2:1)',
 
@@ -538,7 +538,7 @@ const translations = {
     "payment.info": "Платежная информация",
     "payment.ammount": "Сумма к оплате",
     "payment.card": "На карту Сбербанка",
-    "payment.description": "Описание платежа (ваш email)",
+    "payment.description": "Через СБП (Сбербанк)",
     "payment.receipt": "Загрузить квитанцию",
     "payment.paid": "Я оплатил",
     "payment.upload.description": "Пожалуйста, загрузите квитанцию об оплате. После проверки модератором ваш бюджет будет пополнен.",

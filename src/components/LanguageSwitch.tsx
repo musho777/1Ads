@@ -31,7 +31,7 @@ export default function LanguageSwitch() {
 
   return (
     <div className="relative inline-block text-left">
-      <button
+      {/* <button
         ref={buttonRef}
         type="button"
         onClick={() => setIsOpen(!isOpen)}
@@ -44,7 +44,7 @@ export default function LanguageSwitch() {
         <span className="ml-2 text-sm font-medium text-gray-700">
           {language === 'en' ? 'EN' : 'RU'}
         </span>
-      </button>
+      </button> */}
 
       {isOpen && (
         <div

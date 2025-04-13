@@ -436,7 +436,9 @@ function Dashboard() {
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">{t('dashboard.title')}</h1>
+          <h1 className="mr-4 text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900">
+            {t('dashboard.title')}
+          </h1>
           <div className="flex items-center space-x-4">
             <button
               disabled={user?.data?.get_budget[0].budget_balance == 0}
@@ -560,7 +562,7 @@ function Dashboard() {
                                 </button>
 
                                 {actionMenuOpen === campaign?.id && (
-                                  <div className="absolute right-0 mt-1 w-36 bg-white rounded-md shadow-lg z-10 border border-gray-200">
+                                  <div className="absolute right-30 mt-1 w-36 bg-white rounded-md shadow-lg z-10 border border-gray-200">
                                     <div className="py-1">
                                       <button
                                         onClick={(e) => {

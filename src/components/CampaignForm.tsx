@@ -315,7 +315,7 @@ export default function CampaignForm({ isOpen, onClose, onSubmit, initialData, l
     setMax_CPM_need(false)
     return (
       <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-        <div className="bg-white p-5 rounded-lg shadow-md max-w-[350px]">
+        <div className="bg-white p-5 rounded-lg shadow-md max-w-[550px]">
           <p className="text-sm text-center">
             {warningText.split(/(\d+р\.)/).map((part, index) =>
               /\d+р\./.test(part) ? (
@@ -325,9 +325,12 @@ export default function CampaignForm({ isOpen, onClose, onSubmit, initialData, l
               )
             )}
           </p>
-          <div className="flex justify-center items-center gap-5 mt-2">
+          <div className="flex justify-center items-center gap-5 mt-2 flex-wrap">
             <button
-              className="text-xs text-green-500 max-w-[150px] border border-black rounded-[20px]"
+              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md 
+             text-white bg-sky-600 hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500
+             disabled:bg-gray-400 disabled:cursor-not-allowed"
+              // className="text-xs text-green-500 max-w-[150px] border border-black rounded-[20px]"
               type="button"
               onClick={(e) => {
                 handleSubmit(e, "подтвердить")
@@ -341,7 +344,10 @@ export default function CampaignForm({ isOpen, onClose, onSubmit, initialData, l
               type="submit">{t("campaign.status.accept")}</button> */}
 
             <button type="button"
-              className="text-xs  h-[33px] text-red-500 border border-black rounded-[20px] px-[10px] py-0"
+              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md 
+              text-black bg-white hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500
+              disabled:bg-gray-400 disabled:cursor-not-allowed"
+              // className="text-xs  h-[33px] text-red-500 border border-black rounded-[20px] px-[10px] py-0"
               onClick={(e) => {
                 setMax_CPM_need(true)
                 handleSubmit(e, "игнор")
@@ -894,13 +900,13 @@ export default function CampaignForm({ isOpen, onClose, onSubmit, initialData, l
                 {initialData ? t('campaign.edit.title') : t('campaign.create.title')}
               </h2>
               <div className="flex space-x-3">
-                <button
+                {/* <button
                   type="button"
                   onClick={onClose}
                   className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500"
                 >
                   {t('campaign.button.cancel')}
-                </button>
+                </button> */}
                 <button
                   type="submit"
                   disabled={!isFormValid() || loading}
@@ -930,50 +936,51 @@ export default function CampaignForm({ isOpen, onClose, onSubmit, initialData, l
             </div>
 
             {/* Tabs */}
-            <div className="px-6 py-2 bg-white border-b border-gray-200 flex space-x-1">
+            <div className="px-4 py-2 bg-white border-b border-gray-200 flex space-x-1 overflow-auto">
               <button
                 type="button"
                 onClick={() => setActiveTab('details')}
-                className={`px-4 py-2 text-sm font-medium rounded-md ${activeTab === 'details'
+                className={`flex-shrink-0 px-4 py-2 text-sm font-medium rounded-md ${activeTab === 'details'
                   ? 'bg-sky-100 text-sky-700'
                   : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
                   }`}
               >
-                <div className="flex items-center gap-2 text-gray-400">
-                  <div>
-                    {currencySymbol}
-                  </div>
+                <div className="flex items-center gap-2">
+                  <div>{currencySymbol}</div>
                   {t('campaign.details.title')}
                 </div>
               </button>
+
               <button
                 type="button"
                 onClick={() => setActiveTab('content')}
-                className={`px-4 py-2 text-sm font-medium rounded-md ${activeTab === 'content'
+                className={`flex-shrink-0 px-4 py-2 text-sm font-medium rounded-md ${activeTab === 'content'
                   ? 'bg-sky-100 text-sky-700'
                   : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
                   }`}
               >
-                <div className="flex items-center">
-                  <Image className="w-4 h-4 mr-2" />
+                <div className="flex items-center gap-2">
+                  <Image className="w-4 h-4" />
                   {t('campaign.ad.title')}
-                  {isEditing && <Lock className="w-3 h-3 ml-1 text-gray-400" />}
+                  {isEditing && <Lock className="w-3 h-3 text-gray-400" />}
                 </div>
               </button>
+
               <button
                 type="button"
                 onClick={() => setActiveTab('targeting')}
-                className={`px-4 py-2 text-sm font-medium rounded-md ${activeTab === 'targeting'
+                className={`flex-shrink-0 px-4 py-2 text-sm font-medium rounded-md ${activeTab === 'targeting'
                   ? 'bg-sky-100 text-sky-700'
                   : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
                   }`}
               >
-                <div className="flex items-center">
-                  <Target className="w-4 h-4 mr-2" />
+                <div className="flex items-center gap-2">
+                  <Target className="w-4 h-4" />
                   {t('campaign.countries.label')}
                 </div>
               </button>
             </div>
+
 
             {/* Content */}
             <div className="flex-1 overflow-y-auto p-6 bg-gray-50">

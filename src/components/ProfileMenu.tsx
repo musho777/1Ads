@@ -15,8 +15,9 @@ export default function ProfileMenu({ onEditProfile, setIsEditMode, setSettings 
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
-  const { t } = useLanguage();
   const { user, logout } = useAuth();
+  const { language, setLanguage, t } = useLanguage();
+
   const navigator = useNavigate()
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -35,7 +36,10 @@ export default function ProfileMenu({ onEditProfile, setIsEditMode, setSettings 
   }, []);
 
 
-
+  const handleLanguageChange = (newLanguage: 'en' | 'ru') => {
+    setLanguage(newLanguage);
+    setIsOpen(false);
+  };
 
 
 
@@ -81,15 +85,35 @@ export default function ProfileMenu({ onEditProfile, setIsEditMode, setSettings 
               {t('profile.settings')}
             </button>
 
-            <button
+            <div className="py-1" role="menu" aria-orientation="vertical">
+              <button
+                className={`w-full text-left px-4 py-2 text-sm ${language === 'en' ? 'bg-sky-50 text-sky-700' : 'text-gray-700 hover:bg-gray-50'
+                  }`}
+                onClick={() => handleLanguageChange('en')}
+                role="menuitem"
+              >
+                {t('settings.english')}
+              </button>
+              <button
+                className={`w-full text-left px-4 py-2 text-sm ${language === 'ru' ? 'bg-sky-50 text-sky-700' : 'text-gray-700 hover:bg-gray-50'
+                  }`}
+                onClick={() => handleLanguageChange('ru')}
+                role="menuitem"
+              >
+                {t('settings.russian')}
+              </button>
+            </div>
+
+            {/* <button
               className="w-full flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md"
             >
               <CreditCard className="w-4 h-4 mr-3" />
               {t('profile.billing')}
-            </button>
+            </button> */}
 
             <button
               className="w-full flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md"
+              onClick={() => window.open('https://t.me/app_1Muslim', '_blank')}
             >
               <HelpCircle className="w-4 h-4 mr-3" />
               {t('profile.help')}
@@ -117,8 +141,9 @@ export default function ProfileMenu({ onEditProfile, setIsEditMode, setSettings 
             </button>
           </div>
         </div>
-      )}
+      )
+      }
 
-    </div>
+    </div >
   );
 }
