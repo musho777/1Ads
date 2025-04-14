@@ -443,7 +443,7 @@ export default function AdminDashboard({ onUpdateCampaign }: AdminDashboardProps
 
 
   const ModerationQueue = () => {
-    return <div className="space-y-6">
+    return <div className="space-y-6 flex-wrap">
       <h3 className="text-lg font-medium text-gray-900">
         {t("admin.awaiting.moderation")} ({payment.length + company.length})
       </h3>
@@ -483,7 +483,7 @@ export default function AdminDashboard({ onUpdateCampaign }: AdminDashboardProps
 
       {company.map(campaign => {
         return <div key={campaign.id} className="bg-white rounded-lg shadow p-6">
-          <div className="flex items-start space-x-6">
+          <div className="flex items-start flex-wrap space-x-6">
             <div className="w-48 flex-shrink-0">
               <div className="aspect-w-16 aspect-h-9 rounded-lg overflow-hidden">
                 <img
@@ -495,21 +495,22 @@ export default function AdminDashboard({ onUpdateCampaign }: AdminDashboardProps
             </div>
 
             <div className="flex-1">
-              <div className="flex justify-between items-start">
+              <div className="flex flex-wrap justify-between items-start">
                 <div className="space-y-1">
                   <h4 className="text-lg font-medium text-gray-900">{campaign.company_name}</h4>
                   <p className="text-sm text-gray-500">
-                    {t("campaigns.table.budget")}: ₽{campaign.budget}
+                    {t("campaigns.table.budget")}: ₽{campaign.budget.toLocaleString("ru-RU")}
                   </p>
                   <p className="text-sm text-gray-500">
-                    CPM: ₽{campaign.CPM}
+                    CPM: ₽{campaign.CPM.toLocaleString("ru-RU")}
                   </p>
                   <div className="mt-2">
                     <h5 className="text-sm font-medium text-gray-900">{campaign.company_title}</h5>
                     <p className="text-sm text-gray-600">{campaign.company_description}</p>
                   </div>
                 </div>
-                <div className="flex space-x-2">
+
+                <div className="flex flex-wrap gap-2 mt-2 sm:mt-0">
                   <button
                     onClick={() => handleModerate(campaign, 'approved')}
                     className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-green-600 hover:bg-green-700"
@@ -527,6 +528,7 @@ export default function AdminDashboard({ onUpdateCampaign }: AdminDashboardProps
                 </div>
               </div>
             </div>
+
           </div>
         </div>
       })}
@@ -570,12 +572,11 @@ export default function AdminDashboard({ onUpdateCampaign }: AdminDashboardProps
 
 
   const CompetitiveAnalysis = () => (
-    <div className="space-y-6">
+    <div className="space-y-6 flex-wrap">
       <div className="bg-white rounded-lg shadow p-6">
         <h3 className="text-lg font-medium text-gray-900 mb-4">{t('admin.competitive.title')}</h3>
         <div className="space-y-4">
           {topCPMCampaigns?.map((campaign, index) => {
-            console.log(campaign)
             return <div key={campaign.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
               <div className="flex items-center space-x-4">
                 <div className={`w-8 h-8 flex items-center justify-center rounded-full ${index === 0 ? 'bg-yellow-100 text-yellow-800' :
@@ -592,8 +593,8 @@ export default function AdminDashboard({ onUpdateCampaign }: AdminDashboardProps
                   </p>
                 </div>
               </div>
-              <div className="flex items-center space-x-4">
-                <div className="text-right">
+              <div className="flex items-center space-x-4 ">
+                <div className="flex text-right items-center gap-1">
                   <div className="text-lg font-semibold text-gray-900">₽{campaign.CPM}</div>
                   <div className="text-sm text-gray-500">CPM</div>
                 </div>
@@ -603,7 +604,7 @@ export default function AdminDashboard({ onUpdateCampaign }: AdminDashboardProps
                       ...campaign,
                       status: campaign.status === 'active' ? 'paused' : 'active'
                     })}
-                    className={`px-3 py-1 rounded-full text-sm font-medium ${campaign.status === 'active'
+                    className={`px-3 py-1  rounded-full text-sm font-medium ${campaign.status === 'active'
                       ? 'bg-green-100 text-green-800'
                       : 'bg-yellow-100 text-yellow-800'
                       }`}
@@ -626,7 +627,7 @@ export default function AdminDashboard({ onUpdateCampaign }: AdminDashboardProps
             </div>
           }
           {adminSelect &&
-            <div key={adminSelect.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+            <div key={adminSelect.id} className="flex flex-wrap items-center justify-between p-4 bg-gray-50 rounded-lg">
               <div className="flex items-center space-x-4">
                 <div className={`w-8 h-8 flex items-center justify-center rounded-full bg-blue-100 text-blue-800`}>
                   4
@@ -639,7 +640,7 @@ export default function AdminDashboard({ onUpdateCampaign }: AdminDashboardProps
                 </div>
               </div>
               <div className="flex items-center space-x-4">
-                <div className="text-right">
+                <div className="flex text-right items-center gap-1">
                   <div className="text-lg font-semibold text-gray-900">₽{adminSelect.CPM}</div>
                   <div className="text-sm text-gray-500">CPM</div>
                 </div>
@@ -865,7 +866,7 @@ export default function AdminDashboard({ onUpdateCampaign }: AdminDashboardProps
             {selectedTab === 'moderation' && <ModerationQueue />}
             {selectedTab === 'competitive' && <CompetitiveAnalysis />}
             {selectedTab === 'all' && (
-              <div className="space-y-6">
+              <div className="space-y-6 flex-wrap">
                 <CompetitiveAnalysis />
                 <ModerationQueue />
               </div>

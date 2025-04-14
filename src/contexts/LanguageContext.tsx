@@ -502,7 +502,7 @@ const translations = {
     'campaign.ad.thumbnail.description': 'Изображение, которое будет показано перед воспроизведением видео (требуется соотношение 2:1)',
 
     // Admin Dashboard
-    'admin.title': 'Панель администратора',
+    'admin.title': 'Админка',
     'admin.moderation.title': 'Ожидают модерации',
     'admin.moderation.empty': 'Нет кампаний на модерации',
     'admin.moderation.approve': 'Одобрить',
@@ -555,7 +555,7 @@ const translations = {
     'admin.payment.documents.transfer': 'Перевод',
     'admin.payment.documents.view': 'Просмотр документа',
     'admin.payment.documents.close': 'Закрыть',
-    'admin.payment.documents.verify': 'Подтвердить оплату',
+    'admin.payment.documents.verify': 'Открыть',
     'admin.payment.documents.amount': 'Сумма',
     'admin.payment.documents.date': 'Дата',
     'admin.payment.documents.type': 'Тип документа',
