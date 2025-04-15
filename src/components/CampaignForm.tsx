@@ -409,8 +409,8 @@ export default function CampaignForm({ isOpen, onClose, onSubmit, initialData, l
                       type="number"
                       name="budget"
                       id="budget"
-                      min="1"
-                      step="0.01"
+                      min="500"
+                      step="500"
                       value={formData.budget}
                       onChange={handleInputChange}
                       required
@@ -433,8 +433,8 @@ export default function CampaignForm({ isOpen, onClose, onSubmit, initialData, l
                       type="number"
                       name="cpm"
                       id="cpm"
-                      min="0.01"
-                      step="0.01"
+                      min="500"
+                      step="500"
                       value={formData.cpm}
                       onChange={handleInputChange}
                       required

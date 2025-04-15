@@ -555,7 +555,9 @@ const translations = {
     'admin.payment.documents.transfer': 'Перевод',
     'admin.payment.documents.view': 'Просмотр документа',
     'admin.payment.documents.close': 'Закрыть',
-    'admin.payment.documents.verify': 'Открыть',
+    'admin.payment.documents.open': 'Открыть',
+    'admin.payment.documents.verify': 'Подтвердить оплату',
+
     'admin.payment.documents.amount': 'Сумма',
     'admin.payment.documents.date': 'Дата',
     'admin.payment.documents.type': 'Тип документа',

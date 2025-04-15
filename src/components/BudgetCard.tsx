@@ -140,7 +140,7 @@ function PaymentModal({ isOpen, onClose, amount, userEmail }: PaymentModalProps)
                       {t("payment.description")}
                     </label>
                     <div className="flex items-center space-x-2">
-                      <div className="flex-1 px-4 py-2 bg-gray-50 rounded-lg text-gray-900">
+                      <div className="flex-1 px-4 py-2 bg-gray-50 rounded-lg font-mono text-gray-900">
                         +79280900821
                       </div>
                       <button
@@ -150,9 +150,9 @@ function PaymentModal({ isOpen, onClose, amount, userEmail }: PaymentModalProps)
                         {emailCopied ? <Check className="w-5 h-5 text-green-500" /> : <Copy className="w-5 h-5" />}
                       </button>
                     </div>
-                    <label className="block font-medium  text-gray-400 mt-3 text-xs ">
+                    {/* <label className="block font-medium  text-gray-400 mt-3 text-xs ">
                       {t("budget.description2")}
-                    </label>
+                    </label> */}
                   </div>
                 )}
               </div>
@@ -315,8 +315,8 @@ export default function BudgetCard({ }: BudgetCardProps) {
                   type="number"
                   value={amount}
                   onChange={(e) => setAmount(e.target.value)}
-                  min="1"
-                  step="1"
+                  min="500"
+                  step="500"
                   className="
                   min-w-32
                   block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md 
