@@ -187,16 +187,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       const response = await fetch(`${API_URL}/api/register`, requestOptions);
       const result: any = await response.json();
       responseData = { message: result.errors, status: result.status };
-      console.log(response.ok)
       if (response.ok) {
-        console.log(result)
-        setToken(result.token);
-        setId(result.username.id)
-        localStorage.setItem("token", result.token);
-        localStorage.setItem("id", result.username.id);
-
-        setUser(result.username);
-        setIsAuthenticated(true);
+        alert("письмо для подтверждения регистрации отправлено на ваш эл. адресс")
+        // setToken(result.token);
+        // setId(result.username.id)
+        // localStorage.setItem("token", result.token);
+        // localStorage.setItem("id", result.username.id);
+        // setUser(result.username);
+        // setIsAuthenticated(true);
       }
       else {
         responseData = { message: result.message, status: false };
@@ -205,7 +203,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
       }
     } catch (error) {
-      console.log(error)
       responseData = { message: "Server Error", status: false };
     } finally {
       setLoading(false)

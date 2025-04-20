@@ -65,7 +65,6 @@ export default function ChangePassword({ onToggleMode, onChangePassword }: AuthF
       });
 
       const result = await response.json();
-      console.log(result, 'result')
       if (response.ok) {
         onChangePassword()
         alert("Инструкция по сбросу пароля отправлена на почту.")

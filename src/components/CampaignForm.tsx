@@ -241,7 +241,6 @@ export default function CampaignForm({ isOpen, onClose, onSubmit, initialData, l
     if (isEditing && (name === 'adTitle' || name === 'adDescription' || name === 'targetUrl')) {
       return;
     }
-    console.log(value, name)
     setFormData(prev => ({
       ...prev,
       [name]: value

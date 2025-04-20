@@ -84,7 +84,7 @@ export default function Register({ onToggleMode }: AuthFormProps) {
       const response = await register(sendDAta)
       if (!response.message) {
         onToggleMode()
-        navigate("/dashboard")
+        close()
       }
       setApiError(response.message)
     }
