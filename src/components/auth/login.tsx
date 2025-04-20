@@ -91,6 +91,9 @@ export default function Login({ onToggleMode, onChangePassword }: AuthFormProps)
     else if (!response.message) {
       navigate("/dashboard")
     }
+    else {
+      alert(response.message)
+    }
   }
 
   useEffect(() => {

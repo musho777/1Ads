@@ -489,7 +489,7 @@ export default function AdminDashboard({ onUpdateCampaign }: AdminDashboardProps
                 <img
                   src={campaign.file}
                   alt={campaign.company_title}
-                  className="object-cover w-full h-full"
+                  className="object-contain w-full h-full "
                 />
               </div>
             </div>
@@ -548,7 +548,6 @@ export default function AdminDashboard({ onUpdateCampaign }: AdminDashboardProps
       const respons = await axios.post(`${API_URL}/api/activatePriorityCompany?token=${local_token}&user_id=${ids}`, {
         company_id: id,
       });
-      console.log(respons.data.data)
       setAdminSelect(respons.data.data)
     } catch (error: any) {
       console.log(error)

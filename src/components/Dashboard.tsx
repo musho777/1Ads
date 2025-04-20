@@ -143,7 +143,7 @@ const AdPreview = ({ campaign }: { campaign: Campaign }) => {
         <img
           src={campaign?.videoImage ? campaign?.videoImage : campaign?.file}
           alt={campaign?.company_title}
-          className="absolute inset-0 w-full h-full object-cover rounded-lg"
+          className="absolute inset-0 w-full h-full object-contain rounded-lg"
         />
       </div>
       <h3 className="font-medium text-lg mb-2">{campaign?.company_title}</h3>
@@ -532,10 +532,12 @@ function Dashboard() {
                             <div className="mb-2 sm:mb-0">
                               <div className='flex items-center gap-5'>
                                 <h3 className="text-base font-medium text-gray-900">{campaign?.company_name}</h3>
-                                <img onClick={() => {
-                                  setCopmanyId(campaign.id)
-                                  setOpenChart(true)
-                                }} src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%230EA5E9' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 3v18h18'/%3E%3Cpath d='m19 9-5 5-4-4-3 3'/%3E%3C/svg%3E" />
+                                <img
+                                  className="object-contain"
+                                  onClick={() => {
+                                    setCopmanyId(campaign.id)
+                                    setOpenChart(true)
+                                  }} src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%230EA5E9' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 3v18h18'/%3E%3Cpath d='m19 9-5 5-4-4-3 3'/%3E%3C/svg%3E" />
                               </div>
                               <p className="text-sm text-gray-500 mt-1">
                                 {campaign?.start_date} - {campaign?.finish_date}

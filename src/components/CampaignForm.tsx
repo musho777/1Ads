@@ -537,7 +537,7 @@ export default function CampaignForm({ isOpen, onClose, onSubmit, initialData, l
                       <img
                         src={mediaType === 'video' ? (videoPhoroUrl || fileUrl) : fileUrl}
                         alt="Ad preview"
-                        className="absolute inset-0 w-full h-full object-cover"
+                        className="absolute inset-0 w-full h-full object-contain"
                         onError={(e) => {
                           const target = e.target as HTMLImageElement;
                           target.src = defaultPreviewImage;
