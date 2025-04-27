@@ -494,12 +494,16 @@ export default function AdminDashboard({ onUpdateCampaign }: AdminDashboardProps
                       alt={campaign.company_title}
                       className="object-contain w-full h-full "
                     />
-                    <video
+
+                    <video width="320" height="240" controls>
+                      <source src={campaign.file} type="video/mp4" />
+                    </video>
+                    {/* <video
                       autoplay
                       src={campaign.file}
                       alt={campaign.company_title}
                       className="object-contain w-full h-full "
-                    />
+                    /> */}
                   </div> :
                   <img
                     src={campaign.file}
