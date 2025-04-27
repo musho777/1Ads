@@ -482,15 +482,31 @@ export default function AdminDashboard({ onUpdateCampaign }: AdminDashboardProps
       ))}
 
       {company.map(campaign => {
+        console.log(campaign, 'campaign')
         return <div key={campaign.id} className="bg-white rounded-lg shadow p-6">
           <div className="flex items-start flex-wrap space-x-6">
             <div className="w-48 flex-shrink-0">
               <div className="aspect-w-16 aspect-h-9 rounded-lg overflow-hidden">
-                <img
-                  src={campaign.file}
-                  alt={campaign.company_title}
-                  className="object-contain w-full h-full "
-                />
+                {campaign.media_type === "video" ?
+                  <div>
+                    <img
+                      src={campaign.videoImage}
+                      alt={campaign.company_title}
+                      className="object-contain w-full h-full "
+                    />
+                    <video
+                      autoplay
+                      src={campaign.file}
+                      alt={campaign.company_title}
+                      className="object-contain w-full h-full "
+                    />
+                  </div> :
+                  <img
+                    src={campaign.file}
+                    alt={campaign.company_title}
+                    className="object-contain w-full h-full "
+                  />
+                }
               </div>
             </div>
 
