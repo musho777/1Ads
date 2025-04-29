@@ -620,10 +620,10 @@ function Dashboard() {
                             <div className="flex justify-between items-center mb-1">
                               <span className="text-xs font-medium text-gray-500">{t('campaigns.table.progress')}</span>
                               {campaign?.get_company_budget?.length > 0 && <span className="text-xs text-gray-500">
-                                {currencySymbol}{campaign.get_company_budget[0].budget_balance}/{currencySymbol}{campaign?.get_company_budget[0].budget}
+                               {currencySymbol}{campaign?.get_company_budget[0].budget}
                               </span>}
                             </div>
-                            <div className="w-full bg-gray-200 rounded-full h-1.5">
+                            {/* <div className="w-full bg-gray-200 rounded-full h-1.5">
                               {campaign?.get_company_budget?.length > 0 && <div
                                 className="bg-sky-600 h-1.5 rounded-full"
 
@@ -636,7 +636,7 @@ function Dashboard() {
                                     }%`
                                 }}
                               />}
-                            </div>
+                            </div> */}
                           </div>
                         </div>
                       </div>

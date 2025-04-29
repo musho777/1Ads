@@ -290,16 +290,16 @@ export default function BudgetCard({ }: BudgetCardProps) {
           <div className="flex justify-between items-center mb-1">
             <span className="text-sm font-medium text-gray-700">{t('budget.remaining')}</span>
             <span className="text-sm text-gray-500">
-              {currencySymbol}{user?.data?.get_budget[0].budget_balance}/{currencySymbol}{user?.data?.get_budget[0].budget}
+              {currencySymbol}{user?.data?.get_budget[0].budget}
             </span>
           </div>
-          <div className="w-full bg-gray-200 rounded-full h-2">
+          {/* <div className="w-full bg-gray-200 rounded-full h-2">
             <div
               className="bg-sky-600 h-2 rounded-full transition-all duration-300"
               // style={{ width: `${100 - (spentPercentage ?? 40)}%` }}
               style={{ width: `${100 - (spentPercentage ?? 0)}%` }}
             />
-          </div>
+          </div> */}
         </div>
 
         {showAddFunds && (
