@@ -23,7 +23,6 @@ export default function Register({ onToggleMode }: AuthFormProps) {
 
   const [captchaValue, setCaptchaValue] = useState("")
   const { register, loading } = useAuth();
-  const navigate = useNavigate()
   const { t } = useLanguage();
   const [rotation, setRotation] = useState(0);
 

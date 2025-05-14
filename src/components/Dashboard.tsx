@@ -206,7 +206,7 @@ function Dashboard() {
     formData.append("CPM", JSON.stringify(campaignData.cpm));
     formData.append("start_date", campaignData.startDate)
     formData.append("finish_date", campaignData.endDate)
-    formData.append("max_CPM_need", campaignData.max_CPM_need)
+    formData.append("setMax_CPM_need", campaignData.max_CPM_need)
     formData.append("company_description", campaignData.adContent.description)
     formData.append("company_url", campaignData.adContent.targetUrl)
     formData.append("media_type", campaignData.adContent.mediaType)
@@ -255,7 +255,7 @@ function Dashboard() {
         setLoading(false)
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
-
+      
 
       // setCampaigns([...campaigns, newData]);
       setEditingCampaign(undefined);

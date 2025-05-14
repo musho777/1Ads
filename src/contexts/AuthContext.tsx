@@ -1,5 +1,4 @@
 import React, { useState, useEffect, createContext, useContext, ReactNode } from "react";
-import axios from "axios";
 
 // Define the types for the user and response data
 interface User {
@@ -71,9 +70,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
     try {
       const res = await fetch(`${API_URL}/api/getProfileInfo?token=${local_token}&&user_id=${id}`);
-      if (res.status === 403) {
+      if (res.status === 401) {
         localStorage.removeItem("token");
         setUser(null);
+        window.location.replace("/dashboard");
       } else if (!res.ok) {
         throw new Error(`Error: ${res.status}`);
       } else {
@@ -157,12 +157,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     let item = { ...user }
     if (key == "balance") {
       let budget_balance = +item.data.get_budget[0].budget_balance
-      // let budget = +item.data.get_budget[0].budget
       budget_balance -= value
-      // budget += +value
       item.data.get_budget[0].budget_balance = budget_balance
-      // item.data.get_budget[0].budget = budget
-
     }
     else {
       item.data.get_profile_setting[0].notify_by_email = value.notifcation
