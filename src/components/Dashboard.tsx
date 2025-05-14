@@ -345,6 +345,7 @@ function Dashboard() {
           alert(t("campaign.CPM.error"));
         }
         else if (data.message.includes("Цена ниже, чем у конкурентов")) {
+          alert("dsfklsdffdsjlf")
           setWarningModal(true)
           setWarningText(data.message)
         }
